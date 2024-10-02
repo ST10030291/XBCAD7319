@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name" translatable="false">XBCAD7319-VUCADigital</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="your_customers_network" translatable="false">Your Customers Network</string>
+    <string name="all" translatable="false">All</string>
+    <string name="referrals" translatable="false">Referrals</string>
+    <string name="leads" translatable="false">Leads</string>
+    <string name="customer_name" translatable="false">Customer name</string>
+    <string name="contact_name" translatable="false">Contact name</string>
+    <string name="type" translatable="false">Type</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="customer_details" translatable="false">Customer Details</string>
+</resources>
