@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185352327100",
+    "project_id": "vucadigital-c31fc",
+    "storage_bucket": "vucadigital-c31fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185352327100:android:21c0b73af8a83c6c2ca5b9",
+        "android_client_info": {
+          "package_name": "com.example.vucadigital"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9sajTMQhxo-MqiCsh0TzP__bJ646ZX-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
