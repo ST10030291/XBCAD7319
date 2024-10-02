@@ -13,10 +13,13 @@
         android:theme="@style/Theme.XBCAD7319VUCADigital"
         tools:targetApi="31">
         <activity
-            android:name=".Activites.DashboardActivity"
+            android:name=".Activites.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".Activites.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activites.DashboardActivity"
             android:exported="false" />
         <activity
             android:name=".Activites.MainActivity"

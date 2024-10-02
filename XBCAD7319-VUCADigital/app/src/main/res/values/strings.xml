@@ -11,4 +11,15 @@
     <string name="type" translatable="false">Type</string>
     <string name="todo" translatable="false">TODO</string>
     <string name="customer_details" translatable="false">Customer Details</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="need_help">Need help?</string>
+    <string name="contact_your_employer">Contact your employer</string>
+    <string name="sign_up">Sign up</string>
+    <string name="register">Register</string>
+    <string name="opportunities">Opportunities</string>
+    <string name="tasks">Tasks</string>
+    <string name="customers">Customers</string>
+    <string name="home">Home</string>
 </resources>
