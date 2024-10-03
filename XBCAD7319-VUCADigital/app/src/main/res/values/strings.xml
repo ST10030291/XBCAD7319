@@ -22,4 +22,11 @@
     <string name="tasks">Tasks</string>
     <string name="customers">Customers</string>
     <string name="home">Home</string>
+    <string name="welcome">Welcome</string>
+    <string name="opportunities_created_this_month">Opportunities created this month</string>
+    <string name="_137">137</string>
+    <string name="customers_created_this_month">Customers created this month</string>
+    <string name="_000">000</string>
+    <string name="view_products">View Products</string>
+    <string name="view_analytics">View Analytics</string>
 </resources>
