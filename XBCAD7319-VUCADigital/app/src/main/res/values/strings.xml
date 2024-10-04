@@ -37,4 +37,10 @@
     <string name="telephone_number">Telephone number:</string>
     <string name="create">Create</string>
     <string name="prospect">Prospect</string>
+    <string name="product_name">Product name</string>
+    <string name="contract_period">Contract period</string>
+    <string name="status">status</string>
+    <string name="contract_end">Contract end</string>
+    <string name="service_provider">Service Provider</string>
+    <string name="contract_term">Contract Term</string>
 </resources>
