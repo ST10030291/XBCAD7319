@@ -6,7 +6,7 @@
     <string name="all" translatable="false">All</string>
     <string name="referrals" translatable="false">Referrals</string>
     <string name="leads" translatable="false">Leads</string>
-    <string name="customer_name" translatable="false">Customer name:</string>
+    <string name="customer_name" translatable="false">Customer name</string>
     <string name="contact_name" translatable="false">Contact name</string>
     <string name="type" translatable="false">Type</string>
     <string name="todo" translatable="false">TODO</string>
@@ -22,6 +22,13 @@
     <string name="tasks">Tasks</string>
     <string name="customers">Customers</string>
     <string name="home">Home</string>
+    <string name="welcome">Welcome</string>
+    <string name="opportunities_created_this_month">Opportunities created this month</string>
+    <string name="_137">137</string>
+    <string name="customers_created_this_month">Customers created this month</string>
+    <string name="_000">000</string>
+    <string name="view_products">View Products</string>
+    <string name="view_analytics">View Analytics</string>
     <string name="products_and_services">Products and services</string>
     <string name="customer_type">Customer type:</string>
     <string name="billing_account_number">Billing account number:</string>
