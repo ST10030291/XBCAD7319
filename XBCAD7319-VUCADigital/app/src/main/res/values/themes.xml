@@ -6,7 +6,8 @@
     </style>
 
     <style name="FilterBtnTheme" parent="Theme.AppCompat">
-        <item name="android:background">@drawable/filter_btn_selected</item>
+        <item name="android:backgroundTint">@color/Coral</item>
+        <item name="android:radius">6dp</item>
     </style>
 
 
