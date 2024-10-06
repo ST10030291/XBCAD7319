@@ -4,19 +4,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class CustomerModel(
-    val id: String,
+    val id: String? = null,
     val CustomerName: String,
     val TelephoneNumber: String,
-    val EmailAddress: String,
+    val CustomerEmail: String,
     val AccountNumber: String,
     val BillingAccountNumber: String,
     val CustomerType: String,
-    val ProductsAndServices: List<CustomerProduct>
+    val Products: List<CustomerProduct>
 )
 
 @Serializable
 class TaskModel(
-    val id: String,
+    val id: String? = null,
     val UserId: String,
     val TaskName: String,
     val Priority: String,
@@ -28,7 +28,7 @@ class TaskModel(
 
 @Serializable
 class OpportunityModel(
-    val id: String,
+    val id: String? = null,
     val Stage: String,
     val TotalValue: String,
     val LeadStatus: String,
@@ -40,7 +40,7 @@ class OpportunityModel(
 
 @Serializable
 class ProductModel(
-    val id: String,
+    val id: String? = null,
     val ProductName: String,
     val Type: String,
     val Description: String,
@@ -50,7 +50,7 @@ class ProductModel(
 
 @Serializable
 class CustomerProduct(
-    val id: String,
+    val id: String? = null,
     val ProductName: String,
     val ContractStart: String,
     val ContractEnd: String,

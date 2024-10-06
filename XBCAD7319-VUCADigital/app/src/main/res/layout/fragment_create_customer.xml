@@ -196,21 +196,30 @@
                 android:textSize="16sp"
                 android:text="@string/customer_type"/>
 
-            <Spinner
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/customerTypeSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
+                android:hint="@string/select"
+                app:hintEnabled="false"
                 android:textSize="16sp"
-                android:labelFor="@id/labelCustomerType"/>
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:labelFor="@id/labelCustomerType">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/user_input_border"
+                    android:textSize="16sp"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
         <Button
-            android:id="@+id/createButton"
+            android:id="@+id/createCustomerButton"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:text="@string/create"
@@ -219,7 +228,7 @@
             android:textSize="16sp"
             android:theme="@style/FilterBtnTheme"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="70dp"/>
     </RelativeLayout>
 
 

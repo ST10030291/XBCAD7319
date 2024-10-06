@@ -20,13 +20,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         supabaseHelper = SupabaseHelper()
 
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val supabaseApiKey = remoteConfig.getString("SUPABASE_API_KEY")
-                supabaseHelper.initializeSupabase(supabaseApiKey)
-            }
-        }
+
 
         openLoginActivity()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -38,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openLoginActivity() {
-        val intent = Intent(this, DashboardActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }

@@ -43,4 +43,5 @@
     <string name="contract_end">Contract end</string>
     <string name="service_provider">Service Provider</string>
     <string name="contract_term">Contract Term</string>
+    <string name="select">Select Item</string>
 </resources>

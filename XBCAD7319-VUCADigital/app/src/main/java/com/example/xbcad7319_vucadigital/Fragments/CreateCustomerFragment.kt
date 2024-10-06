@@ -1,60 +1,88 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
+import com.example.xbcad7319_vucadigital.databinding.ActivityDashboardBinding
+import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.CustomerProduct
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CreateCustomerFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CreateCustomerFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val sbHelper = SupabaseHelper()
+    private lateinit var selectedItem: String
+    private lateinit var binding: ActivityDashboardBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = ActivityDashboardBinding.inflate(layoutInflater)
+
+        val createBtn = view.findViewById<Button>(R.id.createCustomerButton)
+        val customerTypes = arrayOf("Prospect", "Leads", "Referrals")
+        val customerTypeDropdown: AutoCompleteTextView = view.findViewById(R.id.autoCompleteText)
+        val adapter = ArrayAdapter(requireContext(), R.layout.customer_type_list_item, customerTypes)
+        val backBtn = view.findViewById<ImageView>(R.id.back_btn)
+
+        customerTypeDropdown.setAdapter(adapter)
+
+        customerTypeDropdown.setOnItemClickListener { parent, view, position, id ->
+            selectedItem = parent.getItemAtPosition(position) as String
+            customerTypeDropdown.hint = selectedItem
+            Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT).show()
+
         }
+
+        backBtn.setOnClickListener{
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
+        createBtn.setOnClickListener{
+            try{
+                lifecycleScope.launch {
+                    sbHelper.addCustomer(initializeFields(view))
+                }
+                Toast.makeText(requireContext(), "Insert successfully", Toast.LENGTH_SHORT).show()
+            }
+            catch (e: Exception){
+                Toast.makeText(requireContext(), "Something went wrong! Insert process cancelled.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_customer, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CreateCustomerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CreateCustomerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun initializeFields(view: View): CustomerModel {
+        val customerName = view.findViewById<EditText>(R.id.customerName).text.toString()
+        val telephoneNumber = view.findViewById<EditText>(R.id.telephoneNumber).text.toString()
+        val customerEmail = view.findViewById<EditText>(R.id.customerEmail).text.toString()
+        val accountNumber = view.findViewById<EditText>(R.id.accountNumber).text.toString()
+        val billingAccountNumebr = view.findViewById<EditText>(R.id.billingAccountNumber).text.toString()
+        val customerType = selectedItem
+
+
+        return CustomerModel(id=null,customerName, telephoneNumber, customerEmail,accountNumber, billingAccountNumebr, customerType ,
+            emptyList()
+        )
     }
+
 }

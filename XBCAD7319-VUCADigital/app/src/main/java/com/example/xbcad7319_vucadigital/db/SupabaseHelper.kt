@@ -23,18 +23,26 @@ class SupabaseHelper {
     }
 
     suspend fun getAllCustomers(): List<CustomerModel> {
-        return supabase.from("Customers").select(){
+
+        return supabase.from("customers").select(){
             order(column = "id", order = Order.ASCENDING)
         }.decodeList<CustomerModel>()
     }
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val supabaseApiKey = remoteConfig.getString("SUPABASE_API_KEY")
+                initializeSupabase(supabaseApiKey)
+            }
+        }
         try{
-            supabase.from("Customers").insert(customer)
+            supabase.from("customers").insert(customer)
             return true
         }
         catch (e: Exception){
-            Log.d("INS40", "Something went wrong! Insertion failed")
+            Log.e("INS40", "Insertion failed: ${e.message}", e)
             return false
         }
     }
@@ -44,7 +52,7 @@ class SupabaseHelper {
             supabase.from("Customers").update(customer) {
                 filter {
                     CustomerModel::id eq customer.id
-                    eq("id", customer.id)
+                    customer.id?.let { eq("id", it) }
                 }
             }
             return true
