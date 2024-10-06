@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
+        supabaseHelper = SupabaseHelper()
 
         val remoteConfig = FirebaseRemoteConfig.getInstance()
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openLoginActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
     }

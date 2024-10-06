@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -12,32 +12,55 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation"
         android:layout_alignParentBottom="false"
         android:layout_alignParentTop="false" />
 
     <!-- FAB -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabPopupTray"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@id/bottom_navigation"
-        android:layout_marginTop="-30dp"
-        android:backgroundTint="@color/white"
-        android:contentDescription="@string/todo"
-        app:maxImageSize="40dp"
-        android:src="@drawable/plus_icon" />
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/black"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_bar" />
+        android:layout_height="match_parent">
 
-</RelativeLayout>
+        <!--This is the navbar without the plus button -->
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:backgroundTint="@color/Transparent"
+            app:elevation="0dp"
+            android:theme="@style/NavbarTheme"
+            app:fabCradleMargin="20dp"
+            app:fabCradleRoundedCornerRadius="50dp"
+            android:visibility="visible">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:theme="@style/NavbarTheme"
+                android:background="@drawable/navbar_background"
+                android:elevation="10dp"
+                app:itemIconSize="26dp"
+                app:itemIconTint="@drawable/navbar_selector"
+                app:itemTextColor="@color/white"
+                app:labelVisibilityMode="selected"
+                app:menu="@menu/bottom_nav_bar" />
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/plusBtn"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:contentDescription="TODO"
+            android:src="@drawable/plus_icon"
+            app:layout_anchor="@id/bottomNavigation"
+            app:maxImageSize="30dp"
+            android:visibility="gone" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

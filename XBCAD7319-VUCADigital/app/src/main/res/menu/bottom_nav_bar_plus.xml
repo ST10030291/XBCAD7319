@@ -10,6 +10,12 @@
         android:title="@string/customers"
         android:icon="@drawable/customer_icon"/>
 
+    <!-- The middle item will be invisible, acting as a placeholder for the popup tray -->
+    <item
+        android:id="@+id/navigation_placeholder"
+        android:visible="false"
+        android:title="" />
+
     <item
         android:id="@+id/navigation_tasks"
         android:title="@string/tasks"
