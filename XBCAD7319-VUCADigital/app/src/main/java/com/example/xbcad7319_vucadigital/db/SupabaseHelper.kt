@@ -9,11 +9,13 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class SupabaseHelper {
     private lateinit var supabase: SupabaseClient
 
-    fun initializeSupabase(apiKey: String) {
+    private fun initializeSupabase(apiKey: String) {
         supabase = createSupabaseClient(
             supabaseUrl = "https://tptruaqxxbujkjbktvnf.supabase.co",
             supabaseKey = apiKey
@@ -22,11 +24,31 @@ class SupabaseHelper {
         }
     }
 
-    suspend fun getAllCustomers(): List<CustomerModel> {
+    private suspend fun fetchSupabaseApiKeyAndInitialize(): Boolean {
+        return suspendCoroutine { continuation ->
+            val remoteConfig = FirebaseRemoteConfig.getInstance()
+            remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val supabaseApiKey = remoteConfig.getString("SUPABASE_API_KEY")
+                    initializeSupabase(supabaseApiKey)
+                    continuation.resume(true)
+                } else {
+                    continuation.resume(false)
+                }
+            }
+        }
+    }
 
-        return supabase.from("customers").select(){
-            order(column = "id", order = Order.ASCENDING)
-        }.decodeList<CustomerModel>()
+    suspend fun getAllCustomers(): List<CustomerModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("customers").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<CustomerModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
     }
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{

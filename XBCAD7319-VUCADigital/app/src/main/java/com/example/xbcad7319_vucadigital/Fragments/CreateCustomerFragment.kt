@@ -41,7 +41,6 @@ class CreateCustomerFragment : Fragment() {
         customerTypeDropdown.setOnItemClickListener { parent, view, position, id ->
             selectedItem = parent.getItemAtPosition(position) as String
             customerTypeDropdown.hint = selectedItem
-            Toast.makeText(requireContext(), "Selected: $selectedItem", Toast.LENGTH_SHORT).show()
 
         }
 
@@ -54,6 +53,7 @@ class CreateCustomerFragment : Fragment() {
                 lifecycleScope.launch {
                     sbHelper.addCustomer(initializeFields(view))
                 }
+                requireActivity().supportFragmentManager.popBackStack()
                 Toast.makeText(requireContext(), "Insert successfully", Toast.LENGTH_SHORT).show()
             }
             catch (e: Exception){
