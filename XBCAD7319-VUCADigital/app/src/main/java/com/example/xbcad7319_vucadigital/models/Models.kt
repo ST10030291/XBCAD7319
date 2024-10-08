@@ -12,7 +12,7 @@ class CustomerModel(
     val BillingAccountNumber: String,
     val CustomerType: String,
     val Products: List<CustomerProduct>
-)
+) : java.io.Serializable
 
 @Serializable
 class TaskModel(

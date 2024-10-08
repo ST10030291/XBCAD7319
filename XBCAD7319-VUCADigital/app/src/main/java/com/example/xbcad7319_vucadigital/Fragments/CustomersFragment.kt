@@ -14,13 +14,14 @@ import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.CustomerAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class CustomersFragment : Fragment() {
     private lateinit var sbHelper: SupabaseHelper
-
+    private lateinit var customers : List<CustomerModel>
     override fun onResume() {
         super.onResume()
 
@@ -31,19 +32,35 @@ class CustomersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
 
         sbHelper = SupabaseHelper()
 
         Handler(Looper.getMainLooper()).postDelayed({
             view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers).stopShimmer()
             view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers).visibility = View.GONE
-            view.findViewById<GridView>(R.id.CustomerGridView).visibility = View.VISIBLE
+            gridView.visibility = View.VISIBLE
             lifecycleScope.launch {
                 updateCustomerGrid(view)
+                val customerAdapter = CustomerAdapter(requireContext(), customers)
+                gridView.adapter = customerAdapter
+
+                gridView.setOnItemClickListener { _, _, position, _ ->
+                    val selectedCustomer = customers[position]
+
+                    val fragment = ViewCustomerFragment().apply {
+                        arguments = Bundle().apply {
+                            putSerializable("customer", selectedCustomer)
+                        }
+                    }
+
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
         },4000)
-
-
 
     }
 
@@ -56,7 +73,7 @@ class CustomersFragment : Fragment() {
     }
 
     private suspend fun updateCustomerGrid(view: View) {
-        val customers = sbHelper.getAllCustomers()
+        customers = sbHelper.getAllCustomers()
         Log.d("", customers.toString())
         val adapter = CustomerAdapter(requireContext(), customers)
         view.findViewById<GridView>(R.id.CustomerGridView).adapter = adapter

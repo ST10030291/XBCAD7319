@@ -1,6 +1,9 @@
 package com.example.xbcad7319_vucadigital.Adapters
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,8 +38,9 @@ class CustomerAdapter(context: Context, private val customers: List<CustomerMode
         return view
     }
 
-    private class ViewHolder(view: View) {
+    inner class ViewHolder(view: View) {
         val nameTextView: TextView = view.findViewById(R.id.CustomerName)
         val typeTextView: TextView = view.findViewById(R.id.CustomerType)
     }
+
 }

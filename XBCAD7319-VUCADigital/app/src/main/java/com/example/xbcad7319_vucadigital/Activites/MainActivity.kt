@@ -20,8 +20,6 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         supabaseHelper = SupabaseHelper()
 
-
-
         openLoginActivity()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
