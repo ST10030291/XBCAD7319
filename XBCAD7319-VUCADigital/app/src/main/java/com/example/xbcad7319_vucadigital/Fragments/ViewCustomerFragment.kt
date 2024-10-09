@@ -21,17 +21,35 @@ import kotlinx.coroutines.launch
 
 class ViewCustomerFragment : Fragment() {
     private lateinit var customer: CustomerModel
+    private lateinit var sbHelper: SupabaseHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val callButton: ImageView = view.findViewById(R.id.customer_call_click)
+        val DeleteBtn : ImageView = view.findViewById(R.id.customerDeleteBtn)
+        val UpdateBtn : ImageView = view.findViewById(R.id.customerUpdateBtn)
+        val backBtn : ImageView = view.findViewById(R.id.back_btn)
+
+        sbHelper = SupabaseHelper()
+
         arguments?.let {
             customer = it.getSerializable("customer") as CustomerModel
         }
 
         displayCustomerData(view)
 
-        val callButton: ImageView = view.findViewById(R.id.customer_call_click)
         callButton.setOnClickListener {
             makePhoneCall(customer.TelephoneNumber)
+        }
+
+        DeleteBtn.setOnClickListener{
+            lifecycleScope.launch {
+                deleteCustomer()
+            }
+
+        }
+
+        backBtn.setOnClickListener{
+            requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
@@ -58,6 +76,37 @@ class ViewCustomerFragment : Fragment() {
         customerType.text = customer.CustomerType
         billingAccountNumberTextView.text = customer.BillingAccountNumber
         accountNumberTextView.text = customer.AccountNumber
+    }
+
+    /*private suspend fun updateCustomer(view: View) {
+        try {
+            lifecycleScope.launch {
+                sbHelper.updateCustomer(elementInitialisation())
+                clearDataFromView()
+                updateGpuList()
+            }
+            Toast.makeText(requireContext(), "Update successfully", Toast.LENGTH_SHORT).show()
+        }
+        catch (e: Exception){
+            Toast.makeText(requireContext(), "Something went wrong! Update process cancelled.", Toast.LENGTH_SHORT).show()
+        }
+    }*/
+
+    private suspend fun deleteCustomer() {
+        try {
+            lifecycleScope.launch {
+                customer.id?.let { sbHelper.deleteCustomer(it) }
+                BacktoCustomers()
+            }
+            Toast.makeText(requireContext(), "Deletion successfully", Toast.LENGTH_SHORT).show()
+        }
+        catch (e: Exception){
+            Toast.makeText(requireContext(), "Something went wrong! Deleting process cancelled.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun BacktoCustomers(){
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
 

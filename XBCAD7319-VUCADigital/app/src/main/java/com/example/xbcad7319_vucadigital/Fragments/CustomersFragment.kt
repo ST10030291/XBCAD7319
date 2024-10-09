@@ -60,7 +60,7 @@ class CustomersFragment : Fragment() {
                         .commit()
                 }
             }
-        },4000)
+        },2000)
 
     }
 

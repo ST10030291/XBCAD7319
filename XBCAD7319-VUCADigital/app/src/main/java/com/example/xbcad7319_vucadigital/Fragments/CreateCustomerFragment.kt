@@ -2,6 +2,7 @@ package com.example.xbcad7319_vucadigital.Fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -48,18 +49,24 @@ class CreateCustomerFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        createBtn.setOnClickListener{
-            try{
-                lifecycleScope.launch {
-                    sbHelper.addCustomer(initializeFields(view))
+        createBtn.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    val success = sbHelper.addCustomer(initializeFields(view))
+
+                    if (success) {
+                        Toast.makeText(requireContext(), "Insert successfully", Toast.LENGTH_SHORT).show()
+                        requireActivity().supportFragmentManager.popBackStack()
+                    } else {
+                        Toast.makeText(requireContext(), "Insertion failed!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e("CreateCustomer", "Exception: ${e.message}")
+                    Toast.makeText(requireContext(), "Something went wrong! Insert process cancelled.", Toast.LENGTH_SHORT).show()
                 }
-                requireActivity().supportFragmentManager.popBackStack()
-                Toast.makeText(requireContext(), "Insert successfully", Toast.LENGTH_SHORT).show()
-            }
-            catch (e: Exception){
-                Toast.makeText(requireContext(), "Something went wrong! Insert process cancelled.", Toast.LENGTH_SHORT).show()
             }
         }
+
 
     }
 

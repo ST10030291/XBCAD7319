@@ -52,26 +52,19 @@ class SupabaseHelper {
     }
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val supabaseApiKey = remoteConfig.getString("SUPABASE_API_KEY")
-                initializeSupabase(supabaseApiKey)
-            }
-        }
-        try{
-            supabase.from("customers").insert(customer)
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+                supabase.from("customers").insert(customer)
             return true
-        }
-        catch (e: Exception){
-            Log.e("INS40", "Insertion failed: ${e.message}", e)
-            return false
+        } else {
+            throw Exception("Supabase initialization failed.")
         }
     }
 
     suspend fun updateCustomer(customer: CustomerModel) : Boolean{
         try{
-            supabase.from("Customers").update(customer) {
+            supabase.from("customers").update(customer) {
                 filter {
                     CustomerModel::id eq customer.id
                     customer.id?.let { eq("id", it) }
@@ -85,19 +78,25 @@ class SupabaseHelper {
         }
     }
 
-    suspend fun deleteCustomer(id : Long) : Boolean{
-        try{
-            supabase.from("Customers").delete {
-                filter {
-                    CustomerModel::id eq id
-                    eq("id", id)
+    suspend fun deleteCustomer(id : String) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            try{
+                supabase.from("customers").delete {
+                    filter {
+                        CustomerModel::id eq id
+                        eq("id", id)
+                    }
                 }
+                return true
             }
-            return true
+            catch (e: Exception){
+                Log.e("INS40", "Deletion failed: ${e.message}", e)
+                return false
+            }
+        }else{
+            throw Exception("Supabase initialization failed.")
         }
-        catch (e: Exception){
-            Log.d("DEL40", "Something went wrong! Insertion failed")
-            return false
-        }
+
     }
 }
