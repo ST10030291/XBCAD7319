@@ -1,8 +1,9 @@
 package com.example.xbcad7319_vucadigital.db
 
-import android.net.http.HttpResponseCache.install
+
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.TaskModel
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -112,6 +113,33 @@ class SupabaseHelper {
                 Log.e("DB_ERROR", "Failed to get customer count: ${e.message}", e)
                 return 0 // Return 0 in case of an error
             }
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+//    Still implementing
+//    suspend fun deleteTask(id : String) : Boolean{
+//        try{
+//            supabase.from("tasks").delete {
+//                filter {
+//                    eq("id", id)
+//                }
+//            }
+//            return true
+//        }
+//        catch (e: Exception){
+//            Log.d("DEL40", "Something went wrong! Delete process failed.")
+//            return false
+//        }
+//    }
+
+    suspend fun getAllTasks(): List<TaskModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("tasks").select{
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<TaskModel>()
         } else {
             throw Exception("Supabase initialization failed.")
         }

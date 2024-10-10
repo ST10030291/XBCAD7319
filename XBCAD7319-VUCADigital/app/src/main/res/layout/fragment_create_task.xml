@@ -3,12 +3,224 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_white"
     tools:context=".Fragments.CreateTaskFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:ignore="UselessParent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/headerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="15dp"
+                android:paddingTop="30dp">
+
+                <ImageView
+                    android:id="@+id/back_btn"
+                    android:layout_width="62dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="60dp"
+                    android:clickable="true"
+                    android:contentDescription="@string/todo"
+                    android:focusable="true"
+                    android:src="@drawable/backbtn" />
+
+                <TextView
+                    android:id="@+id/pageName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_task"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/labelTaskName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/task_name"/>
+
+            <EditText
+                android:id="@+id/taskName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:autofillHints="taskName"
+                android:inputType="text"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:textSize="16sp"
+                android:hint="@string/task_name"/>
+
+            <TextView
+                android:id="@+id/labelCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/task_category"/>
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:spinnerMode="dropdown"/>
+
+            <TextView
+                android:id="@+id/labelDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/task_description"/>
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:autofillHints="taskDescription"
+                android:inputType="textMultiLine"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:textSize="16sp"
+                android:hint="@string/task_description"/>
+
+            <TextView
+                android:id="@+id/labelAssignedTo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/person_assigned"/>
+
+            <Spinner
+                android:id="@+id/personAssignedSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:spinnerMode="dropdown"/>
+
+            <TextView
+                android:id="@+id/labelStartDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/start_date"/>
+
+            <EditText
+                android:id="@+id/startDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:autofillHints="startDate"
+                android:inputType="date"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:textSize="16sp"
+                android:hint="@string/start_date"
+                android:focusable="false"/>
+
+            <TextView
+                android:id="@+id/labelEndDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/end_date"/>
+
+            <EditText
+                android:id="@+id/endDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:autofillHints="endDate"
+                android:inputType="date"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:textSize="16sp"
+                android:hint="@string/end_date"
+                android:focusable="false"/>
+
+            <TextView
+                android:id="@+id/labelPriorityLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="@string/priority_level"/>
+
+            <Spinner
+                android:id="@+id/priorityLevelSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/user_input_border"
+                android:spinnerMode="dropdown"/>
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/createTaskButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/create"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textSize="16sp"
+            android:theme="@style/FilterBtnTheme"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="70dp"/>
+    </RelativeLayout>
 
 </FrameLayout>
