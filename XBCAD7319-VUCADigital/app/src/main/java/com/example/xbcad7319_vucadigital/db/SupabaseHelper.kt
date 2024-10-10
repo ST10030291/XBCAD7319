@@ -99,4 +99,22 @@ class SupabaseHelper {
         }
 
     }
+
+    suspend fun getCustomerCount(): Int {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            try {
+                // Fetch all customers and get the size of the list for the count
+                val result = supabase.from("customers").select().decodeList<CustomerModel>()
+                return result.size // Return the count of customers
+            } catch (e: Exception) {
+                Log.e("DB_ERROR", "Failed to get customer count: ${e.message}", e)
+                return 0 // Return 0 in case of an error
+            }
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
 }
