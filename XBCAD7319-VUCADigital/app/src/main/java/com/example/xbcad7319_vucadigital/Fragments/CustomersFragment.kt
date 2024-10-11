@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridView
+import android.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.CustomerAdapter
@@ -23,6 +25,13 @@ class CustomersFragment : Fragment() {
 
     private lateinit var sbHelper: SupabaseHelper
     private lateinit var customers: List<CustomerModel>
+    private lateinit var filteredCustomers: List<CustomerModel>
+    private lateinit var allFilterButton: Button
+    private lateinit var prospectFilterButton: Button
+    private lateinit var leadsFilterButton: Button
+    private lateinit var referralsFilterButton: Button
+    private lateinit var searchView: SearchView
+    private lateinit var gridView: GridView
 
     override fun onResume() {
         super.onResume()
@@ -36,7 +45,12 @@ class CustomersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
+        searchView = view.findViewById(R.id.SearchBar)
+        gridView = view.findViewById(R.id.CustomerGridView)
+        allFilterButton = view.findViewById(R.id.AllFilter)
+        prospectFilterButton = view.findViewById(R.id.ProspectFilter)
+        leadsFilterButton= view.findViewById(R.id.LeadsFilter)
+        referralsFilterButton = view.findViewById(R.id.ReferralsFilter)
         sbHelper = SupabaseHelper()
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -46,13 +60,34 @@ class CustomersFragment : Fragment() {
             gridView.visibility = View.VISIBLE
 
             lifecycleScope.launch {
-                updateCustomerGrid(view)
-                gridView.adapter = CustomerAdapter(requireContext(), customers)
+                customers = sbHelper.getAllCustomers()
 
-                gridView.setOnItemClickListener { _, _, position, _ ->
-                    val selectedCustomer = customers[position]
-                    openCustomerDetails(selectedCustomer)
-                }
+                filteredCustomers = customers
+                selectButton(allFilterButton)
+                updateCustomerGrid(gridView, filteredCustomers)
+
+                setUpSearchView()
+            }
+
+            allFilterButton.setOnClickListener {
+                filteredCustomers = customers
+                updateCustomerGrid(gridView, filteredCustomers)
+                selectButton(allFilterButton)
+            }
+            leadsFilterButton.setOnClickListener {
+                filteredCustomers = customers.filter { it.CustomerType == "Leads" }
+                updateCustomerGrid(gridView, filteredCustomers)
+                selectButton(leadsFilterButton)
+            }
+            referralsFilterButton.setOnClickListener {
+                filteredCustomers = customers.filter { it.CustomerType == "Referrals" }
+                updateCustomerGrid(gridView, filteredCustomers)
+                selectButton(referralsFilterButton)
+            }
+            prospectFilterButton.setOnClickListener {
+                filteredCustomers = customers.filter { it.CustomerType == "Prospect" }
+                updateCustomerGrid(gridView, filteredCustomers)
+                selectButton(prospectFilterButton)
             }
         }, 2000)
     }
@@ -64,23 +99,53 @@ class CustomersFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_customers, container, false)
     }
 
-    private suspend fun updateCustomerGrid(view: View) {
-        customers = sbHelper.getAllCustomers()
-        Log.d("CustomersFragment", "Customers: $customers")
-        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
-        gridView.adapter = CustomerAdapter(requireContext(), customers)
+    private fun setUpSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { searchCustomersByName(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { searchCustomersByName(it) }
+                return true
+            }
+        })
     }
 
-    private fun openCustomerDetails(customer: CustomerModel) {
-        val fragment = ViewCustomerFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable("customer", customer)
-            }
-        }
+    private fun searchCustomersByName(query: String) {
+        val queryLower = query.lowercase()
 
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
+        filteredCustomers = customers.filter { customer ->
+            customer.CustomerName.lowercase().contains(queryLower)
+        }
+        updateCustomerGrid(gridView, filteredCustomers)
+    }
+
+    private fun selectButton(selectedButton: Button) {
+        allFilterButton.isSelected = selectedButton == allFilterButton
+        prospectFilterButton.isSelected = selectedButton == prospectFilterButton
+        leadsFilterButton.isSelected = selectedButton == leadsFilterButton
+        referralsFilterButton.isSelected = selectedButton == referralsFilterButton
+    }
+
+    private fun updateCustomerGrid(gridView: GridView, filteredCustomers: List<CustomerModel>) {
+        val adapter = CustomerAdapter(requireContext(), filteredCustomers)
+        gridView.adapter = adapter
+
+        gridView.setOnItemClickListener { _, _, position, _ ->
+            val selectedCustomer = filteredCustomers[position]
+
+            val fragment = ViewCustomerFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("customer", selectedCustomer)
+                }
+            }
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 }
