@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.CustomerAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
@@ -48,6 +49,26 @@ class ViewCustomerFragment : Fragment() {
 
         }
 
+        UpdateBtn.setOnClickListener {
+            val updateCustomerFragment = CreateCustomerFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean("isUpdateMode", true)
+                    putSerializable("customer", customer)
+                }
+            }
+
+            (activity as? DashboardActivity)?.let { dashboardActivity ->
+                dashboardActivity.binding.bottomNavigation.visibility = View.GONE
+                dashboardActivity.binding.plusBtn.visibility = View.GONE
+            }
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, updateCustomerFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+
         backBtn.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
@@ -77,20 +98,6 @@ class ViewCustomerFragment : Fragment() {
         billingAccountNumberTextView.text = customer.BillingAccountNumber
         accountNumberTextView.text = customer.AccountNumber
     }
-
-    /*private suspend fun updateCustomer(view: View) {
-        try {
-            lifecycleScope.launch {
-                sbHelper.updateCustomer(elementInitialisation())
-                clearDataFromView()
-                updateGpuList()
-            }
-            Toast.makeText(requireContext(), "Update successfully", Toast.LENGTH_SHORT).show()
-        }
-        catch (e: Exception){
-            Toast.makeText(requireContext(), "Something went wrong! Update process cancelled.", Toast.LENGTH_SHORT).show()
-        }
-    }*/
 
     private suspend fun deleteCustomer() {
         try {

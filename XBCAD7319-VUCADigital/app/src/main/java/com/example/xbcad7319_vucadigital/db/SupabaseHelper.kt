@@ -64,7 +64,9 @@ class SupabaseHelper {
     }
 
     suspend fun updateCustomer(customer: CustomerModel) : Boolean{
-        try{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
             supabase.from("customers").update(customer) {
                 filter {
                     CustomerModel::id eq customer.id
@@ -72,8 +74,7 @@ class SupabaseHelper {
                 }
             }
             return true
-        }
-        catch (e: Exception){
+        } else {
             Log.d("UPD40", "Something went wrong! Update failed")
             return false
         }

@@ -79,7 +79,12 @@ class DashboardActivity : AppCompatActivity() {
             is CustomersFragment -> {
                 binding.plusBtn.visibility = View.VISIBLE
                 binding.plusBtn.setOnClickListener {
-                    loadFragment(CreateCustomerFragment(), true)
+                    val createCustomerFragment = CreateCustomerFragment().apply {
+                        arguments = Bundle().apply {
+                            putBoolean("isUpdateMode", false)
+                        }
+                    }
+                    loadFragment(createCustomerFragment, true)
                     binding.bottomNavigation.visibility = View.GONE
                 }
             }
