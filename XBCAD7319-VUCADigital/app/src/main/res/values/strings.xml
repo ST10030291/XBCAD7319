@@ -61,5 +61,7 @@
     <string name="to_do">To Do</string>
     <string name="priority">Priority</string>
     <string name="new_customer">New Customer</string>
+    <string name="update_customer">Update Customer</string>
+    <string name="save">Save</string>
 
 </resources>

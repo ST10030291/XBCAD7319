@@ -20,63 +20,67 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class CustomersFragment : Fragment() {
+
     private lateinit var sbHelper: SupabaseHelper
-    private lateinit var customers : List<CustomerModel>
+    private lateinit var customers: List<CustomerModel>
+
     override fun onResume() {
         super.onResume()
-
-        val dashboardActivity = activity as DashboardActivity
-        dashboardActivity.binding.bottomNavigation.visibility = View.VISIBLE
-        dashboardActivity.binding.plusBtn.visibility = View.VISIBLE
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            bottomNavigation.visibility = View.VISIBLE
+            plusBtn.visibility = View.VISIBLE
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
 
+        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
         sbHelper = SupabaseHelper()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers).stopShimmer()
-            view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers).visibility = View.GONE
+            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
             gridView.visibility = View.VISIBLE
+
             lifecycleScope.launch {
                 updateCustomerGrid(view)
-                val customerAdapter = CustomerAdapter(requireContext(), customers)
-                gridView.adapter = customerAdapter
+                gridView.adapter = CustomerAdapter(requireContext(), customers)
 
                 gridView.setOnItemClickListener { _, _, position, _ ->
                     val selectedCustomer = customers[position]
-
-                    val fragment = ViewCustomerFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable("customer", selectedCustomer)
-                        }
-                    }
-
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
-                        .commit()
+                    openCustomerDetails(selectedCustomer)
                 }
             }
-        },2000)
-
+        }, 2000)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_customers, container, false)
-        return view
+        return inflater.inflate(R.layout.fragment_customers, container, false)
     }
 
     private suspend fun updateCustomerGrid(view: View) {
         customers = sbHelper.getAllCustomers()
-        Log.d("", customers.toString())
-        val adapter = CustomerAdapter(requireContext(), customers)
-        view.findViewById<GridView>(R.id.CustomerGridView).adapter = adapter
+        Log.d("CustomersFragment", "Customers: $customers")
+        val gridView: GridView = view.findViewById(R.id.CustomerGridView)
+        gridView.adapter = CustomerAdapter(requireContext(), customers)
     }
 
+    private fun openCustomerDetails(customer: CustomerModel) {
+        val fragment = ViewCustomerFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable("customer", customer)
+            }
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
 }

@@ -25,104 +25,95 @@ class ViewCustomerFragment : Fragment() {
     private lateinit var sbHelper: SupabaseHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val callButton: ImageView = view.findViewById(R.id.customer_call_click)
-        val DeleteBtn : ImageView = view.findViewById(R.id.customerDeleteBtn)
-        val UpdateBtn : ImageView = view.findViewById(R.id.customerUpdateBtn)
-        val backBtn : ImageView = view.findViewById(R.id.back_btn)
-
+        super.onViewCreated(view, savedInstanceState)
         sbHelper = SupabaseHelper()
 
+        retrieveArguments()
+        displayCustomerData(view)
+        setupClickListeners(view)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_view_customer, container, false)
+    }
+
+    private fun retrieveArguments() {
         arguments?.let {
             customer = it.getSerializable("customer") as CustomerModel
         }
+    }
 
-        displayCustomerData(view)
+    private fun displayCustomerData(view: View) {
+        view.findViewById<TextView>(R.id.customer_name).text = customer.CustomerName
+        view.findViewById<TextView>(R.id.customer_email).text = customer.CustomerEmail
+        view.findViewById<TextView>(R.id.customer_type).text = customer.CustomerType
+        view.findViewById<TextView>(R.id.account_number).text = customer.AccountNumber
+        view.findViewById<TextView>(R.id.billing_account_number).text = customer.BillingAccountNumber
+    }
 
-        callButton.setOnClickListener {
+    private fun setupClickListeners(view: View) {
+        view.findViewById<ImageView>(R.id.customer_call_click).setOnClickListener {
             makePhoneCall(customer.TelephoneNumber)
         }
 
-        DeleteBtn.setOnClickListener{
-            lifecycleScope.launch {
-                deleteCustomer()
-            }
-
+        view.findViewById<ImageView>(R.id.customerDeleteBtn).setOnClickListener {
+            lifecycleScope.launch { deleteCustomer() }
         }
 
-        UpdateBtn.setOnClickListener {
-            val updateCustomerFragment = CreateCustomerFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean("isUpdateMode", true)
-                    putSerializable("customer", customer)
-                }
-            }
-
-            (activity as? DashboardActivity)?.let { dashboardActivity ->
-                dashboardActivity.binding.bottomNavigation.visibility = View.GONE
-                dashboardActivity.binding.plusBtn.visibility = View.GONE
-            }
-
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, updateCustomerFragment)
-                .addToBackStack(null)
-                .commit()
+        view.findViewById<ImageView>(R.id.customerUpdateBtn).setOnClickListener {
+            navigateToUpdateCustomer()
         }
 
-
-        backBtn.setOnClickListener{
+        view.findViewById<ImageView>(R.id.back_btn).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
     private fun makePhoneCall(phoneNumber: String) {
         if (phoneNumber.isNotEmpty()) {
-            val intent = Intent(Intent.ACTION_DIAL).apply {
-                data = Uri.parse("tel:$phoneNumber")
-            }
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
             startActivity(intent)
         } else {
             Toast.makeText(context, "Phone number is not available", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun displayCustomerData(view: View) {
-        val customerNameTextView: TextView = view.findViewById(R.id.customer_name)
-        val emailTextView: TextView = view.findViewById(R.id.customer_email)
-        val customerType: TextView = view.findViewById(R.id.customer_type)
-        val accountNumberTextView: TextView = view.findViewById(R.id.account_number)
-        val billingAccountNumberTextView: TextView = view.findViewById(R.id.billing_account_number)
-
-        customerNameTextView.text = customer.CustomerName
-        emailTextView.text = customer.CustomerEmail
-        customerType.text = customer.CustomerType
-        billingAccountNumberTextView.text = customer.BillingAccountNumber
-        accountNumberTextView.text = customer.AccountNumber
-    }
-
     private suspend fun deleteCustomer() {
         try {
-            lifecycleScope.launch {
-                customer.id?.let { sbHelper.deleteCustomer(it) }
-                BacktoCustomers()
+            customer.id?.let {
+                sbHelper.deleteCustomer(it)
+                showToast("Deletion successfully")
+                popBackStack()
             }
-            Toast.makeText(requireContext(), "Deletion successfully", Toast.LENGTH_SHORT).show()
-        }
-        catch (e: Exception){
-            Toast.makeText(requireContext(), "Something went wrong! Deleting process cancelled.", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            showToast("Something went wrong! Deleting process cancelled.")
         }
     }
 
-    private fun BacktoCustomers(){
+    private fun navigateToUpdateCustomer() {
+        val updateCustomerFragment = CreateCustomerFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean("isUpdateMode", true)
+                putSerializable("customer", customer)
+            }
+        }
+
+        (activity as? DashboardActivity)?.apply {
+            binding.bottomNavigation.visibility = View.GONE
+            binding.plusBtn.visibility = View.GONE
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, updateCustomerFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun popBackStack() {
         requireActivity().supportFragmentManager.popBackStack()
     }
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_view_customer, container, false)
-    }
-
-
 }
