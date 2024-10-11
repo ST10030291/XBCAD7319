@@ -1,5 +1,6 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -110,11 +111,22 @@ class CreateCustomerFragment : Fragment() {
     private fun validateFields(vararg fields: String): Boolean {
         fields.forEach { field ->
             if (field.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter all values", Toast.LENGTH_SHORT).show()
+                errorDialog()
                 return true
             }
         }
         return false
+    }
+
+    private fun errorDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Invalid Data")
+            .setMessage("Please enter all values")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun populateFields(customer: CustomerModel, view: View) {
