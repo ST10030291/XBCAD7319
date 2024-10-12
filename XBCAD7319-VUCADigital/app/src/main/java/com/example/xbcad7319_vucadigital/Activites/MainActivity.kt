@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
                     val intent = Intent(this@MainActivity, DashboardActivity::class.java)
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
                 }
             }
         }

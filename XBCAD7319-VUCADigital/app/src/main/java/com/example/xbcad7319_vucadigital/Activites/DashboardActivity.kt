@@ -67,7 +67,15 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun loadFragment(fragment: Fragment, addToBackStack: Boolean) {
         val transaction = supportFragmentManager.beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
+
+        transaction.setCustomAnimations(
+            R.anim.fade_in,
+            R.anim.fade_out,
+            R.anim.fade_in,
+            R.anim.fade_out
+        )
+
+        transaction.replace(binding.fragmentContainer.id, fragment)
 
         if (addToBackStack) {
             transaction.addToBackStack(null)
