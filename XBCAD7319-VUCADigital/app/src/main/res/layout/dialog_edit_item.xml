@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/labelTaskName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:text="@string/task_name"/>
+
+        <EditText
+            android:id="@+id/taskName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:inputType="text"
+            android:padding="15dp"
+            android:background="@drawable/user_input_border"
+            android:textSize="16sp"
+            android:hint="@string/task_name"/>
+
+        <TextView
+            android:id="@+id/labelCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:text="@string/task_category"/>
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/user_input_border"
+            android:spinnerMode="dropdown"/>
+
+        <TextView
+            android:id="@+id/labelDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:text="@string/task_description"/>
+
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:inputType="textMultiLine"
+            android:padding="15dp"
+            android:background="@drawable/user_input_border"
+            android:textSize="16sp"
+            android:hint="@string/task_description"/>
+
+        <TextView
+            android:id="@+id/labelPersonAssigned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:text="@string/person_assigned"/>
+
+        <Spinner
+            android:id="@+id/personAssignedSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/user_input_border"
+            android:spinnerMode="dropdown"/>
+
+        <TextView
+            android:id="@+id/labelPriorityLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:text="@string/priority_level"/>
+
+        <Spinner
+            android:id="@+id/priorityLevelSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/user_input_border"
+            android:spinnerMode="dropdown"/>
+
+        <Button
+            android:id="@+id/cancelEditTask"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/cancel"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:textSize="16sp"
+            android:backgroundTint="@color/black"/>
+
+        <Button
+            android:id="@+id/saveEditTask"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/save"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:textSize="16sp"
+            android:theme="@style/FilterBtnTheme"/>
+    </LinearLayout>
+
+</FrameLayout>

@@ -75,8 +75,9 @@ class CreateTaskFragment : Fragment() {
 
         // Back button click listener setup
         backButton.setOnClickListener{
-            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TasksFragment()).commit()
+//            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, TasksFragment()).commit()
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         return view

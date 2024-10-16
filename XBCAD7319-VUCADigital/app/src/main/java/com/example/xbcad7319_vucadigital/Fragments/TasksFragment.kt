@@ -1,10 +1,19 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +27,11 @@ class TasksFragment : Fragment() {
     private lateinit var taskAdapter: TaskAdapter
     private var tasksList = mutableListOf<TaskModel>()
     private lateinit var sbHelper: SupabaseHelper
+    // Sample data for now
+    private val categories = listOf("Select a category", "Work", "Personal", "Urgent", "Later")
+    private val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
+    private val priorityLevels = listOf("Select priority level", "High", "Medium", "Low")
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,19 +54,135 @@ class TasksFragment : Fragment() {
     }
 
     private fun loadTasks() {
+        try {
+            lifecycleScope.launch {
+                taskAdapter.updateTasks(sbHelper.getAllTasks())
+            }
+        }
+        catch (e: Exception){
+            Toast.makeText(requireContext(),"Couldn't load tasks from DB", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun setupSpinner(spinner: Spinner, items: List<String>) {
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+    }
+
+    private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, task: TaskModel) {
+        dialogView.findViewById<Button>(R.id.cancelEditTask).setOnClickListener {
+            dialog.dismiss() // Close the dialog
+        }
+
+        dialogView.findViewById<Button>(R.id.saveEditTask).setOnClickListener {
+            saveTaskChanges(dialog, task, dialogView)
+        }
+    }
+
+    private fun saveTaskChanges(dialog: AlertDialog, task: TaskModel, dialogView: View) {
+        val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
+        val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
+        val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
+        val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
+        val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
+
         lifecycleScope.launch {
-            taskAdapter.updateTasks(sbHelper.getAllTasks())
+            try {
+                // Update the task properties based on user input
+                task.name = taskNameEditText.text.toString()
+                task.category = getSelectedCategory(categorySpinner)
+                task.description = descriptionEditText.text.toString()
+                task.priorityLevel = getSelectedPriority(priorityLevelSpinner)
+                task.personAssigned = getSelectedPerson(personAssignedSpinner)
+
+                // Update the task in the database
+                sbHelper.updateTask(task)
+
+                // Update the list in the adapter
+                taskAdapter.updateTasks(sbHelper.getAllTasks())
+
+                Toast.makeText(requireContext(), "Operation Success! Updated task.", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Operation failure! Couldn't update task.", Toast.LENGTH_SHORT).show()
+            }
+            dialog.dismiss() // Close the dialog
         }
     }
 
     private fun onEditTask(task: TaskModel) {
-        // Handle editing a task
-        // by opening a dialog or an another fragment
-        // Update the task in the list and notify the adapter as well
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_item, null)
+        val builder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setTitle("Edit Task")
+
+        setupDialogViews(dialogView, task)
+
+        val dialog = builder.create()
+
+        setupDialogButtons(dialog, dialogView, task)
+
+        dialog.show()
+    }
+
+    private fun setupDialogViews(dialogView: View, task: TaskModel) {
+        // Get references to the dialog views
+        val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
+        val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
+        val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
+        val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
+        val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
+
+        // Populate spinners with data
+        setupSpinner(categorySpinner, categories)
+        setupSpinner(priorityLevelSpinner, priorityLevels)
+        setupSpinner(personAssignedSpinner, assignedPersons)
+
+        // Populate fields with the task's current values
+        taskNameEditText.setText(task.name)
+        categorySpinner.setSelection(categories.indexOf(task.category))
+        descriptionEditText.setText(task.description)
+        priorityLevelSpinner.setSelection(priorityLevels.indexOf(task.priorityLevel))
+        personAssignedSpinner.setSelection(assignedPersons.indexOf(task.personAssigned))
     }
 
     private fun onDeleteTask(task: TaskModel) {
-        tasksList.remove(task)
-        taskAdapter.updateTasks(tasksList)
+        // Create confirmation dialog
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Task")
+            .setMessage("Are you sure you want to delete this task?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                lifecycleScope.launch {
+                    try {
+                        // Delete the task from the database
+                        sbHelper.deleteTask(task.id!!)
+                        // Update the list in the adapter
+                        taskAdapter.updateTasks(sbHelper.getAllTasks())
+                        Toast.makeText(requireContext(), "Operation Success! Task deleted.", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Operation failure! Couldn't delete task.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(requireContext(), "Operation cancelled! No task deleted.", Toast.LENGTH_SHORT).show()
+            }
+            .show()
+    }
+
+
+    private fun getSelectedCategory(spinner: Spinner): String {
+        return spinner.selectedItem.toString()
+    }
+
+    private fun getSelectedPriority(spinner: Spinner): String {
+        return spinner.selectedItem.toString()
+    }
+
+    private fun getSelectedPerson(spinner: Spinner): String {
+        return spinner.selectedItem.toString()
     }
 }

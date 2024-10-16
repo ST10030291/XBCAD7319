@@ -63,6 +63,7 @@
     <string name="new_customer">New Customer</string>
     <string name="update_customer">Update Customer</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="statusOptions">
         <item>Select Status</item>

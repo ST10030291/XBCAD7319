@@ -17,13 +17,13 @@ class CustomerModel(
 @Serializable
 class TaskModel(
     val id: String?=null,
-    val name: String,
-    val category: String,
-    val description: String,
-    val personAssigned: String,
+    var name: String,
+    var category: String,
+    var description: String,
+    var personAssigned: String,
     val startDate: String,
     val endDate: String,
-    val priorityLevel: String
+    var priorityLevel: String
 )
 
 @Serializable
