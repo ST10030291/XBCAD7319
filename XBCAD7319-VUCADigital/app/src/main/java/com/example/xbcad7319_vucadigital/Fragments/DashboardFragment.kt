@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 class DashboardFragment : Fragment() {
 
     private lateinit var customerCountTextView: TextView
+    private lateinit var opportunitiesCountTextView: TextView
     private lateinit var viewProductsBtn: CardView
     private lateinit var viewAnalyticsBtn: CardView
     private val supabaseHelper = SupabaseHelper()
@@ -33,6 +34,7 @@ class DashboardFragment : Fragment() {
 
         // Initialize
         customerCountTextView = view.findViewById(R.id.customerCount)
+        opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
         viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
         viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
 
@@ -47,25 +49,40 @@ class DashboardFragment : Fragment() {
             openAnalyticsFragment()
         }
 
-        // Fetch and display customer count
+        // Fetch and display customer/opportunities count
         fetchAndDisplayCustomerCount()
+        fetchAndDisplayOpportunitiesCount()
     }
 
     private fun fetchAndDisplayCustomerCount() {
-        // Use a Coroutine to fetch the customer count in a background thread
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val customerCount = supabaseHelper.getCustomerCount()
 
-                // Update the UI on the main thread
                 withContext(Dispatchers.Main) {
                     customerCountTextView.text = "$customerCount"
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Handle any errors here, optionally update the UI
                 withContext(Dispatchers.Main) {
                     customerCountTextView.text = "Null"
+                }
+            }
+        }
+    }
+
+    private fun fetchAndDisplayOpportunitiesCount() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val opportunitiesCount = supabaseHelper.getOpportunityCount()
+
+                withContext(Dispatchers.Main) {
+                    opportunitiesCountTextView.text = "$opportunitiesCount"
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    opportunitiesCountTextView.text = "Null"
                 }
             }
         }

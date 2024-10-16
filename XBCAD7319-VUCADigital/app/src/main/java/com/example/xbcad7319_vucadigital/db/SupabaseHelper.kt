@@ -3,6 +3,7 @@ package com.example.xbcad7319_vucadigital.db
 import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -117,4 +118,19 @@ class SupabaseHelper {
         }
     }
 
+    suspend fun getOpportunityCount(): Int {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            try {
+                val result = supabase.from("opportunities").select().decodeList<OpportunityModel>()
+                return result.size
+            } catch (e: Exception) {
+                    Log.e("DB_ERROR", "Failed to get Opportunities Count: ${e.message}", e)
+                return 0
+            }
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
 }
