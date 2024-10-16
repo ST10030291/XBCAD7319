@@ -3,12 +3,201 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_white"
     tools:context=".Fragments.CreateProductFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/back_btn"
+                android:layout_width="62dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="60dp"
+                android:clickable="true"
+                android:contentDescription="@string/todo"
+                android:focusable="true"
+                android:src="@drawable/backbtn" />
+
+            <TextView
+                android:id="@+id/pageName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Product"
+                android:textColor="@color/black"
+                android:textSize="35sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/background_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/labelProductName"
+                    android:layout_width="375dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Name of Product:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/productNameInput"
+                    android:layout_width="375dp"
+                    android:layout_height="48dp"
+                    android:autofillHints="customerName"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Opportunity Name"
+                    android:inputType="text"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelProductName" />
+
+                <TextView
+                    android:id="@+id/labelProduct"
+                    android:layout_width="380dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="21dp"
+                    android:text="Product Type:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/productNameInput" />
+
+                <Spinner
+                    android:id="@+id/productTypeInput"
+                    android:layout_width="375dp"
+                    android:layout_height="48dp"
+                    android:autofillHints="emailAddress"
+                    android:background="@drawable/user_input_border"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelProduct" />
+
+                <TextView
+                    android:id="@+id/descriptionLabel"
+                    android:layout_width="339dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="21dp"
+                    android:text="Description:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/productTypeInput" />
+
+                <EditText
+                    android:id="@+id/descriptionInput"
+                    android:layout_width="375dp"
+                    android:layout_height="144dp"
+                    android:autofillHints="emailAddress"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Description"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/descriptionLabel" />
+
+                <TextView
+                    android:id="@+id/priceLabel"
+                    android:layout_width="339dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="21dp"
+                    android:text="Price:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/descriptionInput" />
+
+                <EditText
+                    android:id="@+id/priceInput"
+                    android:layout_width="375dp"
+                    android:layout_height="48dp"
+                    android:autofillHints="emailAddress"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Price"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/priceLabel" />
+
+                <TextView
+                    android:id="@+id/imageLabel"
+                    android:layout_width="339dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="21dp"
+                    android:text="Image:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/priceInput" />
+
+                <Button
+                    android:id="@+id/AddImageButton"
+                    android:layout_width="375dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Add Image"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageLabel" />
+
+
+                <Button
+                    android:id="@+id/createProductButton"
+                    android:layout_width="375dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="55dp"
+                    android:text="@string/create"
+                    android:textSize="16sp"
+                    android:theme="@style/FilterBtnTheme"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/AddImageButton" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

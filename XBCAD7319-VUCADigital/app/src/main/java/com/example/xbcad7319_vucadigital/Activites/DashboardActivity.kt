@@ -67,7 +67,15 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun loadFragment(fragment: Fragment, addToBackStack: Boolean) {
         val transaction = supportFragmentManager.beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
+
+        transaction.setCustomAnimations(
+            R.anim.fade_in,
+            R.anim.fade_out,
+            R.anim.fade_in,
+            R.anim.fade_out
+        )
+
+        transaction.replace(binding.fragmentContainer.id, fragment)
 
         if (addToBackStack) {
             transaction.addToBackStack(null)
@@ -79,7 +87,12 @@ class DashboardActivity : AppCompatActivity() {
             is CustomersFragment -> {
                 binding.plusBtn.visibility = View.VISIBLE
                 binding.plusBtn.setOnClickListener {
-                    loadFragment(CreateCustomerFragment(), true)
+                    val createCustomerFragment = CreateCustomerFragment().apply {
+                        arguments = Bundle().apply {
+                            putBoolean("isUpdateMode", false)
+                        }
+                    }
+                    loadFragment(createCustomerFragment, true)
                     binding.bottomNavigation.visibility = View.GONE
                 }
             }

@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">XBCAD7319-VUCADigital</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="your_customers_network" translatable="false">Your Customers Network</string>
+    <string name="your_customers_network" translatable="false">Your Customer Network</string>
     <string name="all" translatable="false">All</string>
     <string name="referrals" translatable="false">Referrals</string>
     <string name="leads" translatable="false">Leads</string>
@@ -44,4 +44,24 @@
     <string name="service_provider">Service Provider</string>
     <string name="contract_term">Contract Term</string>
     <string name="select">Select Item</string>
+
+    <string name="create_task">Create Task</string>
+    <string name="task_name">Task Name:</string>
+    <string name="task_category">Task Category:</string>
+    <string name="task_description">Task Description:</string>
+    <string name="person_assigned">Person Assigned:</string>
+    <string name="start_date">Start Date:</string>
+    <string name="end_date">End Date:</string>
+    <string name="priority_level">Priority Level:</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="task_list">Task List</string>
+    <string name="done">Done</string>
+    <string name="doing">Doing</string>
+    <string name="to_do">To Do</string>
+    <string name="priority">Priority</string>
+    <string name="new_customer">New Customer</string>
+    <string name="update_customer">Update Customer</string>
+    <string name="save">Save</string>
+
 </resources>

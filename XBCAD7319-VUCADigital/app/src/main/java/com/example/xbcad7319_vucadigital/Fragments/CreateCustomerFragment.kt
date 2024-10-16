@@ -1,6 +1,6 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
-import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,84 +12,153 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.databinding.ActivityDashboardBinding
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
-import com.example.xbcad7319_vucadigital.models.CustomerProduct
 import kotlinx.coroutines.launch
 
 class CreateCustomerFragment : Fragment() {
     private val sbHelper = SupabaseHelper()
     private lateinit var selectedItem: String
+    private lateinit var customerTypeDropdown: AutoCompleteTextView
     private lateinit var binding: ActivityDashboardBinding
+    private var isUpdateMode = false
+    private var customer: CustomerModel? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_create_customer, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
 
-        val createBtn = view.findViewById<Button>(R.id.createCustomerButton)
-        val customerTypes = arrayOf("Prospect", "Leads", "Referrals")
-        val customerTypeDropdown: AutoCompleteTextView = view.findViewById(R.id.autoCompleteText)
-        val adapter = ArrayAdapter(requireContext(), R.layout.customer_type_list_item, customerTypes)
-        val backBtn = view.findViewById<ImageView>(R.id.back_btn)
+        setupDropdown(view)
+        handleArguments()
+        setupUI(view)
 
-        customerTypeDropdown.setAdapter(adapter)
-
-        customerTypeDropdown.setOnItemClickListener { parent, view, position, id ->
-            selectedItem = parent.getItemAtPosition(position) as String
-            customerTypeDropdown.hint = selectedItem
-
-        }
-
-        backBtn.setOnClickListener{
+        view.findViewById<ImageView>(R.id.back_btn).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
+    }
 
-        createBtn.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    val success = sbHelper.addCustomer(initializeFields(view))
+    private fun setupDropdown(view: View) {
+        customerTypeDropdown = view.findViewById(R.id.autoCompleteText)
+        val customerTypes = arrayOf("Prospect", "Leads", "Referrals")
+        val adapter = ArrayAdapter(requireContext(), R.layout.customer_type_list_item, customerTypes)
+        customerTypeDropdown.setAdapter(adapter)
 
-                    if (success) {
-                        Toast.makeText(requireContext(), "Insert successfully", Toast.LENGTH_SHORT).show()
-                        requireActivity().supportFragmentManager.popBackStack()
-                    } else {
-                        Toast.makeText(requireContext(), "Insertion failed!", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Log.e("CreateCustomer", "Exception: ${e.message}")
-                    Toast.makeText(requireContext(), "Something went wrong! Insert process cancelled.", Toast.LENGTH_SHORT).show()
-                }
-            }
+        customerTypeDropdown.setOnItemClickListener { parent, _, position, _ ->
+            selectedItem = parent.getItemAtPosition(position) as String
+            customerTypeDropdown.hint = selectedItem
+        }
+    }
+
+    private fun handleArguments() {
+        arguments?.let {
+            isUpdateMode = it.getBoolean("isUpdateMode", false)
+            customer = it.getSerializable("customer") as? CustomerModel
+        }
+    }
+
+    private fun setupUI(view: View) {
+        val titleTextView = view.findViewById<TextView>(R.id.pageName)
+        val actionButton = view.findViewById<Button>(R.id.createCustomerButton)
+
+        if (isUpdateMode) {
+            titleTextView.text = getString(R.string.update_customer)
+            actionButton.text = getString(R.string.save)
+            customer?.let { populateFields(it, view) }
+        } else {
+            titleTextView.text = getString(R.string.new_customer)
+            actionButton.text = getString(R.string.create)
         }
 
-
+        actionButton.setOnClickListener {
+            if (isUpdateMode) updateCustomer(view) else createCustomer(view)
+        }
     }
 
+    private fun initializeFields(view: View): CustomerModel? {
+        val customerName = getFieldText(view, R.id.customerName)
+        val telephoneNumber = getFieldText(view, R.id.telephoneNumber)
+        val customerEmail = getFieldText(view, R.id.customerEmail)
+        val accountNumber = getFieldText(view, R.id.accountNumber)
+        val billingAccountNumber = getFieldText(view, R.id.billingAccountNumber)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_create_customer, container, false)
-    }
+        if (validateFields(customerName, telephoneNumber, customerEmail, accountNumber, billingAccountNumber)) return null
 
-    private fun initializeFields(view: View): CustomerModel {
-        val customerName = view.findViewById<EditText>(R.id.customerName).text.toString()
-        val telephoneNumber = view.findViewById<EditText>(R.id.telephoneNumber).text.toString()
-        val customerEmail = view.findViewById<EditText>(R.id.customerEmail).text.toString()
-        val accountNumber = view.findViewById<EditText>(R.id.accountNumber).text.toString()
-        val billingAccountNumebr = view.findViewById<EditText>(R.id.billingAccountNumber).text.toString()
-        val customerType = selectedItem
-
-
-        return CustomerModel(id=null,customerName, telephoneNumber, customerEmail,accountNumber, billingAccountNumebr, customerType ,
-            emptyList()
+        return CustomerModel(
+            id = customer?.id.takeIf { isUpdateMode },
+            CustomerName = customerName,
+            TelephoneNumber = telephoneNumber,
+            CustomerEmail = customerEmail,
+            AccountNumber = accountNumber,
+            BillingAccountNumber = billingAccountNumber,
+            CustomerType = selectedItem,
+            Products = customer?.Products.takeIf { isUpdateMode } ?: emptyList()
         )
     }
 
+    private fun getFieldText(view: View, id: Int): String {
+        return view.findViewById<EditText>(id).text.toString()
+    }
+
+    private fun validateFields(vararg fields: String): Boolean {
+        fields.forEach { field ->
+            if (field.isEmpty()) {
+                errorDialog()
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun errorDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Invalid Data")
+            .setMessage("Please enter all values")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun populateFields(customer: CustomerModel, view: View) {
+        view.findViewById<EditText>(R.id.customerName).setText(customer.CustomerName)
+        view.findViewById<EditText>(R.id.customerEmail).setText(customer.CustomerEmail)
+        view.findViewById<EditText>(R.id.telephoneNumber).setText(customer.TelephoneNumber)
+        view.findViewById<EditText>(R.id.accountNumber).setText(customer.AccountNumber)
+        view.findViewById<EditText>(R.id.billingAccountNumber).setText(customer.BillingAccountNumber)
+        customerTypeDropdown.setText(customer.CustomerType, false)
+        selectedItem = customer.CustomerType
+    }
+
+    private fun createCustomer(view: View) {
+        lifecycleScope.launch {
+            handleCustomerOperation(view, sbHelper::addCustomer, "Insert successfully", "Insertion failed!")
+        }
+    }
+
+    private fun updateCustomer(view: View) {
+        lifecycleScope.launch {
+            handleCustomerOperation(view, sbHelper::updateCustomer, "Customer updated", "Update failed!")
+        }
+    }
+
+    private suspend fun handleCustomerOperation(view: View, operation: suspend (CustomerModel) -> Boolean, successMessage: String, failureMessage: String) {
+        try {
+            val success = initializeFields(view)?.let { operation(it) }
+            Toast.makeText(requireContext(), if (success == true) successMessage else failureMessage, Toast.LENGTH_SHORT).show()
+            if (success == true) requireActivity().supportFragmentManager.popBackStack()
+        } catch (e: Exception) {
+            Log.e("CreateCustomer", "Exception: ${e.message}")
+            Toast.makeText(requireContext(), "Something went wrong! Operation cancelled.", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

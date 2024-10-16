@@ -16,14 +16,14 @@ class CustomerModel(
 
 @Serializable
 class TaskModel(
-    val id: String? = null,
-    val UserId: String,
-    val TaskName: String,
-    val Priority: String,
-    val Status: String,
-    val CustomerName: String,
-    val ServiceProvider: String,
-    val Date: String
+    val id: String?=null,
+    val name: String,
+    val category: String,
+    val description: String,
+    val personAssigned: String,
+    val startDate: String,
+    val endDate: String,
+    val priorityLevel: String
 )
 
 @Serializable
