@@ -3,94 +3,170 @@ package com.example.xbcad7319_vucadigital.Fragments
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.material3.DatePickerDialog
 import com.example.xbcad7319_vucadigital.R
+import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.OpportunityModel
+import com.example.xbcad7319_vucadigital.models.TaskModel
 import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CreateOpportunityFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CreateOpportunityFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    
     private lateinit var date: EditText
+    private lateinit var prioritySpinner: Spinner
+    private lateinit var customerSpinner: Spinner
+    private lateinit var statusSpinner: Spinner
+    private lateinit var opportunityName: EditText
+    private lateinit var value: EditText
+    private lateinit var createButton: Button
+    private lateinit var backButton: ImageView
+    private lateinit var sbHelper: SupabaseHelper
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var customer: CustomerModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        //date = requireView().findViewById(R.id.dateInput)
-        return inflater.inflate(R.layout.fragment_create_opportunity, container, false)
+        // Inflate layout for current fragment
+        val view = inflater.inflate(R.layout.fragment_create_opportunity, container, false)
+
+        // Initialize UI
+        opportunityName = view.findViewById(R.id.opportunityNameInput)
+        value = view.findViewById(R.id.valueInput)
+        customerSpinner = view.findViewById(R.id.customerNameInput)
+        prioritySpinner = view.findViewById(R.id.priorityOfOpportunitySpinner)
+        statusSpinner = view.findViewById(R.id.statusInput)
+        date = view.findViewById(R.id.dateInput)
+        createButton = view.findViewById(R.id.createOpportunityButton)
+        backButton = view.findViewById(R.id.back_btn)
+
+
+        customerDropDown()
+
+        date.setOnClickListener {
+            showDatePickerDialog { selectedDate ->
+                date.setText(selectedDate)
+            }
+        }
+
+        createButton.setOnClickListener {
+            createOpportunity()
+        }
+        backButton.setOnClickListener{
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CreateOpportunityFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CreateOpportunityFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun createOpportunity() {
+        // Retrieve values from the inputs
+        val opportunityName = opportunityName.text.toString()
+        val valueString = value.text.toString()
+        val value: Double = valueString.toDouble()
+        val customerSpinner = customerSpinner.selectedItem.toString()
+        val prioritySpinner = prioritySpinner.selectedItem.toString()
+        val statusSpinner = statusSpinner.selectedItem.toString()
+        val date = date.text.toString()
+
+
+        // Validate inputs
+        if (!validateInputs(opportunityName, value, customerSpinner, prioritySpinner, statusSpinner, date)) return
+
+
+        val opportunity = OpportunityModel(
+            OpportunityName = opportunityName,
+            TotalValue = value,
+            Stage = "1",
+            CustomerName = customerSpinner,
+            Priority = prioritySpinner,
+            Status = statusSpinner,
+            CreationDate = date
+        )
+
+
+        Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} saved successfully!")
+        Toast.makeText(requireContext(), "Task created successfully!", Toast.LENGTH_SHORT).show()
     }
-    private fun datePicker(){
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+
+    private fun validateInputs(
+        opportunityName: String,
+        value: Double,
+        customerSpinner: String,
+        prioritySpinner: String,
+        statusSpinner: String,
+        date: String
+    ): Boolean {
+        return when {
+            opportunityName.isEmpty() -> {
+                showToast("Empty Opportunity Name! Please enter a opportunity name.")
+                false
+            }
+            value == null -> {
+                showToast("Please enter a value.")
+                false
+            }
+            customerSpinner == "Select a Customer" -> {
+                showToast("Customer not selected! Please select a customer.")
+                false
+            }
+            statusSpinner == "Select Status" -> {
+                showToast("Status Level assigned not selected! Please select a status level.")
+                false
+            }
+            prioritySpinner == "Select Priority" -> {
+                showToast("Priority level not selected! Please select a priority level.")
+                false
+            }
+            date.isEmpty() -> {
+                showToast("Empty date! Please enter a Date.")
+                false
+            }
+            // If we're here, everything was okay
+            else -> true
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun customerDropDown(){
+
+    }
+
+    private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
         val datePickerDialog = DatePickerDialog(
-            // on below line we are passing context.
             requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
-                // on below line we are setting
-                // date to our edit text.
-                val dat = (dayOfMonth.toString() + "/" + (monthOfYear + 1) + "/" + year)
-                date.setText(dat)
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Format selected date as "YYYY/MM/DD"
+                val selectedDate = String.format("%04d/%02d/%02d", selectedYear, selectedMonth + 1, selectedDay)
+
+                onDateSelected(selectedDate)
             },
-            // on below line we are passing year, month
-            // and day for the selected date in our date picker.
             year,
             month,
             day
         )
-        datePickerDialog.setOnShowListener{
-            val dateLayout = it as DatePickerDialog
-            val okButton = dateLayout.getButton(DatePickerDialog.BUTTON_POSITIVE)//had to set a colour the themes in android studio wont show my buttons
-            okButton.setTextColor(Color.BLACK)
-        }
-
         datePickerDialog.show()
     }
 }

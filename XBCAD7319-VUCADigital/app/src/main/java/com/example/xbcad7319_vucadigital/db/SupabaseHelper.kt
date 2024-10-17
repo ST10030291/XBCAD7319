@@ -4,6 +4,7 @@ import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
+import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
@@ -16,6 +17,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class SupabaseHelper {
     private lateinit var supabase: SupabaseClient
+    data class Customer(val CustomerName: String)
 
     private fun initializeSupabase(apiKey: String) {
         supabase = createSupabaseClient(
@@ -52,12 +54,23 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
+    /*suspend fun getAllCustomersNames(): List<String> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("customers")
+                .select("CustomerName")
+                .decodeList<String>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }*/
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
-                supabase.from("customers").insert(customer)
+            supabase.from("customers").insert(customer)
             return true
         } else {
             throw Exception("Supabase initialization failed.")
@@ -127,7 +140,7 @@ class SupabaseHelper {
                 val result = supabase.from("opportunities").select().decodeList<OpportunityModel>()
                 return result.size
             } catch (e: Exception) {
-                    Log.e("DB_ERROR", "Failed to get Opportunities Count: ${e.message}", e)
+                Log.e("DB_ERROR", "Failed to get Opportunities Count: ${e.message}", e)
                 return 0
             }
         } else {
@@ -197,4 +210,131 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
+
+
+    //opportunities
+    suspend fun addOpportunities(opportunity : OpportunityModel) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            supabase.from("opportunities").insert(opportunity)
+            return true
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun updateOpportunity(opportunity: OpportunityModel) : Boolean{
+        try{
+            supabase.from("opportunities").update(opportunity) {
+                filter {
+                    OpportunityModel::id eq opportunity.id
+                    //TaskModel.id?.let { eq("id", it) }
+                }
+            }
+            return true
+        }
+        catch (e: Exception){
+            Log.d("UPD40", "Something went wrong! Update failed")
+            return false
+        }
+    }
+
+    suspend fun deleteOpportunity(id : String) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            try{
+                supabase.from("opportunities").delete {
+                    filter {
+                        OpportunityModel::id eq id
+                        eq("id", id)
+                    }
+                }
+                return true
+            }
+            catch (e: Exception){
+                Log.e("DEL40", "Deletion failed: ${e.message}", e)
+                return false
+            }
+        }else{
+            throw Exception("Supabase initialization failed.")
+        }
+
+    }
+
+    suspend fun getAllOpportunities(): List<OpportunityModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("opportunities").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<OpportunityModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+
+    //products
+    suspend fun addProducts(product : ProductModel) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            supabase.from("products").insert(product)
+            return true
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun updateProducts(product : ProductModel) : Boolean{
+        try{
+            supabase.from("products").update(product) {
+                filter {
+                    ProductModel::id eq product.id
+                    //TaskModel.id?.let { eq("id", it) }
+                }
+            }
+            return true
+        }
+        catch (e: Exception){
+            Log.d("UPD40", "Something went wrong! Update failed")
+            return false
+        }
+    }
+
+    suspend fun deleteProducts(id : String) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            try{
+                supabase.from("products").delete {
+                    filter {
+                        ProductModel::id eq id
+                        eq("id", id)
+                    }
+                }
+                return true
+            }
+            catch (e: Exception){
+                Log.e("DEL40", "Deletion failed: ${e.message}", e)
+                return false
+            }
+        }else{
+            throw Exception("Supabase initialization failed.")
+        }
+
+    }
+
+    suspend fun getAllProducts(): List<ProductModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("products").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<ProductModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
 }
+

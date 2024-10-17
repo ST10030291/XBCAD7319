@@ -29,9 +29,9 @@ class TaskModel(
 @Serializable
 class OpportunityModel(
     val id: String? = null,
+    val OpportunityName: String,
+    val TotalValue: Double,
     val Stage: String,
-    val TotalValue: String,
-    val LeadStatus: String,
     val CustomerName: String,
     val Priority: String,
     val Status: String,
@@ -44,8 +44,8 @@ class ProductModel(
     val ProductName: String,
     val Type: String,
     val Description: String,
-    val Price: String,
-    //val Image: String Will have to confirm if the image is necessary
+    val Price: Double,
+    val Image: String
 )
 
 @Serializable

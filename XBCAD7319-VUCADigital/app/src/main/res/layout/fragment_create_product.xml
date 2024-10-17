@@ -181,6 +181,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageLabel" />
 
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="100dp"
+                    android:layout_height="85dp"
+                    android:layout_marginStart="136dp"
+                    android:layout_marginTop="45dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/AddImageButton" />
 
                 <Button
                     android:id="@+id/createProductButton"
@@ -191,7 +199,7 @@
                     android:textSize="16sp"
                     android:theme="@style/FilterBtnTheme"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/AddImageButton" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
