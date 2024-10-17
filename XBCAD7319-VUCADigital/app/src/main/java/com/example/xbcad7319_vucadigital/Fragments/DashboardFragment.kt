@@ -103,35 +103,58 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupLineChart() {
-        // Create fake data for the line chart
-        val xValues = listOf(1f, 2f, 3f, 4f, 5f) // Example X values (e.g., months)
-        val yValues = listOf(10f, 20f, 15f, 25f, 30f) // Example Y values (e.g., budget amounts)
+        // Create data for the line chart
+        val months = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+        val yValues = listOf(10f, 20f, 15f, 25f, 30f, 40f, 50f, 60f, 70f, 80f, 90f, 100f) // Example Y values
 
-        val entries = xValues.mapIndexed { index, xValue ->
-            Entry(xValue, yValues[index]) // Create entries from fake data
+        val entries = months.mapIndexed { index, month ->
+            Entry(index.toFloat(), yValues[index])
         }
 
         // Create a dataset
         val lineDataSet = LineDataSet(entries, "Monthly Data").apply {
-            color = ColorTemplate.COLORFUL_COLORS[0]
+            color = 0xFFFF7F50.toInt() // Coral color
             valueTextColor = ColorTemplate.COLORFUL_COLORS[1]
-            valueTextSize = 12f
-            lineWidth = 2f
-            circleRadius = 5f
-            setCircleColor(ColorTemplate.COLORFUL_COLORS[2])
+            valueTextSize = 0f
+            lineWidth = 3f
+            circleRadius = 0f
         }
 
         // Create LineData object and set it to the chart
         val lineData = LineData(lineDataSet)
         lineChart.data = lineData
 
+        // Customize Y-axis
         lineChart.axisLeft.axisMinimum = 0f // Set minimum Y value
+        lineChart.axisLeft.axisMaximum = 100f // Set maximum Y value
+        lineChart.axisLeft.setLabelCount(10, false) // Set label count for Y-axis
+        lineChart.axisLeft.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
+            override fun getAxisLabel(value: Float, axis: com.github.mikephil.charting.components.AxisBase?): String {
+                return if (value % 10 == 0f) value.toInt().toString() else ""
+            }
+        }
+
+        // Hide grid lines for Y-axis
+        lineChart.axisLeft.gridColor = android.graphics.Color.TRANSPARENT // Hide Y-axis grid lines
+        lineChart.axisLeft.gridLineWidth = 0f // Set Y-axis grid line width to 0
+
         lineChart.axisRight.isEnabled = false // Hide the right Y-axis
+
+        // Customize X-axis
         lineChart.xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM // Set X-axis position
+        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(months) // Set custom labels for X-axis
+        lineChart.xAxis.setLabelCount(months.size, true) // Ensure all months are displayed
+        lineChart.xAxis.granularity = 1f // Minimum interval for X-axis
+
+        // Hide grid lines for X-axis
+        lineChart.xAxis.gridColor = android.graphics.Color.TRANSPARENT // Hide X-axis grid lines
+        lineChart.xAxis.gridLineWidth = 0f // Set X-axis grid line width to 0
+
         lineChart.description.isEnabled = false // Hide the description
         lineChart.animateX(2000) // Animate the chart
         lineChart.invalidate() // Refresh the chart
     }
+
 
     private fun openProductsFragment() {
         val fragment = ProductsFragment()
