@@ -4,6 +4,7 @@ import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
+import com.example.xbcad7319_vucadigital.models.TaskModel
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -129,6 +130,69 @@ class SupabaseHelper {
                     Log.e("DB_ERROR", "Failed to get Opportunities Count: ${e.message}", e)
                 return 0
             }
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+
+
+    suspend fun addTasks(task : TaskModel) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            supabase.from("tasks").insert(task)
+            return true
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun updateTask(task: TaskModel) : Boolean{
+        try{
+            supabase.from("tasks").update(task) {
+                filter {
+                    TaskModel::id eq task.id
+                    //TaskModel.id?.let { eq("id", it) }
+                }
+            }
+            return true
+        }
+        catch (e: Exception){
+            Log.d("UPD40", "Something went wrong! Update failed")
+            return false
+        }
+    }
+
+    suspend fun deleteTask(id : String) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            try{
+                supabase.from("tasks").delete {
+                    filter {
+                        TaskModel::id eq id
+                        eq("id", id)
+                    }
+                }
+                return true
+            }
+            catch (e: Exception){
+                Log.e("DEL40", "Deletion failed: ${e.message}", e)
+                return false
+            }
+        }else{
+            throw Exception("Supabase initialization failed.")
+        }
+
+    }
+
+    suspend fun getAllTasks(): List<TaskModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("tasks").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<TaskModel>()
         } else {
             throw Exception("Supabase initialization failed.")
         }

@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.firebase.config.ktx)
 
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.material3.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -63,5 +63,21 @@
     <string name="new_customer">New Customer</string>
     <string name="update_customer">Update Customer</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <string-array name="statusOptions">
+        <item>Select Status</item>
+        <item>Completed</item>
+        <item>In Progress</item>
+        <item>Pending</item>
+        <item>Overdue</item>
+    </string-array>
+
+    <string-array name="priorityOptions">
+        <item>Select Priority</item>
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
 
 </resources>
