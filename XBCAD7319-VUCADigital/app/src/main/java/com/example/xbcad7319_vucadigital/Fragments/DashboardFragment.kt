@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,12 +39,20 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid ?: return
+
         // Initialize
         customerCountTextView = view.findViewById(R.id.customerCount)
         opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
         viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
         viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
         lineChart = view.findViewById(R.id.lineChart1)
+
+        // Display a welcome message with the users name for added personalization
+        val userEmail = user?.email
+        val userName = userEmail?.substringBefore("@") ?: "User"
+        view.findViewById<TextView>(R.id.username_tv).text = "Welcome, $userName"
 
         // Set onClickListeners
         viewProductsBtn.setOnClickListener {
