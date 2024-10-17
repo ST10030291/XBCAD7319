@@ -67,4 +67,5 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.ktor:ktor-client-android:2.3.12")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
