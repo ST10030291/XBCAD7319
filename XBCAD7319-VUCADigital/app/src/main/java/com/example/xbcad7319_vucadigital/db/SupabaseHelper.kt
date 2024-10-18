@@ -1,5 +1,7 @@
 package com.example.xbcad7319_vucadigital.db
 
+import android.content.Context
+import android.net.Uri
 import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
@@ -11,7 +13,9 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
+import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -54,17 +58,18 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
-    /*suspend fun getAllCustomersNames(): List<String> {
+     suspend fun getAllCustomersNames(): List<String> {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
-
+        val columnName = "CustomerName"
         if (isInitialized) {
             return supabase.from("customers")
-                .select("CustomerName")
+                .select(Columns.list("CustomerName"))
                 .decodeList<String>()
+
         } else {
             throw Exception("Supabase initialization failed.")
         }
-    }*/
+    }
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()

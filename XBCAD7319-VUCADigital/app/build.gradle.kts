@@ -55,6 +55,7 @@ dependencies {
 
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.material3.android)
+    implementation(libs.identity.jvm)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -16,11 +16,13 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.material3.DatePickerDialog
+import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class CreateOpportunityFragment : Fragment() {
@@ -146,7 +148,17 @@ class CreateOpportunityFragment : Fragment() {
 
 
     private fun customerDropDown(){
+        lifecycleScope.launch {
+            try {
+                val customerNames = sbHelper.getAllCustomersNames()
 
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, customerNames)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                customerSpinner.adapter = adapter
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {

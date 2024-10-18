@@ -3,21 +3,26 @@ package com.example.xbcad7319_vucadigital.Fragments
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsAnimation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.content.MediaType
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
+import com.google.android.gms.common.api.Response
 
 class CreateProductFragment : Fragment() {
 
@@ -33,6 +38,7 @@ class CreateProductFragment : Fragment() {
     private var uri: Uri? = null
     private lateinit var galleryImage : ImageView
     private lateinit var cameraImageUrl : Uri
+    private lateinit var customer: CustomerModel
     private lateinit var sbHelper: SupabaseHelper
     private val contract = registerForActivityResult(ActivityResultContracts.TakePicture()){
         galleryImage.setImageURI(null)
@@ -84,9 +90,7 @@ class CreateProductFragment : Fragment() {
         val price: Double = priceString.toDouble()
         val productTypeSpinner = productTypeSpinner.selectedItem.toString()
         val imgUrl = image.toString()
-        if (!validateInputs(productName, description, price, productTypeSpinner)) return
-
-
+        if (!validateInputs(productName, description, price, productTypeSpinner, imgUrl)) return
         val product = ProductModel(
             ProductName = productName,
             Type = productTypeSpinner,
@@ -117,6 +121,7 @@ class CreateProductFragment : Fragment() {
         description: String,
         price : Double,
         productTypeSpinner: String,
+        image: String
     ): Boolean {
         return when {
             productName.isEmpty() -> {
@@ -133,6 +138,10 @@ class CreateProductFragment : Fragment() {
             }
             productTypeSpinner == "" -> {
                 showToast("Product Type assigned not selected! Please select a product type.")
+                false
+            }
+            image.isEmpty() -> {
+                showToast("Please upload an image.")
                 false
             }
             else -> true
