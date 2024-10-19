@@ -58,18 +58,20 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
-     suspend fun getAllCustomersNames(): List<String> {
+    suspend fun getAllCustomersNames(): List<String> {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
-        val columnName = "CustomerName"
-        if (isInitialized) {
-            return supabase.from("customers")
-                .select(Columns.list("CustomerName"))
-                .decodeList<String>()
 
+        if (isInitialized) {
+            return supabase
+                .from("customers")
+                .select{order(column = "id", order = Order.ASCENDING)}
+                .decodeList<CustomerModel>()
+                .map { it.CustomerName } 
         } else {
             throw Exception("Supabase initialization failed.")
         }
     }
+
 
     suspend fun addCustomer(customer : CustomerModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()

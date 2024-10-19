@@ -44,6 +44,7 @@ class CreateOpportunityFragment : Fragment() {
         // Inflate layout for current fragment
         val view = inflater.inflate(R.layout.fragment_create_opportunity, container, false)
 
+        sbHelper = SupabaseHelper()
         // Initialize UI
         opportunityName = view.findViewById(R.id.opportunityNameInput)
         value = view.findViewById(R.id.valueInput)
@@ -149,7 +150,7 @@ class CreateOpportunityFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val customerNames = sbHelper.getAllCustomersNames()
-
+                Log.d("", customerNames.toString())
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, customerNames)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 customerSpinner.adapter = adapter
