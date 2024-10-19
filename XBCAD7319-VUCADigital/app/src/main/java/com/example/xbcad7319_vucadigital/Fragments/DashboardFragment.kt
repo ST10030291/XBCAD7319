@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.github.mikephil.charting.charts.LineChart
@@ -28,6 +29,15 @@ class DashboardFragment : Fragment() {
     private lateinit var viewAnalyticsBtn: CardView
     private lateinit var lineChart: LineChart
     private val supabaseHelper = SupabaseHelper()
+
+    override fun onResume() {
+        super.onResume()
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            bottomNavigation.visibility = View.VISIBLE
+            plusBtn.visibility = View.VISIBLE
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

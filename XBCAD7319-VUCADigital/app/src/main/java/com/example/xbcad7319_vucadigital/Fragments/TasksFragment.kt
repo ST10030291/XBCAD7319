@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.TaskAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
@@ -32,6 +33,14 @@ class TasksFragment : Fragment() {
     private val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
     private val priorityLevels = listOf("Select priority level", "High", "Medium", "Low")
 
+    override fun onResume() {
+        super.onResume()
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            bottomNavigation.visibility = View.VISIBLE
+            plusBtn.visibility = View.VISIBLE
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

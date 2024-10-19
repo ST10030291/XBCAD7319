@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -21,6 +22,15 @@ class OpportunitiesFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    override fun onResume() {
+        super.onResume()
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            bottomNavigation.visibility = View.VISIBLE
+            plusBtn.visibility = View.VISIBLE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
