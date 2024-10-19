@@ -37,8 +37,6 @@ class CreateOpportunityFragment : Fragment() {
     private lateinit var backButton: ImageView
     private lateinit var sbHelper: SupabaseHelper
 
-    private lateinit var customer: CustomerModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
