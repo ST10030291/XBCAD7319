@@ -18,12 +18,14 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.content.MediaType
+import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.google.android.gms.common.api.Response
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 
@@ -38,11 +40,12 @@ class CreateProductFragment : Fragment() {
     private lateinit var createButton: Button
     private lateinit var backButton: ImageView
     private lateinit var image: ImageView
-    private var uri: Uri? = null
+    private lateinit var uri: Uri
     private lateinit var galleryImage : ImageView
     private lateinit var cameraImageUrl : Uri
     private lateinit var customer: CustomerModel
     private lateinit var sbHelper: SupabaseHelper
+    private lateinit var imgUrl: String
     private val contract = registerForActivityResult(ActivityResultContracts.TakePicture()){
         galleryImage.setImageURI(null)
         galleryImage.setImageURI(cameraImageUrl)
@@ -54,7 +57,7 @@ class CreateProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_create_product, container, false)
-
+        sbHelper = SupabaseHelper()
         productName = view.findViewById(R.id.productNameInput)
         description = view.findViewById(R.id.descriptionInput)
         productTypeSpinner = view.findViewById(R.id.productTypeInput)
@@ -91,10 +94,16 @@ class CreateProductFragment : Fragment() {
         val description = description.text.toString()
         val priceString = price.text.toString()
         val price: Double = priceString.toDouble()
+        //var imgUrl: String = null.toString()
         val productTypeSpinner = productTypeSpinner.selectedItem.toString()
-        val imgUrl = image.toString()
-        if (!validateInputs(productName, description, price, productTypeSpinner, imgUrl)) return
+        if (!validateInputs(productName, description, price, productTypeSpinner)) return
         //uploadImageToSupabase(uri)
+
+        lifecycleScope.launch {
+           // val isInserted = sbHelper.uploadImageToStorage(uri, requireContext())
+          //  imgUrl = isInserted
+        }
+
         val product = ProductModel(
             ProductName = productName,
             Type = productTypeSpinner,
@@ -103,48 +112,25 @@ class CreateProductFragment : Fragment() {
             Image = imgUrl
         )
 
-        /*val firebaseAuth = FirebaseAuth.getInstance().currentUser
-        uri?.let{
-            val storageReference = FirebaseStorage.getInstance().reference.child("Product Images")
-                .putFile(it).addOnSuccessListener { image->
-                    image.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
-                        val imgUrl = url.toString()
+        lifecycleScope.launch {
+            val isInserted = sbHelper.addProducts(product)
 
-                        val newTask = Tasks(taskID, userID, taskName, description, category, taskDate, startTime, endTime,timeDifference , imgUrl)
-                        databaseReference.child(taskID).setValue(newTask)
-                    }
-                }
-        }*/
-
-        Log.d(product.ProductName, "${product.ProductName} saved successfully!")
-        Toast.makeText(requireContext(), "Product created successfully!", Toast.LENGTH_SHORT).show()
-    }
-   /* private fun uploadImageToSupabase(imageFile: Uri?) {
-        val bucket = supabase.storage.from("product_images")
-
-        val fileName = "product_images.jpg"
-
-        try {
-            val file = File(imageFile.path)
-            val bytes = file.readBytes()
-            val uploadTask = bucket.upload(fileName, bytes)
-            uploadTask.addOnSuccessListener {
-
-            }.addOnFailureListener {
-
+            if (isInserted) {
+                Log.d(product.ProductName, "${product.ProductName} saved successfully!")
+                Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d(product.ProductName, "${product.ProductName} failed!")
+                Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()
             }
-
-        } catch (e: Exception) {
-
         }
-    }*/
+    }
+
 
     private fun validateInputs(
         productName: String,
         description: String,
         price : Double,
-        productTypeSpinner: String,
-        image: String
+        productTypeSpinner: String
     ): Boolean {
         return when {
             productName.isEmpty() -> {
@@ -161,10 +147,6 @@ class CreateProductFragment : Fragment() {
             }
             productTypeSpinner == "" -> {
                 showToast("Product Type assigned not selected! Please select a product type.")
-                false
-            }
-            image.isEmpty() -> {
-                showToast("Please upload an image.")
                 false
             }
             else -> true

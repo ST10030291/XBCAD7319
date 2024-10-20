@@ -2,17 +2,20 @@ package com.example.xbcad7319_vucadigital.db
 
 import android.content.Context
 import android.net.Uri
+import java.io.InputStream
 import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
 import java.util.UUID
@@ -21,7 +24,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class SupabaseHelper {
     private lateinit var supabase: SupabaseClient
-    data class Customer(val CustomerName: String)
 
     private fun initializeSupabase(apiKey: String) {
         supabase = createSupabaseClient(
@@ -233,7 +235,7 @@ class SupabaseHelper {
 
     suspend fun updateOpportunity(opportunity: OpportunityModel) : Boolean{
         try{
-            supabase.from("opportunities").update(opportunity) {
+            supabase.from("Opportunity").update(opportunity) {
                 filter {
                     OpportunityModel::id eq opportunity.id
                     //TaskModel.id?.let { eq("id", it) }
@@ -251,7 +253,7 @@ class SupabaseHelper {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
         if (isInitialized) {
             try{
-                supabase.from("opportunities").delete {
+                supabase.from("Opportunity").delete {
                     filter {
                         OpportunityModel::id eq id
                         eq("id", id)
@@ -273,7 +275,7 @@ class SupabaseHelper {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
-            return supabase.from("opportunities").select {
+            return supabase.from("Opportunity").select {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<OpportunityModel>()
         } else {
@@ -283,6 +285,26 @@ class SupabaseHelper {
 
 
     //products
+
+  /*  suspend fun uploadImageToStorage(imageUri: Uri, context: Context): String {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+
+            val fileName = "${UUID.randomUUID()}.jpg"
+            val upload = supabase.storage.from("product_images").upload(fileName, inputStream)
+
+
+            val publicUrl = supabase.storage.from("product_images").getPublicUrl(fileName)
+            return publicUrl
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }*/
+
+
+
+
     suspend fun addProducts(product : ProductModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
