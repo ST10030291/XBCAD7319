@@ -1,5 +1,6 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
+import android.content.ContentResolver
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
@@ -23,6 +24,8 @@ import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.google.android.gms.common.api.Response
+import java.io.File
+import java.io.InputStream
 
 class CreateProductFragment : Fragment() {
 
@@ -91,6 +94,7 @@ class CreateProductFragment : Fragment() {
         val productTypeSpinner = productTypeSpinner.selectedItem.toString()
         val imgUrl = image.toString()
         if (!validateInputs(productName, description, price, productTypeSpinner, imgUrl)) return
+        //uploadImageToSupabase(uri)
         val product = ProductModel(
             ProductName = productName,
             Type = productTypeSpinner,
@@ -115,6 +119,25 @@ class CreateProductFragment : Fragment() {
         Log.d(product.ProductName, "${product.ProductName} saved successfully!")
         Toast.makeText(requireContext(), "Product created successfully!", Toast.LENGTH_SHORT).show()
     }
+   /* private fun uploadImageToSupabase(imageFile: Uri?) {
+        val bucket = supabase.storage.from("product_images")
+
+        val fileName = "product_images.jpg"
+
+        try {
+            val file = File(imageFile.path)
+            val bytes = file.readBytes()
+            val uploadTask = bucket.upload(fileName, bytes)
+            uploadTask.addOnSuccessListener {
+
+            }.addOnFailureListener {
+
+            }
+
+        } catch (e: Exception) {
+
+        }
+    }*/
 
     private fun validateInputs(
         productName: String,

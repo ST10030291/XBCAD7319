@@ -224,7 +224,7 @@ class SupabaseHelper {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
-            supabase.from("opportunities").insert(opportunity)
+            supabase.from("Opportunity").insert(opportunity)
             return true
         } else {
             throw Exception("Supabase initialization failed.")

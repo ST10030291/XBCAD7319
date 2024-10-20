@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -30,12 +31,17 @@ class CreateOpportunityFragment : Fragment() {
     private lateinit var date: EditText
     private lateinit var prioritySpinner: Spinner
     private lateinit var customerSpinner: Spinner
+    private lateinit var stageSpinner: Spinner
     private lateinit var statusSpinner: Spinner
     private lateinit var opportunityName: EditText
     private lateinit var value: EditText
     private lateinit var createButton: Button
     private lateinit var backButton: ImageView
+    //private lateinit var customerSearchView: SearchView
     private lateinit var sbHelper: SupabaseHelper
+    private lateinit var customers: List<CustomerModel>
+    private lateinit var filteredCustomers: List<CustomerModel>
+    private var searchName: CustomerModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,15 +54,20 @@ class CreateOpportunityFragment : Fragment() {
         // Initialize UI
         opportunityName = view.findViewById(R.id.opportunityNameInput)
         value = view.findViewById(R.id.valueInput)
+        //customerSearchView = view.findViewById(R.id.customerNameSearch)
         customerSpinner = view.findViewById(R.id.customerNameInput)
         prioritySpinner = view.findViewById(R.id.priorityOfOpportunitySpinner)
         statusSpinner = view.findViewById(R.id.statusInput)
+        stageSpinner = view.findViewById(R.id.stageInput)
         date = view.findViewById(R.id.dateInput)
         createButton = view.findViewById(R.id.createOpportunityButton)
         backButton = view.findViewById(R.id.back_btn)
 
 
         customerDropDown()
+       /* customerSearchView.setOnSearchClickListener {
+            setUpSearchView()
+        }*/
 
         date.setOnClickListener {
             showDatePickerDialog { selectedDate ->
@@ -72,35 +83,75 @@ class CreateOpportunityFragment : Fragment() {
         }
         return view
     }
+    /*private fun setUpSearchView() {
+        customerSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { searchCustomersByName(it)
+                    if (filteredCustomers.size == 1) {
+                        // Automatically select if there's only one match
+                        searchName = filteredCustomers.first()
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { searchCustomersByName(it) }
+                return true
+            }
+        })
+    }
+
+    private fun searchCustomersByName(query: String) {
+        val queryLower = query.lowercase()
+
+        filteredCustomers = customers.filter { customer ->
+            customer.CustomerName.lowercase().contains(queryLower)
+        }
+    }*/
 
     private fun createOpportunity() {
         // Retrieve values from the inputs
         val opportunityName = opportunityName.text.toString()
         val valueString = value.text.toString()
         val value: Double = valueString.toDouble()
+        //val customerSearch = searchName?.CustomerName.toString()
         val customerSpinner = customerSpinner.selectedItem.toString()
         val prioritySpinner = prioritySpinner.selectedItem.toString()
         val statusSpinner = statusSpinner.selectedItem.toString()
+        val stageSpinner = stageSpinner.selectedItem.toString()
         val date = date.text.toString()
-
+        sbHelper = SupabaseHelper()
+        var isInserted = false
 
         // Validate inputs
-        if (!validateInputs(opportunityName, value, customerSpinner, prioritySpinner, statusSpinner, date)) return
+        if (!validateInputs(opportunityName, value, customerSpinner, prioritySpinner, statusSpinner,stageSpinner,  date)) return
 
 
         val opportunity = OpportunityModel(
             OpportunityName = opportunityName,
             TotalValue = value,
-            Stage = "1",
+            Stage = stageSpinner,
             CustomerName = customerSpinner,
             Priority = prioritySpinner,
             Status = statusSpinner,
             CreationDate = date
         )
 
+        lifecycleScope.launch {
+            val isInserted = sbHelper.addOpportunities(opportunity)
 
-        Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} saved successfully!")
-        Toast.makeText(requireContext(), "Task created successfully!", Toast.LENGTH_SHORT).show()
+            if (isInserted) {
+                Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} saved successfully!")
+                Toast.makeText(requireContext(), "Opportunity created successfully!", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} failed!")
+                Toast.makeText(requireContext(), "Opportunity creation failed!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
     }
 
     private fun validateInputs(
@@ -109,6 +160,7 @@ class CreateOpportunityFragment : Fragment() {
         customerSpinner: String,
         prioritySpinner: String,
         statusSpinner: String,
+        stageSpinner: String,
         date: String
     ): Boolean {
         return when {
@@ -120,8 +172,8 @@ class CreateOpportunityFragment : Fragment() {
                 showToast("Please enter a value.")
                 false
             }
-            customerSpinner == "Select a Customer" -> {
-                showToast("Customer not selected! Please select a customer.")
+            customerSpinner == "Select Customer" -> {
+                showToast("Customer not entered! Please enter a customer.")
                 false
             }
             statusSpinner == "Select Status" -> {
@@ -130,6 +182,10 @@ class CreateOpportunityFragment : Fragment() {
             }
             prioritySpinner == "Select Priority" -> {
                 showToast("Priority level not selected! Please select a priority level.")
+                false
+            }
+            stageSpinner == "Select Stage" -> {
+                showToast("Stage not selected! Please select a stage.")
                 false
             }
             date.isEmpty() -> {

@@ -164,7 +164,7 @@
             android:layout_width="339dp"
             android:layout_height="29dp"
             android:layout_marginTop="21dp"
-            android:text="Status Of Opportunity:"
+            android:text="Lead Status Of Opportunity:"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -176,13 +176,39 @@
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/user_input_border"
-            android:entries="@array/statusOptions"
+            android:entries="@array/leadStatusOptions"
             android:inputType="textEmailAddress"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/descriptionLabel" />
+
+
+        <TextView
+            android:id="@+id/stageLabel"
+            android:layout_width="339dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="Stage Of Opportunity:"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusInput" />
+
+        <Spinner
+            android:id="@+id/stageInput"
+            android:layout_width="375dp"
+            android:layout_height="48dp"
+            android:autofillHints="emailAddress"
+            android:background="@drawable/user_input_border"
+            android:entries="@array/stageOptions"
+            android:inputType="textEmailAddress"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stageLabel" />
 
         <TextView
             android:id="@+id/dateLabel"
@@ -193,7 +219,7 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/statusInput" />
+            app:layout_constraintTop_toBottomOf="@+id/stageInput" />
 
         <EditText
             android:id="@+id/dateInput"

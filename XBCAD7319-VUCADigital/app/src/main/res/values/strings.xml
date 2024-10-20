@@ -65,12 +65,13 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
 
-    <string-array name="statusOptions">
-        <item>Select Status</item>
-        <item>Completed</item>
-        <item>In Progress</item>
-        <item>Pending</item>
-        <item>Overdue</item>
+    <string-array name="leadStatusOptions">
+        <item>Select Lead Status</item>
+        <item>Contract</item>
+        <item>Contract Owner</item>
+        <item>Away</item>
+        <item>Closed Contract</item>
+        <item>Not Interested</item>
     </string-array>
 
     <string-array name="priorityOptions">
@@ -79,5 +80,23 @@
         <item>Medium</item>
         <item>Low</item>
     </string-array>
+
+    <string-array name="stageOptions">
+        <item>Select Stage</item>
+        <item>Lead</item>
+        <item>Prospect</item>
+        <item>Open</item>
+        <item>Closed</item>
+        <item>Lost</item>
+        <item>Open</item>
+
+    </string-array>
+
+    <string-array name="typeOptions">
+        <item>Select Type</item>
+        <item>Product</item>
+        <item>Service</item>
+    </string-array>
+
 
 </resources>
