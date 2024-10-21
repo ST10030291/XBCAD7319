@@ -1,83 +1,86 @@
 <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="360dp"
-        android:layout_height="190dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="8dp">
+    android:id="@+id/card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="360dp"
+    android:layout_height="190dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginBottom="20dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/header_title_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
-            <LinearLayout
-                android:id="@+id/header_title_layout"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/task_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/task_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="18sp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"/>
+            <ImageView
+                android:id="@+id/more_image_view"
+                android:src="@drawable/more"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:layout_margin="7dp"/>
 
-                <ImageView
-                    android:id="@+id/more_image_view"
-                    android:src="@drawable/more"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"/>
+        </LinearLayout>
 
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/priority_status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
-            <LinearLayout
-                android:id="@+id/priority_status_layout"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
+            <Button
+                android:id="@+id/task_priority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:paddingEnd="15dp"
+                android:layout_marginEnd="15dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:theme="@style/PriorityBtnTheme"
+                android:text="@string/priority"
+                android:layout_marginStart="10dp"/>
 
-                <Button
-                    android:id="@+id/task_priority"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:paddingEnd="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:theme="@style/PriorityBtnTheme"
-                    android:text="@string/priority"
-                    android:layout_marginStart="10dp"/>
+            <Button
+                android:id="@+id/task_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:paddingEnd="15dp"
+                android:layout_marginEnd="15dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:theme="@style/StatusBtnTheme"
+                android:text="@string/status"/>
 
-                <Button
-                    android:id="@+id/task_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:paddingEnd="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:theme="@style/StatusBtnTheme"
-                    android:text="@string/status"/>
-
-            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/rest_attributes_layout"
@@ -90,33 +93,36 @@
                 android:id="@+id/customer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:layout_weight="1"
-                android:textSize="16sp"
                 android:textColor="@color/black"
-                android:layout_marginStart="20dp"/>
+                android:textSize="16sp"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/task_person_assigned"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:textColor="@color/black"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/task_start_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:textColor="@color/black"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
-        </LinearLayout>
+    </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+</androidx.cardview.widget.CardView>

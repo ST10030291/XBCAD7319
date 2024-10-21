@@ -15,7 +15,7 @@ class CustomerModel(
 ) : java.io.Serializable
 
 @Serializable
-class TaskModel(
+data class TaskModel(
     val id: String?=null,
     var name: String,
     var category: String,
@@ -23,7 +23,9 @@ class TaskModel(
     var personAssigned: String,
     val startDate: String,
     val endDate: String,
-    var priorityLevel: String
+    var priorityLevel: String,
+    var status : String,
+    val customerID : String?=null
 )
 
 @Serializable
