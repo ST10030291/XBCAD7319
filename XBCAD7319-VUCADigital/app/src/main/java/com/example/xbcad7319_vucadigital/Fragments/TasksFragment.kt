@@ -23,6 +23,7 @@ import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +34,13 @@ class TasksFragment : Fragment() {
     private var tasksList = mutableListOf<TaskModel>()
     private lateinit var sbHelper: SupabaseHelper
     private lateinit var customers: List<CustomerModel>
+    private lateinit var filteredTasks: List<TaskModel>
+    private lateinit var tasks: List<TaskModel>
+
+    private lateinit var allFilterButton: Button
+    private lateinit var ToDoFilterButton: Button
+    private lateinit var DoingFilterButton: Button
+    private lateinit var DoneFilterButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,14 +58,45 @@ class TasksFragment : Fragment() {
         taskAdapter = TaskAdapter(tasksList, ::onEditTask, ::onDeleteTask)
         recyclerView.adapter = taskAdapter
 
+        allFilterButton = view.findViewById(R.id.AllFilter)
+        ToDoFilterButton = view.findViewById(R.id.ToDoFilter)
+        DoingFilterButton= view.findViewById(R.id.DoingFilter)
+        DoneFilterButton = view.findViewById(R.id.DoneFilter)
+
+        sbHelper = SupabaseHelper()
+
         loadTasks()
 
+        // Set up the click listeners for each filter button
+        setFilterButtonClickListener(allFilterButton, null)
+        setFilterButtonClickListener(ToDoFilterButton, "To Do")
+        setFilterButtonClickListener(DoingFilterButton, "Doing")
+        setFilterButtonClickListener(DoneFilterButton, "Done")
+    }
+
+    private fun selectButton(selectedButton: Button) {
+        allFilterButton.isSelected = selectedButton == allFilterButton
+        ToDoFilterButton.isSelected = selectedButton == ToDoFilterButton
+        DoingFilterButton.isSelected = selectedButton == DoingFilterButton
+        DoneFilterButton.isSelected = selectedButton == DoneFilterButton
+    }
+
+    private fun setFilterButtonClickListener(button: Button, filterStatus: String?) {
+        button.setOnClickListener {
+            filteredTasks = if (filterStatus == null) {
+                tasks
+            } else {
+                tasks.filter { it.status == filterStatus }
+            }
+            selectButton(button)
+            taskAdapter.updateTasks(filteredTasks)
+        }
     }
 
     private fun loadTasks() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val tasks = sbHelper.getAllTasks()
+                tasks = sbHelper.getAllTasks()
                 withContext(Dispatchers.Main) {
                     taskAdapter.updateTasks(tasks)
                 }
@@ -128,7 +167,7 @@ class TasksFragment : Fragment() {
         // Populate customer spinner
         lifecycleScope.launch {
             try {
-                val customers = sbHelper.getAllCustomers() // Assuming you have access to sbHelper
+                customers = sbHelper.getAllCustomers() // Assuming you have access to sbHelper
                 val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
                 customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
 
@@ -179,7 +218,7 @@ class TasksFragment : Fragment() {
 
         // Create the DatePickerDialog with custom theme
         val datePickerDialog = DatePickerDialog(
-            requireContext(), // Use the custom style
+            requireContext(),
             { _, year, month, dayOfMonth ->
                 val formattedDate = String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth)
                 editText.setText(formattedDate)
@@ -195,11 +234,14 @@ class TasksFragment : Fragment() {
 
     private fun saveTaskChanges(dialog: AlertDialog, task: TaskModel, dialogView: View) {
         val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
+        val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
+        val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
         val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
         val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
         val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
         val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
         val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
+        val customerSpinner: Spinner = dialogView.findViewById(R.id.customerSpinner)
 
         lifecycleScope.launch {
             val updatedTask = task.copy(
@@ -208,7 +250,10 @@ class TasksFragment : Fragment() {
                 description = descriptionEditText.text.toString(),
                 priorityLevel = getSelectedSpinnerProperty(priorityLevelSpinner),
                 personAssigned = getSelectedSpinnerProperty(personAssignedSpinner),
-                status = getSelectedSpinnerProperty(statusSpinner)
+                status = getSelectedSpinnerProperty(statusSpinner),
+                startDate = startDateEditText.text.toString(),
+                endDate = endDateEditText.text.toString(),
+                customerID = retrieveCustomerIDFromSpinner(customerSpinner)
             )
 
             try {
