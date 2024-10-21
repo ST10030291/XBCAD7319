@@ -25,7 +25,7 @@ class OpportunityAdapter (private var opportunities: List<OpportunityModel>/*,
             val status : TextView = itemView.findViewById(R.id.displayStatus)
             val customerName : TextView = itemView.findViewById(R.id.displayName)
             val priority : TextView = itemView.findViewById(R.id.displayPriority)
-            val creationDate : TextView = itemView.findViewById(R.id.displayCreation)
+            val creationDate : TextView = itemView.findViewById(R.id.displayCreationDate)
             val moreImageView: ImageView = itemView.findViewById(R.id.more_image_view)
             //val editButton: Button = itemView.findViewById(R.id.task_edit_button)
            // val deleteButton: Button = itemView.findViewById(R.id.task_delete_button)

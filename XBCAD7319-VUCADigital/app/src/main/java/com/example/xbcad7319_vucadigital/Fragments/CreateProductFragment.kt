@@ -25,6 +25,7 @@ import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.google.android.gms.common.api.Response
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
@@ -40,7 +41,8 @@ class CreateProductFragment : Fragment() {
     private lateinit var createButton: Button
     private lateinit var backButton: ImageView
     private lateinit var image: ImageView
-    private lateinit var uri: Uri
+    private var imageUrl : String? = null
+    private var uri: Uri? = null
     private lateinit var galleryImage : ImageView
     private lateinit var cameraImageUrl : Uri
     private lateinit var customer: CustomerModel
@@ -99,30 +101,44 @@ class CreateProductFragment : Fragment() {
         if (!validateInputs(productName, description, price, productTypeSpinner)) return
         //uploadImageToSupabase(uri)
 
-        lifecycleScope.launch {
+       /* lifecycleScope.launch {
            // val isInserted = sbHelper.uploadImageToStorage(uri, requireContext())
           //  imgUrl = isInserted
+        }*/
+
+        uri?.let{
+            val storageReference = FirebaseStorage.getInstance().reference.child("Product Images/${System.currentTimeMillis()}.jpg")
+                .putFile(it)
+                .addOnSuccessListener { image ->
+                    image.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
+                        val imgUrl = url.toString()
+
+                        val product = ProductModel(
+                            ProductName = productName,
+                            Type = productTypeSpinner,
+                            Description = description,
+                            Price = price,
+                            Image = imgUrl
+                        )
+
+                        lifecycleScope.launch {
+                            val isInserted = sbHelper.addProducts(product)
+
+                            if (isInserted) {
+                                Log.d(product.ProductName, "${product.ProductName} saved successfully!")
+                                Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Log.d(product.ProductName, "${product.ProductName} failed!")
+                                Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
         }
 
-        val product = ProductModel(
-            ProductName = productName,
-            Type = productTypeSpinner,
-            Description = description,
-            Price = price,
-            Image = imgUrl
-        )
 
-        lifecycleScope.launch {
-            val isInserted = sbHelper.addProducts(product)
 
-            if (isInserted) {
-                Log.d(product.ProductName, "${product.ProductName} saved successfully!")
-                Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
-            } else {
-                Log.d(product.ProductName, "${product.ProductName} failed!")
-                Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()
-            }
-        }
+
     }
 
 
