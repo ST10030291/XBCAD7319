@@ -66,8 +66,19 @@ class ProductsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val products = sbHelper.getAllProducts()
-                Log.d("Products", "Number of products retrieved: ${products.size}")
-                productAdapter.updateProducts(products)
+                val filteredProducts = products.filter { it.Type == "Product" }
+                productAdapter.updateProducts(filteredProducts)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Couldn't load products from DB", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    private fun loadService() {
+        lifecycleScope.launch {
+            try {
+                val products = sbHelper.getAllProducts()
+                val filteredProducts = products.filter { it.Type == "Service" }
+                productAdapter.updateProducts(filteredProducts)
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Couldn't load products from DB", Toast.LENGTH_SHORT).show()
             }

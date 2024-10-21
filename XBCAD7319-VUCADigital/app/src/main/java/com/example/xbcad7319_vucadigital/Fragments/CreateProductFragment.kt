@@ -70,7 +70,12 @@ class CreateProductFragment : Fragment() {
         backButton = view.findViewById(R.id.back_btn)
 
         createButton.setOnClickListener {
-            createOpportunity()
+            if(productTypeSpinner.selectedItem.toString() == "Service"){
+                createService()
+            }else if(productTypeSpinner.selectedItem.toString() == "Product"){
+                createProduct()
+            }
+
         }
         backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
@@ -84,21 +89,27 @@ class CreateProductFragment : Fragment() {
         }
 
         addImage.setOnClickListener {
-            pickImage.launch("image/*")
+            if(productTypeSpinner.selectedItem.toString() == "Service"){
+                Toast.makeText(requireContext(), "Services, do not need an image.", Toast.LENGTH_SHORT).show()
+            }else{
+                pickImage.launch("image/*")
+            }
+
         }
 
         return view
     }
 
-    private fun createOpportunity() {
+
+    private fun createProduct() {
         // Retrieve values from the inputs
         val productName = productName.text.toString()
         val description = description.text.toString()
         val priceString = price.text.toString()
         val price: Double = priceString.toDouble()
-        //var imgUrl: String = null.toString()
+        var imgUrl: String = uri.toString()
         val productTypeSpinner = productTypeSpinner.selectedItem.toString()
-        if (!validateInputs(productName, description, price, productTypeSpinner)) return
+        if (!validateInputsProduct(productName, description, price, productTypeSpinner, imgUrl)) return
         //uploadImageToSupabase(uri)
 
        /* lifecycleScope.launch {
@@ -135,14 +146,77 @@ class CreateProductFragment : Fragment() {
                     }
                 }
         }
-
-
-
-
     }
+    private fun createService() {
+        // Retrieve values from the inputs
+        val productName = productName.text.toString()
+        val description = description.text.toString()
+        val priceString = price.text.toString()
+        val price: Double = priceString.toDouble()
+        //var imgUrl: String = null.toString()
+        val productTypeSpinner = productTypeSpinner.selectedItem.toString()
+        if (!validateInputsService(productName, description, price, productTypeSpinner)) return
 
 
-    private fun validateInputs(
+                        val imgUrl = null.toString()
+
+                        val product = ProductModel(
+                            ProductName = productName,
+                            Type = productTypeSpinner,
+                            Description = description,
+                            Price = price,
+                            Image = imgUrl
+                        )
+
+                        lifecycleScope.launch {
+                            val isInserted = sbHelper.addProducts(product)
+
+                            if (isInserted) {
+                                Log.d(product.ProductName, "${product.ProductName} saved successfully!")
+                                Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Log.d(product.ProductName, "${product.ProductName} failed!")
+                                Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+
+
+
+
+
+    private fun validateInputsProduct(
+        productName: String,
+        description: String,
+        price : Double,
+        productTypeSpinner: String,
+        imgUrl: String
+    ): Boolean {
+        return when {
+            productName.isEmpty() -> {
+                showToast("Empty Product Name! Please enter a product name.")
+                false
+            }
+            price == null -> {
+                showToast("Please enter a value.")
+                false
+            }
+            description.isEmpty()  -> {
+                showToast("Empty Description! Please enter a description.")
+                false
+            }
+            productTypeSpinner == "" -> {
+                showToast("Product Type assigned not selected! Please select a product type.")
+                false
+            }
+            imgUrl == null.toString() -> {
+                showToast("Please upload an image.")
+                false
+            }
+            else -> true
+        }
+    }
+    private fun validateInputsService(
         productName: String,
         description: String,
         price : Double,
