@@ -11,27 +11,35 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Adapters.CustomSpinnerAdapter
 import com.example.xbcad7319_vucadigital.R
+import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+
 class CreateTaskFragment : Fragment() {
 
     private lateinit var categorySpinner: Spinner
+    private lateinit var customerSpinner: Spinner
     private lateinit var personAssignedSpinner: Spinner
     private lateinit var priorityLevelSpinner: Spinner
+    private lateinit var statusSpinner: Spinner
     private lateinit var nameEditText: EditText
     private lateinit var descriptionEditText: EditText
     private lateinit var startDateEditText: EditText
     private lateinit var endDateEditText: EditText
     private lateinit var createButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var sbHelper: SupabaseHelper
+    private lateinit var customers: List<CustomerModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +48,15 @@ class CreateTaskFragment : Fragment() {
         // Inflate layout for current fragment
         val view = inflater.inflate(R.layout.fragment_create_task, container, false)
 
+        // Initialize DB helper
+        sbHelper = SupabaseHelper()
+
         // Initialize UI
         categorySpinner = view.findViewById(R.id.categorySpinner)
+        customerSpinner = view.findViewById(R.id.customerSpinner)
         personAssignedSpinner = view.findViewById(R.id.personAssignedSpinner)
         priorityLevelSpinner = view.findViewById(R.id.priorityLevelSpinner)
+        statusSpinner = view.findViewById(R.id.statusSpinner)
         nameEditText = view.findViewById(R.id.taskName)
         descriptionEditText = view.findViewById(R.id.description)
         startDateEditText = view.findViewById(R.id.startDate)
@@ -53,6 +66,7 @@ class CreateTaskFragment : Fragment() {
 
         // Populate spinners
         setupSpinners()
+        populateCustomerSpinner()
 
         // date picker dialog for start date click listener setup
         startDateEditText.setOnClickListener {
@@ -68,8 +82,8 @@ class CreateTaskFragment : Fragment() {
             }
         }
 
-        // Create button click listener setup
-        createButton.setOnClickListener {
+        createButton.setOnClickListener{
+            Log.d("INS40", "Beginning task addition process.")
             createTask()
         }
 
@@ -83,16 +97,44 @@ class CreateTaskFragment : Fragment() {
         return view
     }
 
+    private fun populateCustomerSpinner(){
+        lifecycleScope.launch {
+            try {
+                customers = sbHelper.getAllCustomers()
+                val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
+                customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(),"Operation failure! Couldn't create task.",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun setupSpinners() {
         // Sample data for now
         val categories = listOf("Select a category", "Work", "Personal", "Urgent", "Later")
         val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
-        val priorityLevels = listOf("Select priority level", "High", "Medium", "Low")
+        val priorityLevels = listOf("Select a priority level", "High", "Medium", "Low")
+        val statuses = listOf("Select a task status", "To Do", "Doing", "Done")
 
         // Create ArrayAdapter for each spinner with custom layout
         categorySpinner.adapter = CustomSpinnerAdapter(requireContext(), categories)
         personAssignedSpinner.adapter = CustomSpinnerAdapter(requireContext(), assignedPersons)
         priorityLevelSpinner.adapter = CustomSpinnerAdapter(requireContext(), priorityLevels)
+        statusSpinner.adapter = CustomSpinnerAdapter(requireContext(), statuses)
+    }
+
+    private fun sendToDB(task : TaskModel){
+        lifecycleScope.launch {
+            try {
+                Log.d("INS40", "About to insert to db final step.")
+                // Add the task to the database
+                sbHelper.addTask(task)
+                Toast.makeText(requireContext(),"Operation Success! task created.",Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.popBackStack()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(),"Operation failure! Couldn't create task.",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
@@ -128,18 +170,38 @@ class CreateTaskFragment : Fragment() {
         }
     }
 
+    private fun retrieveCustomerIDFromSpinner(): String? {
+        try {
+            val selectedPosition = customerSpinner.selectedItemPosition
+            if (selectedPosition != Spinner.INVALID_POSITION) {
+                val selectedCustomer = customers[selectedPosition -1]
+                // Get the customer ID
+                return selectedCustomer.id
+            }
+            else {
+                return null
+            }
+        }
+        catch (e : IndexOutOfBoundsException){
+            Toast.makeText(requireContext(),"Operation failed! Couldn't retrieve customer ID.",Toast.LENGTH_SHORT).show()
+            return null
+        }
+    }
+
     private fun createTask() {
         // Retrieve values from the inputs
         val name = nameEditText.text.toString()
         val category = categorySpinner.selectedItem.toString()
         val description = descriptionEditText.text.toString().trim()
+        val customerID = retrieveCustomerIDFromSpinner()
         val personAssigned = personAssignedSpinner.selectedItem.toString()
         val startDate = startDateEditText.text.toString()
         val endDate = endDateEditText.text.toString()
         val priorityLevel = priorityLevelSpinner.selectedItem.toString()
+        val status = statusSpinner.selectedItem.toString()
 
         // Validate inputs
-        if (!validateInputs(name, category, personAssigned, priorityLevel, startDate, endDate, description)) return
+        if (!validateInputs(name, category, customerID, personAssigned, priorityLevel, startDate, endDate, description, status)) return
 
         // Create a new task to save to supabase later
         val task = TaskModel(
@@ -149,22 +211,23 @@ class CreateTaskFragment : Fragment() {
             personAssigned = personAssigned,
             startDate = startDate,
             endDate = endDate,
-            priorityLevel = priorityLevel
+            priorityLevel = priorityLevel,
+            status = status,
+            customerID = customerID
         )
-
-        Log.d(task.name, "${task.name} saved successfully!")
-
-        Toast.makeText(requireContext(), "Task created successfully!", Toast.LENGTH_SHORT).show()
+        sendToDB(task)
     }
 
     private fun validateInputs(
         name: String,
         category: String,
+        customerName: String?,
         personAssigned: String,
         priorityLevel: String,
         startDate: String,
         endDate: String,
-        description: String
+        description: String,
+        status : String
     ): Boolean {
         return when {
             name.isEmpty() -> {
@@ -179,11 +242,15 @@ class CreateTaskFragment : Fragment() {
                 showToast("Category not selected! Please select a category.")
                 false
             }
+            customerName == null -> {
+                showToast("Customer name not selected! Please select a customer name.")
+                false
+            }
             personAssigned == "Select a person" -> {
                 showToast("Person assigned not selected! Please select a person assigned.")
                 false
             }
-            priorityLevel == "Select priority level" -> {
+            priorityLevel == "Select a priority level" -> {
                 showToast("Priority level not selected! Please select a priority level.")
                 false
             }
@@ -197,6 +264,10 @@ class CreateTaskFragment : Fragment() {
             }
             description.length < 6 -> {
                 showToast("Description too short! Please enter a longer description.")
+                false
+            }
+            status == "Select a task status" -> {
+                showToast("Task status not selected! Please select a task status.")
                 false
             }
             // If we're here, everything was okay

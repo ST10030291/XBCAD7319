@@ -1,16 +1,15 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -18,29 +17,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
+import com.example.xbcad7319_vucadigital.Adapters.CustomSpinnerAdapter
 import com.example.xbcad7319_vucadigital.Adapters.TaskAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class TasksFragment : Fragment() {
     private lateinit var taskAdapter: TaskAdapter
     private var tasksList = mutableListOf<TaskModel>()
     private lateinit var sbHelper: SupabaseHelper
-    // Sample data for now
-    private val categories = listOf("Select a category", "Work", "Personal", "Urgent", "Later")
-    private val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
-    private val priorityLevels = listOf("Select priority level", "High", "Medium", "Low")
-
-    override fun onResume() {
-        super.onResume()
-        val dashboardActivity = activity as? DashboardActivity
-        dashboardActivity?.binding?.apply {
-            bottomNavigation.visibility = View.VISIBLE
-            plusBtn.visibility = View.VISIBLE
-        }
-    }
+    private lateinit var customers: List<CustomerModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,26 +50,57 @@ class TasksFragment : Fragment() {
         taskAdapter = TaskAdapter(tasksList, ::onEditTask, ::onDeleteTask)
         recyclerView.adapter = taskAdapter
 
-        sbHelper = SupabaseHelper()
         loadTasks()
+
     }
 
     private fun loadTasks() {
-        try {
-            lifecycleScope.launch {
-                taskAdapter.updateTasks(sbHelper.getAllTasks())
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val tasks = sbHelper.getAllTasks()
+                withContext(Dispatchers.Main) {
+                    taskAdapter.updateTasks(tasks)
+                }
+            } catch (e: Exception) {
+                Log.e("TaskLoadError", "Error loading tasks", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Couldn't load tasks from DB", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-        catch (e: Exception){
-            Toast.makeText(requireContext(),"Couldn't load tasks from DB", Toast.LENGTH_SHORT).show()
-        }
-
     }
 
-    private fun setupSpinner(spinner: Spinner, items: List<String>) {
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+    private fun retrieveCustomerIDFromSpinner(spinner: Spinner): String? {
+        try {
+            val selectedPosition = spinner.selectedItemPosition
+            if (selectedPosition != Spinner.INVALID_POSITION) {
+                // Adjust index if necessary based on your customer list
+                val selectedCustomer = customers[selectedPosition - 1]
+                return selectedCustomer.id
+            }
+        } catch (e: IndexOutOfBoundsException) {
+            Toast.makeText(requireContext(), "Operation failed! Couldn't retrieve customer ID.", Toast.LENGTH_SHORT).show()
+        }
+        return null
+    }
+
+    private fun setupDatePickers(dialogView: View, task: TaskModel) {
+        val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
+        val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+
+        // Set initial values
+        startDateEditText.setText(task.startDate)
+        endDateEditText.setText(task.endDate)
+
+        // Show date picker when start date is clicked
+        startDateEditText.setOnClickListener {
+            showDatePickerDialog(startDateEditText, task.startDate)
+        }
+
+        // Show date picker when end date is clicked
+        endDateEditText.setOnClickListener {
+            showDatePickerDialog(endDateEditText, task.endDate)
+        }
     }
 
     private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, task: TaskModel) {
@@ -90,33 +113,117 @@ class TasksFragment : Fragment() {
         }
     }
 
+    private fun setupDialogViews(dialogView: View, task: TaskModel) {
+        // Get references to the dialog views
+        val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
+        val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
+        val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
+        val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
+        val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
+        val customerSpinner: Spinner = dialogView.findViewById(R.id.customerSpinner)
+        val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
+        val taskStartDateEditText: EditText = dialogView.findViewById(R.id.startDate)
+        val taskEndDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+
+        // Populate customer spinner
+        lifecycleScope.launch {
+            try {
+                val customers = sbHelper.getAllCustomers() // Assuming you have access to sbHelper
+                val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
+                customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
+
+                // Set selection if customerID is provided
+                task.customerID?.let {
+                    val customerIndex = customers.indexOfFirst { customer -> customer.id == it }
+                    if (customerIndex != -1) {
+                        // Set selection, add 1 to account for the "Select a customer name" entry
+                        customerSpinner.setSelection(customerIndex + 1)
+                    }
+                }
+
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Operation failure! Couldn't load customers.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Sample data for now
+        val categories = listOf("Select a category", "Work", "Personal", "Urgent", "Later")
+        val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
+        val priorityLevels = listOf("Select a priority level", "High", "Medium", "Low")
+        val statuses = listOf("Select a task status", "To Do", "Doing", "Done")
+
+        // Set adapters
+        categorySpinner.adapter = CustomSpinnerAdapter(requireContext(), categories)
+        personAssignedSpinner.adapter = CustomSpinnerAdapter(requireContext(), assignedPersons)
+        priorityLevelSpinner.adapter = CustomSpinnerAdapter(requireContext(), priorityLevels)
+        statusSpinner.adapter = CustomSpinnerAdapter(requireContext(), statuses)
+
+        // Populate fields with the task's current values
+        taskNameEditText.setText(task.name)
+        categorySpinner.setSelection(categories.indexOf(task.category))
+        descriptionEditText.setText(task.description)
+        priorityLevelSpinner.setSelection(priorityLevels.indexOf(task.priorityLevel))
+        personAssignedSpinner.setSelection(assignedPersons.indexOf(task.personAssigned))
+        statusSpinner.setSelection(statuses.indexOf(task.status))
+        taskStartDateEditText.setText(task.startDate)
+        taskEndDateEditText.setText(task.endDate)
+    }
+
+    private fun showDatePickerDialog(editText: EditText, initialDate: String) {
+        val calendar = Calendar.getInstance()
+
+        if (initialDate.isNotEmpty()) {
+            val dateParts = initialDate.split("-")
+            calendar.set(dateParts[0].toInt(), dateParts[1].toInt() - 1, dateParts[2].toInt())
+        }
+
+        // Create the DatePickerDialog with custom theme
+        val datePickerDialog = DatePickerDialog(
+            requireContext(), // Use the custom style
+            { _, year, month, dayOfMonth ->
+                val formattedDate = String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth)
+                editText.setText(formattedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        // Show the DatePickerDialog
+        datePickerDialog.show()
+    }
+
     private fun saveTaskChanges(dialog: AlertDialog, task: TaskModel, dialogView: View) {
         val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
         val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
         val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
         val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
         val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
+        val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
 
         lifecycleScope.launch {
+            val updatedTask = task.copy(
+                name = taskNameEditText.text.toString(),
+                category = getSelectedSpinnerProperty(categorySpinner),
+                description = descriptionEditText.text.toString(),
+                priorityLevel = getSelectedSpinnerProperty(priorityLevelSpinner),
+                personAssigned = getSelectedSpinnerProperty(personAssignedSpinner),
+                status = getSelectedSpinnerProperty(statusSpinner)
+            )
+
             try {
-                // Update the task properties based on user input
-                task.name = taskNameEditText.text.toString()
-                task.category = getSelectedCategory(categorySpinner)
-                task.description = descriptionEditText.text.toString()
-                task.priorityLevel = getSelectedPriority(priorityLevelSpinner)
-                task.personAssigned = getSelectedPerson(personAssignedSpinner)
-
                 // Update the task in the database
-                sbHelper.updateTask(task)
+                sbHelper.updateTask(updatedTask)
 
-                // Update the list in the adapter
-                taskAdapter.updateTasks(sbHelper.getAllTasks())
+                // Update the task in the adapter
+                taskAdapter.updateTask(updatedTask)
 
                 Toast.makeText(requireContext(), "Operation Success! Updated task.", Toast.LENGTH_SHORT).show()
+                dialog.dismiss() // Dismiss only after success
             } catch (e: Exception) {
+                Log.e("EditTask", "Error updating task", e) // Log error details
                 Toast.makeText(requireContext(), "Operation failure! Couldn't update task.", Toast.LENGTH_SHORT).show()
             }
-            dialog.dismiss() // Close the dialog
         }
     }
 
@@ -130,68 +237,62 @@ class TasksFragment : Fragment() {
 
         val dialog = builder.create()
 
+        setupDatePickers(dialogView, task)
+
         setupDialogButtons(dialog, dialogView, task)
 
         dialog.show()
     }
 
-    private fun setupDialogViews(dialogView: View, task: TaskModel) {
-        // Get references to the dialog views
-        val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
-        val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
-        val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
-        val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)
-        val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
-
-        // Populate spinners with data
-        setupSpinner(categorySpinner, categories)
-        setupSpinner(priorityLevelSpinner, priorityLevels)
-        setupSpinner(personAssignedSpinner, assignedPersons)
-
-        // Populate fields with the task's current values
-        taskNameEditText.setText(task.name)
-        categorySpinner.setSelection(categories.indexOf(task.category))
-        descriptionEditText.setText(task.description)
-        priorityLevelSpinner.setSelection(priorityLevels.indexOf(task.priorityLevel))
-        personAssignedSpinner.setSelection(assignedPersons.indexOf(task.personAssigned))
-    }
-
     private fun onDeleteTask(task: TaskModel) {
-        // Create confirmation dialog
-        AlertDialog.Builder(requireContext())
-            .setTitle("Delete Task")
-            .setMessage("Are you sure you want to delete this task?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                lifecycleScope.launch {
-                    try {
-                        // Delete the task from the database
-                        sbHelper.deleteTask(task.id!!)
-                        // Update the list in the adapter
-                        taskAdapter.updateTasks(sbHelper.getAllTasks())
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_delete_task, null)
+        val deleteDialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
+
+        val taskNameTextView: TextView = dialogView.findViewById(R.id.dialog_task_name)
+        val messageTextView: TextView = dialogView.findViewById(R.id.dialog_message)
+        val cancelButton: Button = dialogView.findViewById(R.id.button_cancel)
+        val deleteButton: Button = dialogView.findViewById(R.id.button_delete)
+
+        // Set the task name in the dialog
+        taskNameTextView.text = task.name
+
+        cancelButton.setOnClickListener {
+            deleteDialog.dismiss()
+            Toast.makeText(requireContext(), "Operation cancelled! No task deleted.", Toast.LENGTH_SHORT).show()
+        }
+
+        deleteButton.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    // Delete the task from the database
+                    sbHelper.deleteTask(task.id!!)
+                    withContext(Dispatchers.Main) {
+                        taskAdapter.removeTask(task)
                         Toast.makeText(requireContext(), "Operation Success! Task deleted.", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
+                    }
+                } catch (e: Exception) {
+                    Log.e("TaskDeleteError", "Error deleting task: ${e.message}", e)
+                    withContext(Dispatchers.Main) {
                         Toast.makeText(requireContext(), "Operation failure! Couldn't delete task.", Toast.LENGTH_SHORT).show()
                     }
                 }
-                dialog.dismiss()
+                deleteDialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-                Toast.makeText(requireContext(), "Operation cancelled! No task deleted.", Toast.LENGTH_SHORT).show()
-            }
-            .show()
+        }
+
+        deleteDialog.show()
     }
 
-
-    private fun getSelectedCategory(spinner: Spinner): String {
+    private fun getSelectedSpinnerProperty(spinner: Spinner): String {
         return spinner.selectedItem.toString()
     }
 
-    private fun getSelectedPriority(spinner: Spinner): String {
-        return spinner.selectedItem.toString()
-    }
-
-    private fun getSelectedPerson(spinner: Spinner): String {
-        return spinner.selectedItem.toString()
+    override fun onResume() {
+        super.onResume()
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            bottomNavigation.visibility = View.VISIBLE
+            plusBtn.visibility = View.VISIBLE
+        }
     }
 }
