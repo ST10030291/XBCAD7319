@@ -85,7 +85,6 @@ class DashboardFragment : Fragment() {
             setupLineChart()
         }
 
-        // Fetch and display customer/opportunities count
 
     }
 

@@ -11,7 +11,7 @@ class CustomerModel(
     val AccountNumber: String,
     val BillingAccountNumber: String,
     val CustomerType: String,
-    val Products: List<CustomerProduct>
+    val Products: List<CustomerProductModel>
 ) : java.io.Serializable
 
 @Serializable
@@ -50,8 +50,9 @@ data class ProductModel(
 )
 
 @Serializable
-class CustomerProduct(
+class CustomerProductModel(
     val id: String? = null,
+    val customerName: String,
     val ProductName: String,
     val ContractStart: String,
     val ContractEnd: String,

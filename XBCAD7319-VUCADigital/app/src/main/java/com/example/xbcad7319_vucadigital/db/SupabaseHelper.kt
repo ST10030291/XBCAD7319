@@ -150,7 +150,7 @@ class SupabaseHelper {
 
         if (isInitialized) {
             try {
-                val result = supabase.from("opportunities").select().decodeList<OpportunityModel>()
+                val result = supabase.from("Opportunity").select().decodeList<OpportunityModel>()
                 return result.size
             } catch (e: Exception) {
                 Log.e("DB_ERROR", "Failed to get Opportunities Count: ${e.message}", e)
