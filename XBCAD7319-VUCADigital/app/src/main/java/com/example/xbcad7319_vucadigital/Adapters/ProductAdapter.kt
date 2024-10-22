@@ -14,14 +14,13 @@ import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.squareup.picasso.Picasso
 
 class ProductAdapter (private var products: MutableList<ProductModel> = mutableListOf(),
-                          //private val onEditClick: (ProductModel) -> Unit,
+                          private val onEditClick: (ProductModel) -> Unit,
                           private val onDeleteClick: (ProductModel) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productName: TextView = itemView.findViewById(R.id.productNameText)
         val valueText : TextView = itemView.findViewById(R.id.productValueText)
         val description : TextView = itemView.findViewById(R.id.displayProductDescription)
-        val image : ImageView = itemView.findViewById(R.id.displayOpportunityStatusImage)
 
         val moreImageView: ImageView = itemView.findViewById(R.id.more_image_view)
         //val editButton: Button = itemView.findViewById(R.id.task_edit_button)
@@ -41,7 +40,6 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
         holder.description.text = products.Description // For now
         //holder.customerName.text = products.CustomerName // For now
 
-        Picasso.get().load(products.Image).into(holder.image)
 
         holder.moreImageView.setOnClickListener {
             showPopupMenu(holder.moreImageView, products)
@@ -60,7 +58,7 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
                 R.id.edit_item -> {
                     // Call the edit click listener
                     // Log.d("INF355", "Edit button called")
-                    //onEditClick(task)
+                    onEditClick(product)
                     true
                 }
                 R.id.delete_item -> {
@@ -80,6 +78,13 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
             products.removeAt(position)  // Change this line to use 'opportunities' list
             // Notify that an item was removed
             notifyItemRemoved(position)
+        }
+    }
+    fun updateProduct(updatedProduct: ProductModel) {
+        val index = products.indexOfFirst { it.id == updatedProduct.id }
+        if (index != -1) {
+            products[index] = updatedProduct
+            notifyItemChanged(index) // Notify the adapter of the item change
         }
     }
 

@@ -46,8 +46,7 @@ data class ProductModel(
     val ProductName: String,
     val Type: String,
     val Description: String,
-    val Price: Double,
-    val Image: String
+    val Price: Double
 )
 
 @Serializable

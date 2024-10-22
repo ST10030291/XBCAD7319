@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
+import com.example.xbcad7319_vucadigital.Adapters.CustomSpinnerAdapter
 import com.example.xbcad7319_vucadigital.Adapters.OpportunityAdapter
 import com.example.xbcad7319_vucadigital.Adapters.ProductAdapter
 import com.example.xbcad7319_vucadigital.Adapters.ServiceAdapter
@@ -69,13 +72,13 @@ class ProductsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.product_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        productAdapter = ProductAdapter(productList, ::onDeleteProduct)
+        productAdapter = ProductAdapter(productList, ::onEditProduct, ::onDeleteProduct)
         recyclerView.adapter = productAdapter
 
 
         recyclerViewService = view.findViewById(R.id.service_recycler_view)
         recyclerViewService.layoutManager = GridLayoutManager(requireContext(), 2)
-        serviceAdapter = ServiceAdapter(serviceList, ::onDeleteService)
+        serviceAdapter = ServiceAdapter(serviceList, ::onEditProduct, ::onDeleteService)
         recyclerViewService.adapter = serviceAdapter
 
         sbHelper = SupabaseHelper()
@@ -225,6 +228,83 @@ class ProductsFragment : Fragment() {
         }
 
         deleteDialog.show()
+    }
+    private fun onEditProduct(product: ProductModel) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_product, null)
+        val builder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setTitle("Edit Product")
+
+        setupDialogViews(dialogView, product)
+
+        val dialog = builder.create()
+
+        setupDialogButtons(dialog, dialogView, product)
+
+        dialog.show()
+    }
+    private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, product: ProductModel) {
+        dialogView.findViewById<Button>(R.id.cancelEditProduct).setOnClickListener {
+            dialog.dismiss() // Close the dialog
+        }
+
+        dialogView.findViewById<Button>(R.id.saveEditProduct).setOnClickListener {
+            saveProductChanges(dialog, product, dialogView)
+        }
+    }
+
+    private fun setupDialogViews(dialogView: View, product: ProductModel) {
+        // Get references to the dialog views
+
+        val productName : EditText = dialogView.findViewById(R.id.productNameInput)
+        val description : EditText = dialogView.findViewById(R.id.descriptionInput)
+        val productTypeSpinner : Spinner = dialogView.findViewById(R.id.productTypeInput)
+        val price : EditText = dialogView.findViewById(R.id.priceInput)
+
+
+
+        val typeOptions = resources.getStringArray(R.array.typeOptions)
+
+        // Populate fields with the task's current values
+        productName.setText(product.ProductName)
+        productTypeSpinner.setSelection(typeOptions.indexOf(product.Type))
+        price.setText(product.Price.toString())
+        description.setText(product.Description)
+    }
+    private fun saveProductChanges(dialog: AlertDialog, product: ProductModel, dialogView: View) {
+        val productName : EditText = dialogView.findViewById(R.id.productNameInput)
+        val description : EditText = dialogView.findViewById(R.id.descriptionInput)
+        val productTypeSpinner : Spinner = dialogView.findViewById(R.id.productTypeInput)
+        val priceInput : EditText = dialogView.findViewById(R.id.priceInput)
+
+        val priceString = priceInput.text.toString()
+        val price: Double = priceString.toDouble()
+
+        lifecycleScope.launch {
+            val updatedProduct = product.copy(
+                ProductName = productName.text.toString(),
+                        Type = productTypeSpinner.selectedItem.toString(),
+                Description = description.text.toString(),
+            Price = price
+            )
+
+            try {
+                // Update the task in the database
+                sbHelper.updateProducts(updatedProduct)
+
+                // Update the task in the adapter
+                productAdapter.updateProduct(updatedProduct)
+                if(updatedProduct.Type == "Service"){
+                    serviceAdapter.updateProduct(updatedProduct)
+                }
+
+                Toast.makeText(requireContext(), "Operation Success! Updated product.", Toast.LENGTH_SHORT).show()
+                dialog.dismiss() // Dismiss only after success
+            } catch (e: Exception) {
+                Log.e("EditTask", "Error updating product", e) // Log error details
+                Toast.makeText(requireContext(), "Operation failure! Couldn't update product.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }

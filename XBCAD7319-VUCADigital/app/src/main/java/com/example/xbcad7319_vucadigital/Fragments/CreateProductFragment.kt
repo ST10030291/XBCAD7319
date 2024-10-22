@@ -64,8 +64,7 @@ class CreateProductFragment : Fragment() {
         description = view.findViewById(R.id.descriptionInput)
         productTypeSpinner = view.findViewById(R.id.productTypeInput)
         price = view.findViewById(R.id.priceInput)
-        addImage = view.findViewById(R.id.AddImageButton)
-        image = view.findViewById(R.id.imageView)
+
         createButton = view.findViewById(R.id.createProductButton)
         backButton = view.findViewById(R.id.back_btn)
 
@@ -81,21 +80,7 @@ class CreateProductFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()){
-            image.setImageURI(it)
-            if(it != null){
-                uri = it
-            }
-        }
 
-        addImage.setOnClickListener {
-            if(productTypeSpinner.selectedItem.toString() == "Service"){
-                Toast.makeText(requireContext(), "Services, do not need an image.", Toast.LENGTH_SHORT).show()
-            }else{
-                pickImage.launch("image/*")
-            }
-
-        }
 
         return view
     }
@@ -109,7 +94,25 @@ class CreateProductFragment : Fragment() {
         val price: Double = priceString.toDouble()
         var imgUrl: String = uri.toString()
         val productTypeSpinner = productTypeSpinner.selectedItem.toString()
-        if (!validateInputsProduct(productName, description, price, productTypeSpinner, imgUrl)) return
+        if (!validateInputsProduct(productName, description, price, productTypeSpinner)) return
+        val product = ProductModel(
+            ProductName = productName,
+            Type = productTypeSpinner,
+            Description = description,
+            Price = price
+        )
+
+        lifecycleScope.launch {
+            val isInserted = sbHelper.addProducts(product)
+
+            if (isInserted) {
+                Log.d(product.ProductName, "${product.ProductName} saved successfully!")
+                Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d(product.ProductName, "${product.ProductName} failed!")
+                Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()
+            }
+        }
         //uploadImageToSupabase(uri)
 
        /* lifecycleScope.launch {
@@ -117,7 +120,7 @@ class CreateProductFragment : Fragment() {
           //  imgUrl = isInserted
         }*/
 
-        uri?.let{
+        /*uri?.let{
             val storageReference = FirebaseStorage.getInstance().reference.child("Product Images/${System.currentTimeMillis()}.jpg")
                 .putFile(it)
                 .addOnSuccessListener { image ->
@@ -128,8 +131,7 @@ class CreateProductFragment : Fragment() {
                             ProductName = productName,
                             Type = productTypeSpinner,
                             Description = description,
-                            Price = price,
-                            Image = imgUrl
+                            Price = price
                         )
 
                         lifecycleScope.launch {
@@ -145,7 +147,7 @@ class CreateProductFragment : Fragment() {
                         }
                     }
                 }
-        }
+        }*/
     }
     private fun createService() {
         // Retrieve values from the inputs
@@ -164,8 +166,7 @@ class CreateProductFragment : Fragment() {
                             ProductName = productName,
                             Type = productTypeSpinner,
                             Description = description,
-                            Price = price,
-                            Image = imgUrl
+                            Price = price
                         )
 
                         lifecycleScope.launch {
@@ -189,37 +190,6 @@ class CreateProductFragment : Fragment() {
         productName: String,
         description: String,
         price : Double,
-        productTypeSpinner: String,
-        imgUrl: String
-    ): Boolean {
-        return when {
-            productName.isEmpty() -> {
-                showToast("Empty Product Name! Please enter a product name.")
-                false
-            }
-            price == null -> {
-                showToast("Please enter a value.")
-                false
-            }
-            description.isEmpty()  -> {
-                showToast("Empty Description! Please enter a description.")
-                false
-            }
-            productTypeSpinner == "" -> {
-                showToast("Product Type assigned not selected! Please select a product type.")
-                false
-            }
-            imgUrl == null.toString() -> {
-                showToast("Please upload an image.")
-                false
-            }
-            else -> true
-        }
-    }
-    private fun validateInputsService(
-        productName: String,
-        description: String,
-        price : Double,
         productTypeSpinner: String
     ): Boolean {
         return when {
@@ -237,6 +207,32 @@ class CreateProductFragment : Fragment() {
             }
             productTypeSpinner == "" -> {
                 showToast("Product Type assigned not selected! Please select a product type.")
+                false
+            }
+            else -> true
+        }
+    }
+    private fun validateInputsService(
+        productName: String,
+        description: String,
+        price : Double,
+        productTypeSpinner: String
+    ): Boolean {
+        return when {
+            productName.isEmpty() -> {
+                showToast("Empty Service Name! Please enter a service name.")
+                false
+            }
+            price == null -> {
+                showToast("Please enter a value.")
+                false
+            }
+            description.isEmpty()  -> {
+                showToast("Empty Description! Please enter a description.")
+                false
+            }
+            productTypeSpinner == "" -> {
+                showToast("Product Type assigned not selected! Please select a service type.")
                 false
             }
             else -> true

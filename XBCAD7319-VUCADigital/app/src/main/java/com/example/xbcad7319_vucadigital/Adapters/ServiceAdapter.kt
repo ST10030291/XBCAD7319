@@ -14,7 +14,7 @@ import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.squareup.picasso.Picasso
 
 class ServiceAdapter  (private var services: MutableList<ProductModel> = mutableListOf(),
-                          //private val onEditClick: (ProductModel) -> Unit,
+                          private val onEditClick: (ProductModel) -> Unit,
                           private val onDeleteClick: (ProductModel) -> Unit
 ) : RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder>() {
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -61,7 +61,7 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
                 R.id.edit_item -> {
                     // Call the edit click listener
                     // Log.d("INF355", "Edit button called")
-                    //onEditClick(task)
+                    onEditClick(service)
                     true
                 }
                 R.id.delete_item -> {
@@ -81,6 +81,13 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
             services.removeAt(position)  // Change this line to use 'opportunities' list
             // Notify that an item was removed
             notifyItemRemoved(position)
+        }
+    }
+    fun updateProduct(updatedProduct: ProductModel) {
+        val index = services.indexOfFirst { it.id == updatedProduct.id }
+        if (index != -1) {
+            services[index] = updatedProduct
+            notifyItemChanged(index) // Notify the adapter of the item change
         }
     }
     fun updateProducts(newService: List<ProductModel>) {
