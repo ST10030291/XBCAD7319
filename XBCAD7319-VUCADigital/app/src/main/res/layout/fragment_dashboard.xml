@@ -63,8 +63,8 @@
                     android:layout_width="90dp"
                     android:layout_height="40dp"
                     android:layout_marginEnd="10dp"
-                    android:id="@+id/AllFilter"
-                    android:text="@string/all"
+                    android:id="@+id/DailyFilter"
+                    android:text="Daily"
                     android:textColor="@color/black"
                     android:background="@drawable/filter_button_selector"
                     android:textAllCaps="false"/>
@@ -72,9 +72,9 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:id="@+id/ProspectFilter"
+                    android:id="@+id/WeeklyFilter"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/prospect"
+                    android:text="Weekly"
                     android:textColor="@color/black"
                     android:background="@drawable/filter_button_selector"
                     android:textAllCaps="false" />
@@ -82,9 +82,9 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:id="@+id/LeadsFilter"
+                    android:id="@+id/MonthlyFilter"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/leads"
+                    android:text="Monthly"
                     android:textColor="@color/black"
                     android:background="@drawable/filter_button_selector"
                     android:textAllCaps="false"/>
@@ -92,8 +92,8 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:id="@+id/ReferralsFilter"
-                    android:text="@string/referrals"
+                    android:id="@+id/YearlyFilter"
+                    android:text="Yearly"
                     android:textColor="@color/black"
                     android:background="@drawable/filter_button_selector"
                     android:textAllCaps="false"
