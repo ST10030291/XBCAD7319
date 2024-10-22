@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.R
+import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.squareup.picasso.Picasso
 
-class ServiceAdapter  (private var services: List<ProductModel>/*,
-                          private val onEditClick: (ProductModel) -> Unit,
-                          private val onDeleteClick: (ProductModel) -> Unit*/
+class ServiceAdapter  (private var services: MutableList<ProductModel> = mutableListOf(),
+                          //private val onEditClick: (ProductModel) -> Unit,
+                          private val onDeleteClick: (ProductModel) -> Unit
 ) : RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder>() {
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val serviceName: TextView = itemView.findViewById(R.id.serviceNameText)
@@ -37,7 +39,9 @@ class ServiceAdapter  (private var services: List<ProductModel>/*,
         holder.serviceName.text = service.ProductName
         holder.serviceValueText.text = "R" + service.Price.toString()
         holder.serviceDescription.text = service.Description
-
+        holder.moreImageView.setOnClickListener {
+            showPopupMenu(holder.moreImageView, service)
+        }
        // Picasso.get().load(products.Image).into(holder.image)
 
         /*holder.moreImageView.setOnClickListener {
@@ -48,9 +52,40 @@ class ServiceAdapter  (private var services: List<ProductModel>/*,
 
     override fun getItemCount(): Int = services.size
 
+    private fun showPopupMenu(view: View, service: ProductModel) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit_item -> {
+                    // Call the edit click listener
+                    // Log.d("INF355", "Edit button called")
+                    //onEditClick(task)
+                    true
+                }
+                R.id.delete_item -> {
+                    // Call the delete click listener
+                    onDeleteClick(service)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+    fun removeService(product: ProductModel) {
+        val position = services.indexOfFirst { it.id == product.id }
+        if (position != -1) {
+            // Remove the opportunity at the found position
+            services.removeAt(position)  // Change this line to use 'opportunities' list
+            // Notify that an item was removed
+            notifyItemRemoved(position)
+        }
+    }
     fun updateProducts(newService: List<ProductModel>) {
         Log.d("OpportunityAdapter", "Updating opportunities: ${newService.size} items")
-        services = newService
+        services = newService.toMutableList()
         notifyDataSetChanged()
     }
 }

@@ -13,9 +13,9 @@ import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 
-class OpportunityAdapter (private var opportunities: List<OpportunityModel>/*,
-                          private val onEditClick: (OpportunityModel) -> Unit,
-                          private val onDeleteClick: (OpportunityModel) -> Unit*/
+class OpportunityAdapter (private var opportunities: MutableList<OpportunityModel> = mutableListOf(),
+                          //private val onEditClick: (OpportunityModel) -> Unit,
+                          private val onDeleteClick: (OpportunityModel) -> Unit
     ) : RecyclerView.Adapter<OpportunityAdapter.OpportunityViewHolder>() {
 
         class OpportunityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -46,6 +46,9 @@ class OpportunityAdapter (private var opportunities: List<OpportunityModel>/*,
             holder.creationDate.text = opportunity.CreationDate
             holder.priority.text = opportunity.Priority
 
+            holder.moreImageView.setOnClickListener {
+                showPopupMenu(holder.moreImageView, opportunity)
+            }
             /*holder.moreImageView.setOnClickListener {
                 showPopupMenu(holder.moreImageView, opportunity)
             }*/
@@ -72,6 +75,38 @@ class OpportunityAdapter (private var opportunities: List<OpportunityModel>/*,
 
         override fun getItemCount(): Int = opportunities.size
 
+    private fun showPopupMenu(view: View, opportunity: OpportunityModel) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit_item -> {
+                    // Call the edit click listener
+                   // Log.d("INF355", "Edit button called")
+                    //onEditClick(task)
+                    true
+                }
+                R.id.delete_item -> {
+                    // Call the delete click listener
+                    onDeleteClick(opportunity)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+    fun removeOpportunity(opportunity: OpportunityModel) {
+        val position = opportunities.indexOfFirst { it.id == opportunity.id }
+        if (position != -1) {
+            // Remove the opportunity at the found position
+            opportunities.removeAt(position)  // Change this line to use 'opportunities' list
+            // Notify that an item was removed
+            notifyItemRemoved(position)
+        }
+    }
+
        /* private fun showPopupMenu(view: View, opportunity: OpportunityModel) {
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
@@ -94,7 +129,7 @@ class OpportunityAdapter (private var opportunities: List<OpportunityModel>/*,
 
     fun updateOpportunity(newOpportuniy: List<OpportunityModel>) {
         Log.d("OpportunityAdapter", "Updating opportunities: ${newOpportuniy.size} items")
-        opportunities = newOpportuniy
+        opportunities = newOpportuniy.toMutableList()
         notifyDataSetChanged()
     }
     }

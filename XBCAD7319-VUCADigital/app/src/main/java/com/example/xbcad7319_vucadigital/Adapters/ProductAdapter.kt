@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.R
@@ -12,9 +13,9 @@ import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.squareup.picasso.Picasso
 
-class ProductAdapter (private var products: List<ProductModel>/*,
-                          private val onEditClick: (ProductModel) -> Unit,
-                          private val onDeleteClick: (ProductModel) -> Unit*/
+class ProductAdapter (private var products: MutableList<ProductModel> = mutableListOf(),
+                          //private val onEditClick: (ProductModel) -> Unit,
+                          private val onDeleteClick: (ProductModel) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productName: TextView = itemView.findViewById(R.id.productNameText)
@@ -42,17 +43,49 @@ class ProductAdapter (private var products: List<ProductModel>/*,
 
         Picasso.get().load(products.Image).into(holder.image)
 
-        /*holder.moreImageView.setOnClickListener {
-            showPopupMenu(holder.moreImageView, opportunity)
-        }*/
+        holder.moreImageView.setOnClickListener {
+            showPopupMenu(holder.moreImageView, products)
+        }
     }
 
 
     override fun getItemCount(): Int = products.size
 
+    private fun showPopupMenu(view: View, product: ProductModel) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit_item -> {
+                    // Call the edit click listener
+                    // Log.d("INF355", "Edit button called")
+                    //onEditClick(task)
+                    true
+                }
+                R.id.delete_item -> {
+                    // Call the delete click listener
+                    onDeleteClick(product)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+    fun removeProduct(product: ProductModel) {
+        val position = products.indexOfFirst { it.id == product.id }
+        if (position != -1) {
+            // Remove the opportunity at the found position
+            products.removeAt(position)  // Change this line to use 'opportunities' list
+            // Notify that an item was removed
+            notifyItemRemoved(position)
+        }
+    }
+
     fun updateProducts(newProduct: List<ProductModel>) {
         Log.d("OpportunityAdapter", "Updating opportunities: ${newProduct.size} items")
-        products = newProduct
+        products = newProduct.toMutableList()
         notifyDataSetChanged()
     }
 }
