@@ -47,6 +47,10 @@ class ProductsFragment : Fragment() {
         dashboardActivity?.binding?.apply {
             bottomNavigation.visibility = View.VISIBLE
             plusBtn.visibility = View.VISIBLE
+            plusBtn.setOnClickListener {
+                dashboardActivity.loadFragment(CreateProductFragment(), true)
+                bottomNavigation.visibility = View.GONE
+            }
         }
     }
     override fun onCreateView(

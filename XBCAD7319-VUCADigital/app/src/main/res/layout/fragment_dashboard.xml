@@ -44,9 +44,69 @@
 
         </RelativeLayout>
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:scrollbarSize="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="90dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:id="@+id/AllFilter"
+                    android:text="@string/all"
+                    android:textColor="@color/black"
+                    android:background="@drawable/filter_button_selector"
+                    android:textAllCaps="false"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/ProspectFilter"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/prospect"
+                    android:textColor="@color/black"
+                    android:background="@drawable/filter_button_selector"
+                    android:textAllCaps="false" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/LeadsFilter"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/leads"
+                    android:textColor="@color/black"
+                    android:background="@drawable/filter_button_selector"
+                    android:textAllCaps="false"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/ReferralsFilter"
+                    android:text="@string/referrals"
+                    android:textColor="@color/black"
+                    android:background="@drawable/filter_button_selector"
+                    android:textAllCaps="false"
+                    />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/lineChart1"
             android:layout_width="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:layout_height="300dp"/>
 
         <LinearLayout
@@ -139,8 +199,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:weightSum="2"
-            android:layout_marginTop="16dp">
+            android:weightSum="2">
 
             <!-- Box 3 -->
             <androidx.cardview.widget.CardView

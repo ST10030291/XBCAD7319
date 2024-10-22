@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 if(counter == 100){
                     t.cancel()
 
-                    val intent = Intent(this@MainActivity, DashboardActivity::class.java)
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
                     startActivity(intent)
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
                 }

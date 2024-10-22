@@ -65,7 +65,7 @@ class DashboardActivity : AppCompatActivity() {
 
     }
 
-    private fun loadFragment(fragment: Fragment, addToBackStack: Boolean) {
+    fun loadFragment(fragment: Fragment, addToBackStack: Boolean) {
         val transaction = supportFragmentManager.beginTransaction()
 
         transaction.setCustomAnimations(

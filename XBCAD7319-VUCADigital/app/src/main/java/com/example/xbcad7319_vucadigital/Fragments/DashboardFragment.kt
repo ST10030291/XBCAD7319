@@ -1,12 +1,14 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
@@ -28,6 +30,7 @@ class DashboardFragment : Fragment() {
     private lateinit var viewProductsBtn: CardView
     private lateinit var viewAnalyticsBtn: CardView
     private lateinit var lineChart: LineChart
+    private lateinit var tasksByMonth: List<Int>
     private val supabaseHelper = SupabaseHelper()
 
     override fun onResume() {
@@ -35,7 +38,7 @@ class DashboardFragment : Fragment() {
         val dashboardActivity = activity as? DashboardActivity
         dashboardActivity?.binding?.apply {
             bottomNavigation.visibility = View.VISIBLE
-            plusBtn.visibility = View.VISIBLE
+            plusBtn.visibility = View.GONE
         }
     }
 
@@ -73,11 +76,17 @@ class DashboardFragment : Fragment() {
             openAnalyticsFragment()
         }
 
-        // Fetch and display customer/opportunities count
-        fetchAndDisplayCustomerCount()
-        fetchAndDisplayOpportunitiesCount()
+        lifecycleScope.launch {
+            tasksByMonth = supabaseHelper.fetchTasksByMonth()
 
-        setupLineChart()
+            fetchAndDisplayCustomerCount()
+            fetchAndDisplayOpportunitiesCount()
+
+            setupLineChart()
+        }
+
+        // Fetch and display customer/opportunities count
+
     }
 
     private fun fetchAndDisplayCustomerCount() {
@@ -115,10 +124,10 @@ class DashboardFragment : Fragment() {
     private fun setupLineChart() {
         // Create data for the line chart
         val months = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        val yValues = listOf(10f, 20f, 15f, 25f, 30f, 40f, 50f, 60f, 70f, 80f, 90f, 100f) // Example Y values
+        val yValues = tasksByMonth
 
         val entries = months.mapIndexed { index, month ->
-            Entry(index.toFloat(), yValues[index])
+            Entry(index.toFloat(), yValues[index].toFloat())
         }
 
         // Create a dataset
@@ -128,6 +137,8 @@ class DashboardFragment : Fragment() {
             valueTextSize = 0f
             lineWidth = 3f
             circleRadius = 0f
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawCircles(false)
         }
 
         // Create LineData object and set it to the chart
@@ -135,12 +146,12 @@ class DashboardFragment : Fragment() {
         lineChart.data = lineData
 
         // Customize Y-axis
-        lineChart.axisLeft.axisMinimum = 0f // Set minimum Y value
-        lineChart.axisLeft.axisMaximum = 100f // Set maximum Y value
-        lineChart.axisLeft.setLabelCount(10, false) // Set label count for Y-axis
+        lineChart.axisLeft.axisMinimum = -0.5f // Set minimum Y value
+        lineChart.axisLeft.axisMaximum = 30f // Set maximum Y value
+        lineChart.axisLeft.setLabelCount(5, false) // Set label count for Y-axis
         lineChart.axisLeft.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
             override fun getAxisLabel(value: Float, axis: com.github.mikephil.charting.components.AxisBase?): String {
-                return if (value % 10 == 0f) value.toInt().toString() else ""
+                return if (value % 5 == 0f) value.toInt().toString() else ""
             }
         }
 

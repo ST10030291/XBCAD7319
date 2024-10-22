@@ -18,6 +18,10 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -217,6 +221,37 @@ class SupabaseHelper {
         } else {
             throw Exception("Supabase initialization failed.")
         }
+    }
+
+    suspend fun fetchTasksByMonth(): ArrayList<Int> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        val tasksByMonthList = ArrayList<Int>()
+
+        if (isInitialized) {
+            val result = supabase.from("tasks")
+                .select { order(column = "id", order = Order.ASCENDING) }
+                .decodeList<TaskModel>()
+                .map { it.startDate }
+
+            val tasksGroupedByMonth = IntArray(12)
+
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            result.forEach { task ->
+                val taskDate: Date? = dateFormat.parse(task)
+                taskDate?.let {
+                    val calendar = Calendar.getInstance().apply { time = it }
+                    val monthIndex = calendar.get(Calendar.MONTH)
+                    tasksGroupedByMonth[monthIndex]++
+                }
+            }
+
+            tasksByMonthList.addAll(tasksGroupedByMonth.toList())
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+
+        return tasksByMonthList
     }
 
 
