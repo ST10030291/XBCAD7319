@@ -14,7 +14,7 @@ import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 
 class OpportunityAdapter (private var opportunities: MutableList<OpportunityModel> = mutableListOf(),
-                          //private val onEditClick: (OpportunityModel) -> Unit,
+                          private val onEditClick: (OpportunityModel) -> Unit,
                           private val onDeleteClick: (OpportunityModel) -> Unit
     ) : RecyclerView.Adapter<OpportunityAdapter.OpportunityViewHolder>() {
 
@@ -84,7 +84,7 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
                 R.id.edit_item -> {
                     // Call the edit click listener
                    // Log.d("INF355", "Edit button called")
-                    //onEditClick(task)
+                    onEditClick(opportunity)
                     true
                 }
                 R.id.delete_item -> {
@@ -126,7 +126,23 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             }
             popupMenu.show()
         }*/
+       fun updateOpportunity(updatedOpportunity: OpportunityModel) {
+           val index = opportunities.indexOfFirst { it.id == updatedOpportunity.id }
+           if (index != -1) {
+               opportunities[index] = updatedOpportunity
+               notifyItemChanged(index) // Notify the adapter of the item change
+           }
+       }
 
+    fun updateOpportunities(newOpportunity: List<OpportunityModel>) {
+        val oldSize = opportunities.size
+        opportunities.clear()
+        opportunities.addAll(newOpportunity)
+        // Notify that all old items were removed
+        notifyItemRangeRemoved(0, oldSize)
+        // Notify that new items were added
+        notifyItemRangeInserted(0, newOpportunity.size)
+    }
     fun updateOpportunity(newOpportuniy: List<OpportunityModel>) {
         Log.d("OpportunityAdapter", "Updating opportunities: ${newOpportuniy.size} items")
         opportunities = newOpportuniy.toMutableList()

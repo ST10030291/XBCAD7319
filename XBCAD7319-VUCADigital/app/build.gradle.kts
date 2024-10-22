@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.identity.jvm)
     implementation(libs.firebase.storage)
+    implementation(libs.androidx.room.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

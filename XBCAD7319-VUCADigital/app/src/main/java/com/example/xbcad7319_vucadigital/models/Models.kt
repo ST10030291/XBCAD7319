@@ -29,7 +29,7 @@ data class TaskModel(
 )
 
 @Serializable
-class OpportunityModel(
+data class OpportunityModel(
     val id: String? = null,
     val OpportunityName: String,
     val TotalValue: Double,
@@ -41,7 +41,7 @@ class OpportunityModel(
 )
 
 @Serializable
-class ProductModel(
+data class ProductModel(
     val id: String? = null,
     val ProductName: String,
     val Type: String,

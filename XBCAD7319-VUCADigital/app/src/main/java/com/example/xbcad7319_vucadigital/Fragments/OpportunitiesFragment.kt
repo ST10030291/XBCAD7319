@@ -1,6 +1,7 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,25 +9,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
+import com.example.xbcad7319_vucadigital.Adapters.CustomSpinnerAdapter
 import com.example.xbcad7319_vucadigital.Adapters.OpportunityAdapter
 import com.example.xbcad7319_vucadigital.Adapters.TaskAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class OpportunitiesFragment : Fragment() {
     private lateinit var opportunityAdapter: OpportunityAdapter
     private var opportunityList = mutableListOf<OpportunityModel>()
+    private lateinit var customers: List<CustomerModel>
     private lateinit var sbHelper: SupabaseHelper
     override fun onResume() {
         super.onResume()
@@ -51,7 +58,7 @@ class OpportunitiesFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.opportunity_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        opportunityAdapter = OpportunityAdapter(opportunityList, ::onDeleteOpportunity)
+        opportunityAdapter = OpportunityAdapter(opportunityList, ::onEditOpportunity, ::onDeleteOpportunity)
         recyclerView.adapter = opportunityAdapter
 
         sbHelper = SupabaseHelper()
@@ -110,14 +117,144 @@ class OpportunitiesFragment : Fragment() {
         deleteDialog.show()
     }
 
-    /*private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, task: TaskModel) {
-        dialogView.findViewById<Button>(R.id.cancelEditTask).setOnClickListener {
+    private fun onEditOpportunity(opportunity: OpportunityModel) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_opportunity, null)
+        val builder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setTitle("Edit Opportunity")
+
+        setupDialogViews(dialogView, opportunity)
+
+        val dialog = builder.create()
+
+        setupDatePickers(dialogView, opportunity)
+
+        setupDialogButtons(dialog, dialogView, opportunity)
+
+        dialog.show()
+    }
+    private fun setupDatePickers(dialogView: View, opportunity: OpportunityModel) {
+        val dateEditText: EditText = dialogView.findViewById(R.id.dateInput)
+
+        // Set initial values
+        dateEditText.setText(opportunity.CreationDate)
+
+        // Show date picker when start date is clicked
+        dateEditText.setOnClickListener {
+            showDatePickerDialog(dateEditText, opportunity.CreationDate)
+        }
+    }
+    private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, opportunity: OpportunityModel) {
+        dialogView.findViewById<Button>(R.id.cancelEditOpportunity).setOnClickListener {
             dialog.dismiss() // Close the dialog
         }
 
-        dialogView.findViewById<Button>(R.id.saveEditTask).setOnClickListener {
-            saveTaskChanges(dialog, task, dialogView)
+        dialogView.findViewById<Button>(R.id.saveEditOpportunity).setOnClickListener {
+            saveOpportunityChanges(dialog, opportunity, dialogView)
         }
-    }*/
+    }
+    private fun setupDialogViews(dialogView: View, opportunity: OpportunityModel) {
+        // Get references to the dialog views
+        val opportunityNameEditText: EditText = dialogView.findViewById(R.id.opportunityNameInput)
+        val stageSpinner: Spinner = dialogView.findViewById(R.id.stageInput)
+        val customerSpinner: Spinner = dialogView.findViewById(R.id.customerNameInput)
+        val statusSpinner: Spinner = dialogView.findViewById(R.id.statusInput)
+        val prioritySpinner: Spinner = dialogView.findViewById(R.id.priorityOfOpportunitySpinner)
+        val valueEditText: EditText = dialogView.findViewById(R.id.valueInput)
+        val dateEditText: EditText = dialogView.findViewById(R.id.dateInput)
+
+        // Populate customer spinner
+        lifecycleScope.launch {
+            try {
+                // Retrieve customer names and populate spinner
+                customers = sbHelper.getAllCustomers()
+                val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
+                customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
+
+                // Set selection to a specific name
+                opportunity.CustomerName?.let { customerName ->
+                    val customerIndex = customerNames.indexOf(customerName)
+                    if (customerIndex != -1) {
+                        customerSpinner.setSelection(customerIndex)
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Operation failure! Couldn't load customers.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val leadStatusOptions = resources.getStringArray(R.array.leadStatusOptions)
+        val priorityOptions = resources.getStringArray(R.array.priorityOptions)
+        val stageOptions = resources.getStringArray(R.array.stageOptions)
+        // Populate fields with the task's current values
+        opportunityNameEditText.setText(opportunity.OpportunityName)
+        stageSpinner.setSelection(stageOptions.indexOf(opportunity.Stage))
+
+        prioritySpinner.setSelection(priorityOptions.indexOf(opportunity.Priority))
+        statusSpinner.setSelection(leadStatusOptions.indexOf(opportunity.Status))
+        valueEditText.setText(opportunity.TotalValue.toString())
+        dateEditText.setText(opportunity.CreationDate)
+    }
+    private fun saveOpportunityChanges(dialog: AlertDialog, opportunity: OpportunityModel, dialogView: View) {
+        val opportunityNameEditText: EditText = dialogView.findViewById(R.id.opportunityNameInput)
+        val stageSpinner: Spinner = dialogView.findViewById(R.id.stageInput)
+        val customerSpinner: Spinner = dialogView.findViewById(R.id.customerNameInput)
+        val statusSpinner: Spinner = dialogView.findViewById(R.id.statusInput)
+        val prioritySpinner: Spinner = dialogView.findViewById(R.id.priorityOfOpportunitySpinner)
+        val valueEditText: EditText = dialogView.findViewById(R.id.valueInput)
+        val valueString = valueEditText.text.toString()
+        val value: Double = valueString.toDouble()
+        val dateEditText: EditText = dialogView.findViewById(R.id.dateInput)
+
+        lifecycleScope.launch {
+            val updatedOpportunity = opportunity.copy(
+                OpportunityName = opportunityNameEditText.text.toString(),
+                TotalValue = value,
+                Stage = stageSpinner.selectedItem.toString(),
+                CustomerName = customerSpinner.selectedItem.toString(),
+                Priority = prioritySpinner.selectedItem.toString(),
+                Status = statusSpinner.selectedItem.toString(),
+                CreationDate = dateEditText.text.toString()
+            )
+
+            try {
+                // Update the task in the database
+                sbHelper.updateOpportunity(updatedOpportunity)
+
+                // Update the task in the adapter
+                opportunityAdapter.updateOpportunity(updatedOpportunity)
+
+                Toast.makeText(requireContext(), "Operation Success! Updated opportunity.", Toast.LENGTH_SHORT).show()
+                dialog.dismiss() // Dismiss only after success
+            } catch (e: Exception) {
+                Log.e("EditTask", "Error updating opportunity", e) // Log error details
+                Toast.makeText(requireContext(), "Operation failure! Couldn't update opportunity.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showDatePickerDialog(editText: EditText, initialDate: String) {
+        val calendar = Calendar.getInstance()
+
+        if (initialDate.isNotEmpty()) {
+            val dateParts = initialDate.split("-")
+            calendar.set(dateParts[0].toInt(), dateParts[1].toInt() - 1, dateParts[2].toInt())
+        }
+
+        // Create the DatePickerDialog with custom theme
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                val formattedDate = String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth)
+                editText.setText(formattedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        // Show the DatePickerDialog
+        datePickerDialog.show()
+    }
 
 }

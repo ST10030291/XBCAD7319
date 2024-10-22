@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/background_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/labelCustomerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Name of Opportunity:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/opportunityNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:autofillHints="customerName"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Opportunity Name"
+                    android:inputType="text"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelCustomerName" />
+
+                <TextView
+                    android:id="@+id/labelTelephoneNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:text="Value:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/opportunityNameInput" />
+
+                <EditText
+                    android:id="@+id/valueInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:autofillHints="customerTelephone"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Value"
+                    android:inputType="number"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelTelephoneNumber" />
+
+                <TextView
+                    android:id="@+id/labelCustomer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:text="Customer Name:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/valueInput" />
+
+                <Spinner
+                    android:id="@+id/customerNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:autofillHints="emailAddress"
+                    android:background="@drawable/user_input_border"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelCustomer" />
+
+                <TextView
+                    android:id="@+id/labelPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:text="Priority Of Opportunity:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customerNameInput" />
+
+                <Spinner
+                    android:id="@+id/priorityOfOpportunitySpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:entries="@array/priorityOptions"
+                    android:background="@drawable/user_input_border"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/labelPriority" />
+
+                <TextView
+                    android:id="@+id/descriptionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:text="Lead Status Of Opportunity:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/priorityOfOpportunitySpinner" />
+
+                <Spinner
+                    android:id="@+id/statusInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:entries="@array/leadStatusOptions"
+                    android:background="@drawable/user_input_border"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/descriptionLabel" />
+
+                <TextView
+                    android:id="@+id/stageLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Stage Of Opportunity:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/statusInput" />
+
+                <Spinner
+                    android:id="@+id/stageInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:entries="@array/stageOptions"
+                    android:background="@drawable/user_input_border"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/stageLabel" />
+
+                <TextView
+                    android:id="@+id/dateLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:text="Date Of Opportunity:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/stageInput" />
+
+                <EditText
+                    android:id="@+id/dateInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:autofillHints="emailAddress"
+                    android:background="@drawable/user_input_border"
+                    android:hint="Date Of Opportunity"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dateLabel" />
+
+                <Button
+                    android:id="@+id/cancelEditOpportunity"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/cancel"
+                    android:textSize="16sp"
+                    android:backgroundTint="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dateInput" />
+
+                <Button
+                    android:id="@+id/saveEditOpportunity"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/save"
+                    android:textSize="16sp"
+                    android:theme="@style/FilterBtnTheme"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cancelEditOpportunity" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
