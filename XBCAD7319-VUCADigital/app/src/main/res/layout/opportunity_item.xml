@@ -149,7 +149,7 @@
 
         <TextView
             android:id="@+id/displayPriority"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
@@ -165,15 +165,15 @@
 
         <TextView
             android:id="@+id/displayStatus"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="20dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/rounded_corners"
+            android:background="@drawable/status_border"
             android:text="TextView"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/displayPriority"
             tools:text="Status" />

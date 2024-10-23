@@ -27,6 +27,7 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             val priority : TextView = itemView.findViewById(R.id.displayPriority)
             val creationDate : TextView = itemView.findViewById(R.id.displayCreationDate)
             val moreImageView: ImageView = itemView.findViewById(R.id.more_image_view)
+            val priorityImageView: ImageView = itemView.findViewById(R.id.displayOpportunityStatusImage)
             //val editButton: Button = itemView.findViewById(R.id.task_edit_button)
            // val deleteButton: Button = itemView.findViewById(R.id.task_delete_button)
         }
@@ -49,10 +50,42 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             holder.moreImageView.setOnClickListener {
                 showPopupMenu(holder.moreImageView, opportunity)
             }
+
+            if(opportunity.Priority == "High"){
+                holder.priorityImageView.setImageResource(R.drawable.red_stage)
+                holder.priority.setBackgroundResource(R.drawable.high_priority)
+            }else if(opportunity.Priority == "Medium"){
+                holder.priorityImageView.setImageResource(R.drawable.yellow_stage)
+                holder.priority.setBackgroundResource(R.drawable.medium_priority)
+            }else if(opportunity.Priority == "Low"){
+                holder.priorityImageView.setImageResource(R.drawable.green_stage)
+                holder.priority.setBackgroundResource(R.drawable.low_priority)
+            }
             /*holder.moreImageView.setOnClickListener {
                 showPopupMenu(holder.moreImageView, opportunity)
             }*/
         }
+    /*private fun colorChange(x:String): String {
+        var colourName = ""
+        if (x.equals("Dark Blue")){
+            colourName = "#00003f"
+        }else if (x.equals("Light Blue")){
+            colourName ="#00ADB5"
+        }else if (x.equals("Grey")){
+            colourName ="#808080"
+        }else if (x.equals("Orange")){
+            colourName ="#F8B400"
+        }else if (x.equals("Purple")){
+            colourName ="#7209B7"
+        }else if (x.equals("Black")){
+            colourName ="#000000"
+        }else if (x.equals("White")){
+            colourName ="#FFFFFFFF"
+        }else if(x.equals("Select Color")){
+            colourName ="#D9D9D9"
+        }
+        return colourName
+    }*/
    /* private fun showPopupMenu(view: View, opportunity: OpportunityModel) {
         val popupMenu = PopupMenu(view.context, view)
         popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
@@ -134,18 +167,18 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
            }
        }
 
-    fun updateOpportunities(newOpportunity: List<OpportunityModel>) {
-        val oldSize = opportunities.size
-        opportunities.clear()
-        opportunities.addAll(newOpportunity)
-        // Notify that all old items were removed
-        notifyItemRangeRemoved(0, oldSize)
-        // Notify that new items were added
-        notifyItemRangeInserted(0, newOpportunity.size)
-    }
-    fun updateOpportunity(newOpportuniy: List<OpportunityModel>) {
-        Log.d("OpportunityAdapter", "Updating opportunities: ${newOpportuniy.size} items")
-        opportunities = newOpportuniy.toMutableList()
-        notifyDataSetChanged()
-    }
+        fun updateOpportunities(newOpportunity: List<OpportunityModel>) {
+            val oldSize = opportunities.size
+            opportunities.clear()
+            opportunities.addAll(newOpportunity)
+            // Notify that all old items were removed
+            notifyItemRangeRemoved(0, oldSize)
+            // Notify that new items were added
+            notifyItemRangeInserted(0, newOpportunity.size)
+        }
+        fun updateOpportunity(newOpportuniy: List<OpportunityModel>) {
+            Log.d("OpportunityAdapter", "Updating opportunities: ${newOpportuniy.size} items")
+            opportunities = newOpportuniy.toMutableList()
+            notifyDataSetChanged()
+        }
     }

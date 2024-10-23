@@ -35,6 +35,7 @@ class OpportunitiesFragment : Fragment() {
     private var opportunityList = mutableListOf<OpportunityModel>()
     private lateinit var customers: List<CustomerModel>
     private lateinit var sbHelper: SupabaseHelper
+
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity

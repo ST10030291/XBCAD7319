@@ -7,6 +7,10 @@
     <color name="background_white">#EFF2EB</color>
     <color name="Transparent">#00FFFFFF</color>
     <color name="red">#FF0000</color>
+    <color name="priorityRed">#FF6161</color>
+    <color name="priorityYellow">#FFEB61</color>
+    <color name="priorityGreen">#9AFF81</color>
     <color name="grey">#454B60</color>
     <color name="DarkGrey">#151515</color>
+    <color name="LightGrey">#D9D9D9</color>
 </resources>
