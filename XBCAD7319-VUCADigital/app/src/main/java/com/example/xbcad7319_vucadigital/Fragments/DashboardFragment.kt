@@ -14,9 +14,13 @@ import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
@@ -179,14 +183,13 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    //Sets up the line chart according to the parsed x labels and the values given
     private fun setupLineChart(xAxisLabels: List<String>, values: List<Int>) {
-        //Parse the x and y values
+        // Parse the x and y values
         val entries = List(xAxisLabels.size) { index ->
             Entry(index.toFloat(), values.getOrElse(index) { 0 }.toFloat())
         }
 
-        //Create the Line chart data set
+        // Create the Line chart data set
         val lineDataSet = LineDataSet(entries, "Number of Tasks").apply {
             color = 0xFFFF7F50.toInt()
             valueTextColor = ColorTemplate.COLORFUL_COLORS[1]
@@ -200,32 +203,42 @@ class DashboardFragment : Fragment() {
         val lineData = LineData(lineDataSet)
         lineChart.data = lineData
 
-        //Customise the Y axis
-        lineChart.axisLeft.axisMinimum = -0.5f
-        lineChart.axisLeft.axisMaximum = 30f
-        lineChart.axisLeft.setLabelCount(5, false)
-        lineChart.axisLeft.gridColor = android.graphics.Color.TRANSPARENT
-        lineChart.axisLeft.gridLineWidth = 0f
-        lineChart.axisLeft.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
-            override fun getAxisLabel(value: Float, axis: com.github.mikephil.charting.components.AxisBase?): String {
-                return if (value % 5 == 0f) value.toInt().toString() else ""
+        // Customize the Y axis
+        lineChart.axisLeft.apply {
+            axisMinimum = -0.5f
+            axisMaximum = 30f
+            setLabelCount(5, false)
+            gridColor = android.graphics.Color.TRANSPARENT
+            gridLineWidth = 0f
+            valueFormatter = object : ValueFormatter() {
+                override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                    return if (value % 5 == 0f) value.toInt().toString() else ""
+                }
             }
         }
 
         lineChart.axisRight.isEnabled = false
 
-        //Customize the X axis
-        lineChart.xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(xAxisLabels)
-        lineChart.xAxis.setLabelCount(31, true)
-        lineChart.xAxis.granularity = 1f
-        lineChart.xAxis.gridColor = android.graphics.Color.TRANSPARENT
-        lineChart.xAxis.gridLineWidth = 0f
+        // Customize the X axis
+        lineChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = object : ValueFormatter() {
+                override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                    val index = value.toInt()
+                    return if (index in xAxisLabels.indices) {
+                        xAxisLabels[index]
+                    } else {
+                        ""
+                    }
+                }
+            }
 
-        lineChart.description.isEnabled = false
-        lineChart.animateX(2000)
-        lineChart.invalidate()
+            lineChart.description.isEnabled = false
+            lineChart.animateX(2000)
+            lineChart.invalidate()
+        }
     }
+
 
 
     private fun openProductsFragment() {

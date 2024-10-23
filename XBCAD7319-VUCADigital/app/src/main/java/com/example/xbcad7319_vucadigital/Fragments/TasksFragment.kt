@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -23,7 +24,6 @@ import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
-import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,9 +38,11 @@ class TasksFragment : Fragment() {
     private lateinit var tasks: List<TaskModel>
 
     private lateinit var allFilterButton: Button
-    private lateinit var ToDoFilterButton: Button
-    private lateinit var DoingFilterButton: Button
-    private lateinit var DoneFilterButton: Button
+    private lateinit var toDoFilterButton: Button
+    private lateinit var doingFilterButton: Button
+    private lateinit var doneFilterButton: Button
+
+    private lateinit var searchView: SearchView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,27 +60,30 @@ class TasksFragment : Fragment() {
         taskAdapter = TaskAdapter(tasksList, ::onEditTask, ::onDeleteTask)
         recyclerView.adapter = taskAdapter
 
+        searchView = view.findViewById(R.id.searchView)
         allFilterButton = view.findViewById(R.id.AllFilter)
-        ToDoFilterButton = view.findViewById(R.id.ToDoFilter)
-        DoingFilterButton= view.findViewById(R.id.DoingFilter)
-        DoneFilterButton = view.findViewById(R.id.DoneFilter)
+        toDoFilterButton = view.findViewById(R.id.ToDoFilter)
+        doingFilterButton= view.findViewById(R.id.DoingFilter)
+        doneFilterButton = view.findViewById(R.id.DoneFilter)
 
         sbHelper = SupabaseHelper()
 
         loadTasks()
 
+        setUpSearchView()
+
         // Set up the click listeners for each filter button
         setFilterButtonClickListener(allFilterButton, null)
-        setFilterButtonClickListener(ToDoFilterButton, "To Do")
-        setFilterButtonClickListener(DoingFilterButton, "Doing")
-        setFilterButtonClickListener(DoneFilterButton, "Done")
+        setFilterButtonClickListener(toDoFilterButton, "To Do")
+        setFilterButtonClickListener(doingFilterButton, "Doing")
+        setFilterButtonClickListener(doneFilterButton, "Done")
     }
 
     private fun selectButton(selectedButton: Button) {
         allFilterButton.isSelected = selectedButton == allFilterButton
-        ToDoFilterButton.isSelected = selectedButton == ToDoFilterButton
-        DoingFilterButton.isSelected = selectedButton == DoingFilterButton
-        DoneFilterButton.isSelected = selectedButton == DoneFilterButton
+        toDoFilterButton.isSelected = selectedButton == toDoFilterButton
+        doingFilterButton.isSelected = selectedButton == doingFilterButton
+        doneFilterButton.isSelected = selectedButton == doneFilterButton
     }
 
     private fun setFilterButtonClickListener(button: Button, filterStatus: String?) {
@@ -92,6 +97,36 @@ class TasksFragment : Fragment() {
             taskAdapter.updateTasks(filteredTasks)
         }
     }
+
+    private fun setUpSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { searchTasksByName(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { searchTasksByName(it) }
+                return true
+            }
+        })
+    }
+
+    private fun searchTasksByName(query: String) {
+        val queryLower = query.lowercase()
+
+        filteredTasks = tasks.filter { task ->
+            task.name.lowercase().contains(queryLower)
+        }
+
+        taskAdapter.updateTasks(filteredTasks)
+
+        // Show a toast message if filteredTasks is empty
+        if (filteredTasks.isEmpty()) {
+            Toast.makeText(context, "Task \"$query\" not found!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun loadTasks() {
         lifecycleScope.launch(Dispatchers.IO) {
