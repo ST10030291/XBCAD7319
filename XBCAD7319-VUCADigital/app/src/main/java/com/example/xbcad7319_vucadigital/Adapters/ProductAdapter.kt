@@ -21,7 +21,7 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
         val productName: TextView = itemView.findViewById(R.id.productNameText)
         val valueText : TextView = itemView.findViewById(R.id.productValueText)
         val description : TextView = itemView.findViewById(R.id.displayProductDescription)
-
+        val productType: TextView = itemView.findViewById(R.id.productLabel)
         val moreImageView: ImageView = itemView.findViewById(R.id.more_image_view)
         //val editButton: Button = itemView.findViewById(R.id.task_edit_button)
         // val deleteButton: Button = itemView.findViewById(R.id.task_delete_button)
@@ -38,6 +38,7 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
         holder.productName.text = products.ProductName
         holder.valueText.text = "R" + products.Price.toString()
         holder.description.text = products.Description // For now
+        holder.productType.text = products.Type
         //holder.customerName.text = products.CustomerName // For now
 
 
@@ -86,6 +87,15 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
             products[index] = updatedProduct
             notifyItemChanged(index) // Notify the adapter of the item change
         }
+    }
+    fun updateProductss(newProducts: List<ProductModel>) {
+        val oldSize = products.size
+        products.clear()
+        products.addAll(newProducts)
+        // Notify that all old items were removed
+        notifyItemRangeRemoved(0, oldSize)
+        // Notify that new items were added
+        notifyItemRangeInserted(0, newProducts.size)
     }
 
     fun updateProducts(newProduct: List<ProductModel>) {

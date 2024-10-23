@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
+import com.example.xbcad7319_vucadigital.models.TaskModel
 import com.squareup.picasso.Picasso
 
 class ServiceAdapter  (private var services: MutableList<ProductModel> = mutableListOf(),
@@ -90,6 +91,18 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
             notifyItemChanged(index) // Notify the adapter of the item change
         }
     }
+
+
+    fun updateServices(newProducts: List<ProductModel>) {
+        val oldSize = services.size
+        services.clear()
+        services.addAll(newProducts)
+        // Notify that all old items were removed
+        notifyItemRangeRemoved(0, oldSize)
+        // Notify that new items were added
+        notifyItemRangeInserted(0, newProducts.size)
+    }
+
     fun updateProducts(newService: List<ProductModel>) {
         Log.d("OpportunityAdapter", "Updating opportunities: ${newService.size} items")
         services = newService.toMutableList()

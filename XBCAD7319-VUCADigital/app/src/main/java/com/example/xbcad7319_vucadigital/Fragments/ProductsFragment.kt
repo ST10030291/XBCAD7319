@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -28,6 +29,7 @@ import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
+import com.example.xbcad7319_vucadigital.models.TaskModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,10 +44,17 @@ class ProductsFragment : Fragment() {
     private lateinit var serviceAdapter: ServiceAdapter
     private var serviceList = mutableListOf<ProductModel>()
     private lateinit var recyclerViewService : RecyclerView
+    private lateinit var filteredProducts: List<ProductModel>
+    private lateinit var productss: List<ProductModel>
+
+    private lateinit var filteredServices: List<ProductModel>
+    private lateinit var services: List<ProductModel>
 
     private lateinit var productButton: Button
     private lateinit var serviceButton: Button
     private lateinit var sbHelper: SupabaseHelper
+
+    private lateinit var searchView: SearchView
 
     override fun onResume() {
         super.onResume()
@@ -72,7 +81,7 @@ class ProductsFragment : Fragment() {
         productButton = view.findViewById(R.id.ProductsFilter)
         serviceButton = view.findViewById(R.id.ServicesFilter)
 
-
+        searchView = view.findViewById(R.id.productAndServicesSearch)
         recyclerView = view.findViewById(R.id.product_recycler_view)
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         productAdapter = ProductAdapter(productList, ::onEditProduct, ::onDeleteProduct)
@@ -89,7 +98,7 @@ class ProductsFragment : Fragment() {
 
         loadProduct()
         loadService()
-
+        setUpSearchView()
 
         allButton.setOnClickListener {
             allButton.setBackgroundResource(R.drawable.filter_btn_selected);
@@ -139,6 +148,7 @@ class ProductsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val products = sbHelper.getAllProducts()
+                productss = sbHelper.getAllProducts()
                 val filteredProducts = products.filter { it.Type == "Product" }
                 productAdapter.updateProducts(filteredProducts)
                 productAdapter.notifyDataSetChanged()
@@ -152,6 +162,7 @@ class ProductsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val products = sbHelper.getAllProducts()
+                services = sbHelper.getAllProducts()
                 val filteredProducts = products.filter { it.Type == "Service" }
                 serviceAdapter.updateProducts(filteredProducts)
                 serviceAdapter.notifyDataSetChanged()
@@ -161,6 +172,48 @@ class ProductsFragment : Fragment() {
             }
         }
     }
+    private fun setUpSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+
+                //recyclerViewService.visibility = RecyclerView.GONE
+                query?.let { searchProductsByName(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //recyclerViewService.visibility = RecyclerView.GONE
+                newText?.let { searchProductsByName(it) }
+                return true
+            }
+        })
+    }
+
+    private fun searchProductsByName(query: String) {
+        val queryLower = query.lowercase()
+
+        filteredProducts = productss.filter { product ->
+            product.ProductName.lowercase().contains(queryLower) &&
+                    product.Type == "Product"
+        }
+
+
+        productAdapter.updateProductss(filteredProducts)
+
+        filteredServices = services.filter { service ->
+            service.ProductName.lowercase().contains(queryLower) &&
+                    service.Type == "Service"
+        }
+
+        serviceAdapter.updateServices(filteredServices)
+        //recyclerViewService.visibility = RecyclerView.GONE
+
+        // Show a toast message if filteredTasks is empty
+        if (filteredProducts.isEmpty()) {
+            Toast.makeText(context, "Product/Service \"$query\" not found!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun onDeleteProduct(product: ProductModel) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_delete_task, null)
         val deleteDialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
