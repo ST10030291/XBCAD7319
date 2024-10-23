@@ -1,7 +1,6 @@
 package com.example.xbcad7319_vucadigital.Adapters
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,13 +24,14 @@ class TaskAdapter(
     private val onDeleteClick: (TaskModel) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    // Define colors for different priority levels with sentence case
+    // Map of priority levels to their corresponding colors
     private val priorityColors = mapOf(
         "High" to "#E8715C",    // Red
         "Medium" to "#FFD700",  // Yellow
         "Low" to "#D3D3D3"      // Dark Gray
     )
 
+    // ViewHolder class to hold references to the views in each item
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTextView: TextView = itemView.findViewById(R.id.task_name)
         val priorityButton: Button = itemView.findViewById(R.id.task_priority)
@@ -43,87 +43,97 @@ class TaskAdapter(
         val cardView: CardView = itemView.findViewById(R.id.card_view)
     }
 
+    // Called when the ViewHolder is created
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
     }
 
+    // Called to bind data to the ViewHolder
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
 
-        // Set item background color based on position
-        val colorIndex = position % 3  // Alternating background colors
-        val backgroundColor = when (colorIndex) {
-            0 -> Color.parseColor("#2D2D2D")
-            1 -> Color.parseColor("#FFFFFF")
-            2 -> Color.parseColor("#E8715C")
-            else -> Color.parseColor("#FFFFFF")  // Default fallback
+        // Determine the background color based on the position
+        val backgroundColor = when (position % 3) {
+            0 -> Color.parseColor("#2D2D2D") // Dark Gray
+            1 -> Color.WHITE // White
+            2 -> Color.parseColor("#E8715C") // Red
+            else -> Color.WHITE // Default to White
         }
-
         holder.cardView.setCardBackgroundColor(backgroundColor)
 
-        // Set text color based on background color
-        val textColor = if (backgroundColor == Color.WHITE) {
-            // Use black text on white background
-            Color.BLACK
-        } else {
-            // Use white text on any other background
-            Color.WHITE
-        }
+        // Determine text color based on the background color
+        val textColor = if (backgroundColor == Color.WHITE) Color.BLACK else Color.WHITE
+        setTextColor(holder, textColor)
 
-        // Set text colors
-        holder.nameTextView.setTextColor(textColor)
-        holder.priorityButton.setTextColor(textColor)
-        holder.customerName.setTextColor(textColor)
-        holder.personAssigned.setTextColor(textColor)
-        holder.startDate.setTextColor(textColor)
-
-        Log.d("TEST44", "Old date: ${task.startDate}")
-        val formattedDate = task.startDate.replace("-", "/")
-        holder.startDate.text = formattedDate
-        Log.d("TEST44", "New date:$formattedDate")
-
+        // Format and set the task start date
+        holder.startDate.text = task.startDate.replace("-", "/")
         holder.nameTextView.text = task.name
         holder.priorityButton.text = task.priorityLevel
 
-        // Adjust the priority button text color based on the background color
-        if (backgroundColor == Color.parseColor("#E8715C")) { // Red background
-            holder.priorityButton.setBackgroundColor(Color.WHITE)
-            // Set text color to black
-            holder.priorityButton.setTextColor(Color.RED)
-            holder.moreImageView.setColorFilter(Color.WHITE)
-        } else {
-            // Set button background color based on priority level
-            val priorityColor = priorityColors[task.priorityLevel] ?: "#FFFFFF" // Default to white if not found
-            holder.priorityButton.setBackgroundColor(Color.parseColor(priorityColor))
-            // Use the determined text color
-            holder.priorityButton.setTextColor(textColor)
-        }
+        // Set the priority button appearance
+        setPriorityButton(holder, task, backgroundColor, textColor)
+        // Set the status button appearance
+        setStatusButton(holder, backgroundColor)
 
-        if(backgroundColor == Color.parseColor("#E8715C") || backgroundColor == Color.parseColor("#2D2D2D")){
-            holder.moreImageView.setColorFilter(Color.WHITE)
-        }
-
-        if(backgroundColor == Color.parseColor("#FFFFFF")){
-            holder.status.setBackgroundColor(Color.parseColor("#2D2D2D"))
-            holder.status.setTextColor(Color.WHITE)
-        }
-
-        holder.status.text = task.status
+        // Set assigned person and customer name
+        holder.personAssigned.text = task.personAssigned
         getCustomerName(task.customerID!!) { customerName ->
             holder.customerName.text = customerName ?: "Unassigned customer"
         }
-        holder.personAssigned.text = task.personAssigned
-        holder.startDate.text = task.startDate
 
         // Set click listener for the more options icon
         holder.moreImageView.setOnClickListener {
             showPopupMenu(holder.moreImageView, task)
         }
+
+        // Set the color of the moreImageView based on the background color
+        setMoreImageViewColor(holder.moreImageView, backgroundColor)
     }
 
+    // Returns the total number of items in the adapter
     override fun getItemCount(): Int = tasks.size
 
+    // Sets the text color for the relevant views
+    private fun setTextColor(holder: TaskViewHolder, textColor: Int) {
+        holder.nameTextView.setTextColor(textColor)
+        holder.priorityButton.setTextColor(textColor)
+        holder.customerName.setTextColor(textColor)
+        holder.personAssigned.setTextColor(textColor)
+        holder.startDate.setTextColor(textColor)
+    }
+
+    // Configures the priority button appearance
+    private fun setPriorityButton(holder: TaskViewHolder, task: TaskModel, backgroundColor: Int, textColor: Int) {
+        // Red background
+        if (backgroundColor == Color.parseColor("#E8715C")) {
+            holder.priorityButton.setBackgroundColor(Color.WHITE)
+            holder.priorityButton.setTextColor(Color.RED)
+        } else {
+            // Set background color based on priority level
+            holder.priorityButton.setBackgroundColor(Color.parseColor(priorityColors[task.priorityLevel] ?: "#FFFFFF"))
+            holder.priorityButton.setTextColor(textColor)
+        }
+    }
+
+    // Configures the status button appearance
+    private fun setStatusButton(holder: TaskViewHolder, backgroundColor: Int) {
+        holder.status.setBackgroundColor(if (backgroundColor == Color.parseColor("#2D2D2D")) Color.WHITE else Color.parseColor("#2D2D2D"))
+        holder.status.setTextColor(if (backgroundColor == Color.parseColor("#2D2D2D")) Color.BLACK else Color.WHITE)
+    }
+
+    // Sets the color of the moreImageView based on the background color
+    private fun setMoreImageViewColor(imageView: ImageView, backgroundColor: Int) {
+        if (backgroundColor == Color.parseColor("#E8715C") || backgroundColor == Color.parseColor("#2D2D2D")) {
+            // Set to white for red or grey backgrounds
+            imageView.setColorFilter(Color.WHITE)
+        } else {
+            // Reset filter for other backgrounds
+            imageView.clearColorFilter()
+        }
+    }
+
+    // Shows the popup menu for editing or deleting a task
     private fun showPopupMenu(view: View, task: TaskModel) {
         val popupMenu = PopupMenu(view.context, view)
         popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
@@ -131,52 +141,56 @@ class TaskAdapter(
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit_item -> {
-                    // Call the edit click listener
-                    Log.d("INF355", "Edit button called")
+                    // Call edit listener
                     onEditClick(task)
                     true
                 }
                 R.id.delete_item -> {
-                    // Call the delete click listener
+                    // Call delete listener
                     onDeleteClick(task)
                     true
                 }
                 else -> false
             }
         }
+        // Show the popup menu
         popupMenu.show()
     }
 
+    // Fetches the customer name using the provided ID
     private fun getCustomerName(id: String, onResult: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val sbHelper = SupabaseHelper()
             val customer = sbHelper.getCustomerNameUsingID(id)
-
-            // Switch to the Main thread to handle the result
             withContext(Dispatchers.Main) {
+                // Return the customer name on the main thread
                 onResult(customer.CustomerName)
             }
         }
     }
 
+    // Updates an existing task in the adapter
     fun updateTask(updatedTask: TaskModel) {
         val index = tasks.indexOfFirst { it.id == updatedTask.id }
         if (index != -1) {
             tasks[index] = updatedTask
-            notifyItemChanged(index) // Notify the adapter of the item change
+            // Notify the adapter of the item change
+            notifyItemChanged(index)
         }
     }
 
+    // Updates the entire list of tasks in the adapter
     fun updateTasks(newTasks: List<TaskModel>) {
         val oldSize = tasks.size
         tasks.clear()
         tasks.addAll(newTasks)
-        // Notify that all old items were removed
+        // Notify that old items were removed
         notifyItemRangeRemoved(0, oldSize)
         // Notify that new items were added
         notifyItemRangeInserted(0, newTasks.size)
     }
 
+    // Removes a task from the adapter
     fun removeTask(task: TaskModel) {
         val position = tasks.indexOfFirst { it.id == task.id }
         if (position != -1) {
@@ -187,4 +201,7 @@ class TaskAdapter(
         }
     }
 }
+
+
+
 
