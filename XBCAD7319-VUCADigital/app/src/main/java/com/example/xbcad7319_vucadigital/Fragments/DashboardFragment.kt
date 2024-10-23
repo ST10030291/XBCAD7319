@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -27,10 +28,18 @@ class DashboardFragment : Fragment() {
 
     private lateinit var customerCountTextView: TextView
     private lateinit var opportunitiesCountTextView: TextView
+    private lateinit var filteredTasks: List<Int>
+    private lateinit var dailyFilterButton: Button
+    private lateinit var weeklyFilterButton: Button
+    private lateinit var monthlyFilterButton: Button
+    private lateinit var yearlyFilterButton: Button
     private lateinit var viewProductsBtn: CardView
     private lateinit var viewAnalyticsBtn: CardView
     private lateinit var lineChart: LineChart
-    private lateinit var tasksByMonth: List<Int>
+    private val monthLabels = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    private val dayLabels = List(31) { (it + 1).toString() }
+    private val weekLabels = List(5) { "Week ${it + 1}" }
+    private val yearLabels = listOf("2024")
     private val supabaseHelper = SupabaseHelper()
 
     override fun onResume() {
@@ -42,49 +51,83 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val user = FirebaseAuth.getInstance().currentUser
-        val userId = user?.uid ?: return
 
-        // Initialize
-        customerCountTextView = view.findViewById(R.id.customerCount)
-        opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
-        viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
-        viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
-        lineChart = view.findViewById(R.id.lineChart1)
+        //Initialize views
+        InitElements(view)
 
         // Display a welcome message with the users name for added personalization
         val userEmail = user?.email
         val userName = userEmail?.substringBefore("@") ?: "User"
         view.findViewById<TextView>(R.id.username_tv).text = "Welcome, $userName"
 
-        // Set onClickListeners
-        viewProductsBtn.setOnClickListener {
-            openProductsFragment()
-        }
-
-        viewAnalyticsBtn.setOnClickListener {
-            openAnalyticsFragment()
-        }
-
         lifecycleScope.launch {
-            tasksByMonth = supabaseHelper.fetchTasksByMonth()
+            filteredTasks = supabaseHelper.fetchTasksByFilter("month")
 
             fetchAndDisplayCustomerCount()
             fetchAndDisplayOpportunitiesCount()
+            selectButton(monthlyFilterButton)
+            setupLineChart(monthLabels, filteredTasks)
 
-            setupLineChart()
+            // Set onClickListeners
+            viewProductsBtn.setOnClickListener {
+                openProductsFragment()
+            }
+
+            viewAnalyticsBtn.setOnClickListener {
+                openAnalyticsFragment()
+            }
+
+            //This filters by month
+            monthlyFilterButton.setOnClickListener {
+                lifecycleScope.launch {
+                    filteredTasks = supabaseHelper.fetchTasksByFilter("month")
+                    setupLineChart(monthLabels, filteredTasks)
+                    selectButton(monthlyFilterButton)
+                }
+            }
+            //This filters by days
+            dailyFilterButton.setOnClickListener {
+                lifecycleScope.launch {
+                    filteredTasks = supabaseHelper.fetchTasksByFilter("day")
+                    setupLineChart(dayLabels, filteredTasks)
+                    selectButton(dailyFilterButton)
+                }
+            }
+            //This filters by weeks
+            weeklyFilterButton.setOnClickListener {
+                lifecycleScope.launch {
+                    filteredTasks = supabaseHelper.fetchTasksByFilter("week")
+                    setupLineChart(weekLabels, filteredTasks)
+                    selectButton(weeklyFilterButton)
+                }
+            }
+            //This filters by years
+            yearlyFilterButton.setOnClickListener {
+                lifecycleScope.launch {
+                    filteredTasks = supabaseHelper.fetchTasksByFilter("year")
+                    setupLineChart(yearLabels, filteredTasks)
+                    selectButton(yearlyFilterButton)
+                }
+            }
         }
 
+
+    }
+
+    private fun InitElements(view: View){
+        customerCountTextView = view.findViewById(R.id.customerCount)
+        opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
+        viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
+        viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
+        lineChart = view.findViewById(R.id.lineChart1)
+        dailyFilterButton = view.findViewById(R.id.DailyFilter)
+        weeklyFilterButton = view.findViewById(R.id.WeeklyFilter)
+        monthlyFilterButton= view.findViewById(R.id.MonthlyFilter)
+        yearlyFilterButton = view.findViewById(R.id.YearlyFilter)
 
     }
 
@@ -102,6 +145,22 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+    }
+
+    //Changes the filter button selected theme
+    private fun selectButton(selectedButton: Button) {
+        monthlyFilterButton.isSelected = selectedButton == monthlyFilterButton
+        dailyFilterButton.isSelected = selectedButton == dailyFilterButton
+        weeklyFilterButton.isSelected = selectedButton == weeklyFilterButton
+        yearlyFilterButton.isSelected = selectedButton == yearlyFilterButton
     }
 
     private fun fetchAndDisplayOpportunitiesCount() {
@@ -120,59 +179,52 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun setupLineChart() {
-        // Create data for the line chart
-        val months = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        val yValues = tasksByMonth
-
-        val entries = months.mapIndexed { index, month ->
-            Entry(index.toFloat(), yValues[index].toFloat())
+    //Sets up the line chart according to the parsed x labels and the values given
+    private fun setupLineChart(xAxisLabels: List<String>, values: List<Int>) {
+        //Parse the x and y values
+        val entries = List(xAxisLabels.size) { index ->
+            Entry(index.toFloat(), values.getOrElse(index) { 0 }.toFloat())
         }
 
-        // Create a dataset
-        val lineDataSet = LineDataSet(entries, "Monthly Data").apply {
-            color = 0xFFFF7F50.toInt() // Coral color
+        //Create the Line chart data set
+        val lineDataSet = LineDataSet(entries, "Number of Tasks").apply {
+            color = 0xFFFF7F50.toInt()
             valueTextColor = ColorTemplate.COLORFUL_COLORS[1]
             valueTextSize = 0f
             lineWidth = 3f
-            circleRadius = 0f
+            circleRadius = 0.1f
             mode = LineDataSet.Mode.CUBIC_BEZIER
             setDrawCircles(false)
         }
 
-        // Create LineData object and set it to the chart
         val lineData = LineData(lineDataSet)
         lineChart.data = lineData
 
-        // Customize Y-axis
-        lineChart.axisLeft.axisMinimum = -0.5f // Set minimum Y value
-        lineChart.axisLeft.axisMaximum = 30f // Set maximum Y value
-        lineChart.axisLeft.setLabelCount(5, false) // Set label count for Y-axis
+        //Customise the Y axis
+        lineChart.axisLeft.axisMinimum = -0.5f
+        lineChart.axisLeft.axisMaximum = 30f
+        lineChart.axisLeft.setLabelCount(5, false)
+        lineChart.axisLeft.gridColor = android.graphics.Color.TRANSPARENT
+        lineChart.axisLeft.gridLineWidth = 0f
         lineChart.axisLeft.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
             override fun getAxisLabel(value: Float, axis: com.github.mikephil.charting.components.AxisBase?): String {
                 return if (value % 5 == 0f) value.toInt().toString() else ""
             }
         }
 
-        // Hide grid lines for Y-axis
-        lineChart.axisLeft.gridColor = android.graphics.Color.TRANSPARENT // Hide Y-axis grid lines
-        lineChart.axisLeft.gridLineWidth = 0f // Set Y-axis grid line width to 0
+        lineChart.axisRight.isEnabled = false
 
-        lineChart.axisRight.isEnabled = false // Hide the right Y-axis
+        //Customize the X axis
+        lineChart.xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
+        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(xAxisLabels)
+        lineChart.xAxis.setLabelCount(31, true)
+        lineChart.xAxis.granularity = 1f
+        lineChart.xAxis.gridColor = android.graphics.Color.TRANSPARENT
+        lineChart.xAxis.gridLineWidth = 0f
 
-        // Customize X-axis
-        lineChart.xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM // Set X-axis position
-        lineChart.xAxis.valueFormatter = com.github.mikephil.charting.formatter.IndexAxisValueFormatter(months) // Set custom labels for X-axis
-        lineChart.xAxis.setLabelCount(months.size, true) // Ensure all months are displayed
-        lineChart.xAxis.granularity = 1f // Minimum interval for X-axis
-
-        // Hide grid lines for X-axis
-        lineChart.xAxis.gridColor = android.graphics.Color.TRANSPARENT // Hide X-axis grid lines
-        lineChart.xAxis.gridLineWidth = 0f // Set X-axis grid line width to 0
-
-        lineChart.description.isEnabled = false // Hide the description
-        lineChart.animateX(2000) // Animate the chart
-        lineChart.invalidate() // Refresh the chart
+        lineChart.description.isEnabled = false
+        lineChart.animateX(2000)
+        lineChart.invalidate()
     }
 
 

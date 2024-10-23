@@ -223,9 +223,10 @@ class SupabaseHelper {
         }
     }
 
-    suspend fun fetchTasksByMonth(): ArrayList<Int> {
+    //This filters the tasks based of the filter type argument
+    suspend fun fetchTasksByFilter(filterType: String): ArrayList<Int> {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
-        val tasksByMonthList = ArrayList<Int>()
+        val tasksGroupedList = ArrayList<Int>()
 
         if (isInitialized) {
             val result = supabase.from("tasks")
@@ -233,26 +234,72 @@ class SupabaseHelper {
                 .decodeList<TaskModel>()
                 .map { it.startDate }
 
-            val tasksGroupedByMonth = IntArray(12)
-
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-            result.forEach { task ->
-                val taskDate: Date? = dateFormat.parse(task)
-                taskDate?.let {
-                    val calendar = Calendar.getInstance().apply { time = it }
-                    val monthIndex = calendar.get(Calendar.MONTH)
-                    tasksGroupedByMonth[monthIndex]++
+            val arraySize = when (filterType) {
+                "month" -> 12
+                "day" -> 31
+                "year" -> 1
+                "week" -> 5
+                else -> throw IllegalArgumentException("Invalid filter type. Use 'month', 'day', 'year', or 'week'.")
+            }
+            val tasksGrouped = IntArray(arraySize)
+
+            val currentCalendar = Calendar.getInstance()
+
+            //If the filter type is week then only the weeks of the current month will be captured
+            if (filterType == "week") {
+                val firstDayOfMonth = currentCalendar.apply {
+                    set(Calendar.DAY_OF_MONTH, 1)
+                }.time
+                val lastDayOfMonth = currentCalendar.apply {
+                    set(Calendar.DAY_OF_MONTH, currentCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+                }.time
+
+                result.forEach { task ->
+                    val taskDate: Date? = dateFormat.parse(task)
+                    taskDate?.let {
+                        val taskCalendar = Calendar.getInstance().apply { time = it }
+
+                        if (taskDate.after(firstDayOfMonth) && taskDate.before(lastDayOfMonth)) {
+                            val weekIndex = taskCalendar.get(Calendar.WEEK_OF_MONTH) - 1
+                            tasksGrouped[weekIndex]++
+                        }
+                    }
+                }
+            } else {
+                result.forEach { task ->
+                    val taskDate: Date? = dateFormat.parse(task)
+                    taskDate?.let {
+                        val calendar = Calendar.getInstance().apply { time = it }
+
+                        when (filterType) {
+                            "month" -> {
+                                val monthIndex = calendar.get(Calendar.MONTH)
+                                tasksGrouped[monthIndex]++
+                            }
+                            "day" -> {
+                                val dayIndex = calendar.get(Calendar.DAY_OF_MONTH) - 1
+                                tasksGrouped[dayIndex]++
+                            }
+                            "year" -> {
+                                tasksGrouped[0]++
+                            }
+                        }
+                    }
                 }
             }
 
-            tasksByMonthList.addAll(tasksGroupedByMonth.toList())
+            tasksGroupedList.addAll(tasksGrouped.toList())
         } else {
             throw Exception("Supabase initialization failed.")
         }
 
-        return tasksByMonthList
+        //returns the filtered tasks list
+        return tasksGroupedList
     }
+
+
 
 
     //products
