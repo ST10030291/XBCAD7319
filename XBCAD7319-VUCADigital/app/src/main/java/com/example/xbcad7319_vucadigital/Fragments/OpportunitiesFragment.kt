@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -36,6 +37,11 @@ class OpportunitiesFragment : Fragment() {
     private lateinit var customers: List<CustomerModel>
     private lateinit var sbHelper: SupabaseHelper
 
+
+    private lateinit var filteredOpportunities: List<OpportunityModel>
+    private lateinit var opportunitiesSearch: List<OpportunityModel>
+    private lateinit var searchView: SearchView
+
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -56,7 +62,7 @@ class OpportunitiesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        searchView = view.findViewById(R.id.opportunitySearchView)
         val recyclerView: RecyclerView = view.findViewById(R.id.opportunity_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         opportunityAdapter = OpportunityAdapter(opportunityList, ::onEditOpportunity, ::onDeleteOpportunity)
@@ -64,12 +70,43 @@ class OpportunitiesFragment : Fragment() {
 
         sbHelper = SupabaseHelper()
         loadOpportunity()
+
+        setUpSearchView()
     }
+    private fun setUpSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { searchOpportunitiesByName(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { searchOpportunitiesByName(it) }
+                return true
+            }
+        })
+    }
+
+    private fun searchOpportunitiesByName(query: String) {
+        val queryLower = query.lowercase()
+
+        filteredOpportunities = opportunitiesSearch.filter { opportunity ->
+            opportunity.CustomerName.lowercase().contains(queryLower)
+        }
+
+        opportunityAdapter.updateOpportunities(filteredOpportunities)
+
+        if (filteredOpportunities.isEmpty()) {
+            Toast.makeText(context, "Opportunity \"$query\" not found!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun loadOpportunity() {
         lifecycleScope.launch {
             try {
                 val opportunities = sbHelper.getAllOpportunities()
+                opportunitiesSearch = sbHelper.getAllOpportunities()
                 Log.d("Opportunities", "Number of opportunities retrieved: ${opportunities.size}")
                 opportunityAdapter.updateOpportunity(opportunities)
             } catch (e: Exception) {
