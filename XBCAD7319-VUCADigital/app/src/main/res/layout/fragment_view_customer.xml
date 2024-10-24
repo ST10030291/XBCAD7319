@@ -165,21 +165,42 @@
 
     </FrameLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_gravity="start"
-        android:text="@string/products_and_services"
-        android:textStyle="bold"
-        android:textSize="17sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="start"
+            android:textColor="@color/black"
+            android:text="@string/products_and_services"
+            android:textStyle="bold"
+            android:textSize="17sp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="15dp"
+            android:id="@+id/NewCustomerProductBtn"
+            android:text="@string/new_product"
+            android:textColor="@color/white"
+            android:background="@drawable/gray_button_layout"
+            android:layout_alignParentEnd="true"
+            android:textAllCaps="false"/>
+
+    </RelativeLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/customer_products_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="15dp"/>
 
 

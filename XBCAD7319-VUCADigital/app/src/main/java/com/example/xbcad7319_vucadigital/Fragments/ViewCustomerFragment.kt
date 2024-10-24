@@ -12,6 +12,7 @@ import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.CustomerAdapter
@@ -23,6 +24,14 @@ import kotlinx.coroutines.launch
 class ViewCustomerFragment : Fragment() {
     private lateinit var customer: CustomerModel
     private lateinit var sbHelper: SupabaseHelper
+
+    override fun onResume() {
+        super.onResume()
+        val dashboardActivity = activity as? DashboardActivity
+        dashboardActivity?.binding?.apply {
+            plusBtn.visibility = View.GONE
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,6 +76,10 @@ class ViewCustomerFragment : Fragment() {
         view.findViewById<ImageView>(R.id.back_btn).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
+
+        view.findViewById<AppCompatButton>(R.id.NewCustomerProductBtn).setOnClickListener{
+            navigateToCreateCustomerProductFragment()
+        }
     }
 
     private fun makePhoneCall(phoneNumber: String) {
@@ -105,6 +118,19 @@ class ViewCustomerFragment : Fragment() {
 
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, updateCustomerFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun navigateToCreateCustomerProductFragment() {
+
+        (activity as? DashboardActivity)?.apply {
+            binding.bottomNavigation.visibility = View.GONE
+            binding.plusBtn.visibility = View.GONE
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, AddCustomerProductFragment())
             .addToBackStack(null)
             .commit()
     }
