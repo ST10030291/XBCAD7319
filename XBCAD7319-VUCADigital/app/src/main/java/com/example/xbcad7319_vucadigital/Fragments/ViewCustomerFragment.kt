@@ -8,38 +8,52 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
-import com.example.xbcad7319_vucadigital.Adapters.CustomerAdapter
+import com.example.xbcad7319_vucadigital.Adapters.CustomerProductsAdapter
+import com.example.xbcad7319_vucadigital.Adapters.TaskAdapter
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.CustomerProductModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ViewCustomerFragment : Fragment() {
     private lateinit var customer: CustomerModel
     private lateinit var sbHelper: SupabaseHelper
+    private var customerProducts = mutableListOf<CustomerProductModel>()
+    private lateinit var customerProductAdapter: CustomerProductsAdapter
 
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
         dashboardActivity?.binding?.apply {
             plusBtn.visibility = View.GONE
+            bottomNavigation.visibility = View.VISIBLE
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sbHelper = SupabaseHelper()
+        val recyclerView: RecyclerView = view.findViewById(R.id.customer_products_recycler)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        customerProductAdapter = CustomerProductsAdapter(customerProducts)
+        recyclerView.adapter = customerProductAdapter
 
         retrieveArguments()
         displayCustomerData(view)
         setupClickListeners(view)
+
+        loadCustomerProducts()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -133,6 +147,25 @@ class ViewCustomerFragment : Fragment() {
             .replace(R.id.fragment_container, AddCustomerProductFragment())
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun loadCustomerProducts() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                customer.CustomerName.let {
+                    customerProducts = sbHelper.getCustomerProducts(it).toMutableList()
+                }
+
+                withContext(Dispatchers.Main) {
+                    customerProductAdapter.updateCustomerProducts(customerProducts)
+                }
+            } catch (e: Exception) {
+                Log.e("CustomerProductsLoadError", "Error loading customer products", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Couldn't load customer products from DB", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun showToast(message: String) {

@@ -1,29 +1,21 @@
 package com.example.xbcad7319_vucadigital.db
 
-import android.content.Context
-import android.net.Uri
-import java.io.InputStream
-import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.CustomerProductModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
-import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -473,4 +465,22 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
+
+    suspend fun getCustomerProducts(customerName: String): List<CustomerProductModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("customer_products")
+                .select{
+                    filter{
+                        eq("CustomerName", customerName)
+                    }
+                    order("id", Order.ASCENDING)
+                }.decodeList<CustomerProductModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+
 }
