@@ -1,7 +1,6 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.firebase.auth.FirebaseAuth
@@ -69,57 +67,41 @@ class DashboardFragment : Fragment() {
         view.findViewById<TextView>(R.id.username_tv).text = "Welcome, $userName"
 
         lifecycleScope.launch {
-            filteredTasks = supabaseHelper.fetchTasksByFilter("month")
+            // Initial data fetching on the background thread
+            val initialFilteredTasks = withContext(Dispatchers.IO) {
+                supabaseHelper.fetchTasksByFilter("month")
+            }
 
             fetchAndDisplayCustomerCount()
             fetchAndDisplayOpportunitiesCount()
             selectButton(monthlyFilterButton)
-            setupLineChart(monthLabels, filteredTasks)
+            setupLineChart(monthLabels, initialFilteredTasks)
 
             // Set onClickListeners
-            viewProductsBtn.setOnClickListener {
-                openProductsFragment()
-            }
+            viewProductsBtn.setOnClickListener { openProductsFragment() }
+            viewAnalyticsBtn.setOnClickListener { openAnalyticsFragment() }
 
-            viewAnalyticsBtn.setOnClickListener {
-                openAnalyticsFragment()
-            }
+            // Set up filter buttons
+            setupFilterButton(monthlyFilterButton, "month", monthLabels)
+            setupFilterButton(dailyFilterButton, "day", dayLabels)
+            setupFilterButton(weeklyFilterButton, "week", weekLabels)
+            setupFilterButton(yearlyFilterButton, "year", yearLabels)
+        }
+    }
 
-            //This filters by month
-            monthlyFilterButton.setOnClickListener {
-                lifecycleScope.launch {
-                    filteredTasks = supabaseHelper.fetchTasksByFilter("month")
-                    setupLineChart(monthLabels, filteredTasks)
-                    selectButton(monthlyFilterButton)
+    private fun setupFilterButton(button: Button, filterType: String, labels: List<String>) {
+        button.setOnClickListener {
+            lifecycleScope.launch {
+                // Fetch tasks on the background thread
+                val tasks = withContext(Dispatchers.IO) {
+                    supabaseHelper.fetchTasksByFilter(filterType)
                 }
-            }
-            //This filters by days
-            dailyFilterButton.setOnClickListener {
-                lifecycleScope.launch {
-                    filteredTasks = supabaseHelper.fetchTasksByFilter("day")
-                    setupLineChart(dayLabels, filteredTasks)
-                    selectButton(dailyFilterButton)
-                }
-            }
-            //This filters by weeks
-            weeklyFilterButton.setOnClickListener {
-                lifecycleScope.launch {
-                    filteredTasks = supabaseHelper.fetchTasksByFilter("week")
-                    setupLineChart(weekLabels, filteredTasks)
-                    selectButton(weeklyFilterButton)
-                }
-            }
-            //This filters by years
-            yearlyFilterButton.setOnClickListener {
-                lifecycleScope.launch {
-                    filteredTasks = supabaseHelper.fetchTasksByFilter("year")
-                    setupLineChart(yearLabels, filteredTasks)
-                    selectButton(yearlyFilterButton)
-                }
+
+                // Update UI on the main thread
+                setupLineChart(labels, tasks)
+                selectButton(button)
             }
         }
-
-
     }
 
     private fun InitElements(view: View){
