@@ -53,12 +53,15 @@
             android:id="@+id/plusBtn"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:contentDescription="TODO"
-            android:src="@drawable/plus_icon"
             app:layout_anchor="@id/bottomNavigation"
-            app:maxImageSize="30dp"
-            android:visibility="gone" />
+            android:theme="@style/NavbarTheme"
+            android:src="@drawable/plus_icon"
+            app:elevation="0dp"
+            app:backgroundTint="@color/white"
+            app:tint="@null"
+            app:maxImageSize="60dp"
+            android:visibility="visible" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

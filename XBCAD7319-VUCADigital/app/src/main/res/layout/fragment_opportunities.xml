@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_marginStart="10dp"
@@ -35,25 +35,13 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"/>
 
-
-
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/opportunity_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="100dp"/>
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/opportunity_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </ScrollView>
-
-        </LinearLayout>
 
     </LinearLayout>
 
