@@ -52,7 +52,7 @@ data class ProductModel(
 @Serializable
 class CustomerProductModel(
     val id: String? = null,
-    val customerName: String,
+    val CustomerName: String,
     val ProductName: String,
     val ContractStart: String,
     val ContractEnd: String,

@@ -75,6 +75,7 @@
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
+                    android:textColor="@color/black"
                     android:hint="Customer Name"
                     android:inputType="text"
                     android:paddingStart="15dp"
@@ -100,6 +101,7 @@
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
+                    android:textColor="@color/black"
                     android:hint="Product Name"
                     android:inputType="text"
                     android:paddingStart="15dp"
@@ -137,8 +139,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:hint="Start Date"
+                            android:textColor="@color/black"
                             android:background="@drawable/user_input_border"
-                            android:inputType="date"
                             android:focusable="false"
                             android:clickable="true"
                             android:drawableEnd="@drawable/calender_icon"
@@ -172,7 +174,7 @@
                             android:layout_height="48dp"
                             android:hint="End Date"
                             android:background="@drawable/user_input_border"
-                            android:inputType="date"
+                            android:textColor="@color/black"
                             android:focusable="false"
                             android:clickable="true"
                             android:drawableEnd="@drawable/calender_icon"
@@ -199,6 +201,7 @@
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
+                    android:textColor="@color/black"
                     android:hint="Contract Term"
                     android:inputType="text"
                     android:paddingStart="15dp"
@@ -224,6 +227,7 @@
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
+                    android:textColor="@color/black"
                     android:hint="Service Provider"
                     android:inputType="text"
                     android:paddingStart="15dp"
@@ -249,6 +253,7 @@
                     android:layout_height="48dp"
                     android:layout_marginTop="0dp"
                     android:background="@drawable/user_input_border"
+                    android:textColor="@color/black"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
                     android:textSize="16sp"
@@ -268,6 +273,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/statusSpinner" />
 
+                <View
+                    android:id="@+id/yourView"
+                    android:layout_width="375dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/holo_blue_light"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/createButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

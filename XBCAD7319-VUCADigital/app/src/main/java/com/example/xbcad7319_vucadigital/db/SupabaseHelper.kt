@@ -6,6 +6,7 @@ import java.io.InputStream
 import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
+import com.example.xbcad7319_vucadigital.models.CustomerProductModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
@@ -461,5 +462,15 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }
-}
 
+    suspend fun addCustomerProduct(customerProduct : CustomerProductModel) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            supabase.from("customer_products").insert(customerProduct)
+            return true
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+}
