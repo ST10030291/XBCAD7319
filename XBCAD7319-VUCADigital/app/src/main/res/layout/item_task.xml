@@ -2,7 +2,6 @@
     android:id="@+id/card_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="360dp"
     android:layout_height="190dp"
@@ -47,38 +46,33 @@
         <LinearLayout
             android:id="@+id/priority_status_layout"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="30dp"
             android:orientation="horizontal"
             android:layout_marginBottom="10dp">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/task_priority"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="15dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:paddingEnd="15dp"
-                android:layout_marginEnd="15dp"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:theme="@style/PriorityBtnTheme"
+                android:layout_height="29dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="@string/priority"
-                android:layout_marginStart="10dp"/>
+                android:textColor="@color/black"
+                android:background="@drawable/task_priority_square_btn"
+                android:textAllCaps="false"
+                android:textSize="16sp"/>
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/task_status"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="15dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:paddingEnd="15dp"
-                android:layout_marginEnd="15dp"
-                android:textSize="16sp"
+                android:layout_height="29dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/status"
                 android:textColor="@color/black"
-                android:theme="@style/StatusBtnTheme"
-                android:text="@string/status"/>
+                android:background="@drawable/task_status_square_btn"
+                android:textAllCaps="false"
+                android:textSize="16sp"/>
 
         </LinearLayout>
 

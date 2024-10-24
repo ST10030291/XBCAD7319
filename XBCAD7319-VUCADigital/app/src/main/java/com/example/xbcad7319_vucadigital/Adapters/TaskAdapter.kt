@@ -1,5 +1,6 @@
 package com.example.xbcad7319_vucadigital.Adapters
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -70,6 +71,7 @@ class TaskAdapter(
         holder.startDate.text = task.startDate.replace("-", "/")
         holder.nameTextView.text = task.name
         holder.priorityButton.text = task.priorityLevel
+        holder.status.text = task.status
 
         // Set the priority button appearance
         setPriorityButton(holder, task, backgroundColor, textColor)
@@ -107,19 +109,35 @@ class TaskAdapter(
     private fun setPriorityButton(holder: TaskViewHolder, task: TaskModel, backgroundColor: Int, textColor: Int) {
         // Red background
         if (backgroundColor == Color.parseColor("#E8715C")) {
-            holder.priorityButton.setBackgroundColor(Color.WHITE)
+            holder.priorityButton.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+            //holder.priorityButton.setBackgroundColor(Color.WHITE)
             holder.priorityButton.setTextColor(Color.RED)
         } else {
             // Set background color based on priority level
-            holder.priorityButton.setBackgroundColor(Color.parseColor(priorityColors[task.priorityLevel] ?: "#FFFFFF"))
+            val newColor = Color.parseColor(priorityColors[task.priorityLevel] ?: "#FFFFFF")
+            holder.priorityButton.backgroundTintList = ColorStateList.valueOf(newColor)
+            //holder.priorityButton.setBackgroundColor(Color.parseColor(priorityColors[task.priorityLevel] ?: "#FFFFFF"))
             holder.priorityButton.setTextColor(textColor)
         }
     }
 
     // Configures the status button appearance
     private fun setStatusButton(holder: TaskViewHolder, backgroundColor: Int) {
-        holder.status.setBackgroundColor(if (backgroundColor == Color.parseColor("#2D2D2D")) Color.WHITE else Color.parseColor("#2D2D2D"))
-        holder.status.setTextColor(if (backgroundColor == Color.parseColor("#2D2D2D")) Color.BLACK else Color.WHITE)
+        // Determine the tint color based on the cardview background color
+        val tintColor = if (backgroundColor == Color.parseColor("#2D2D2D") ||
+            backgroundColor == Color.parseColor("#E8715C")) {
+            Color.WHITE
+        } else {
+            // Set background to dark grey
+            Color.parseColor("#2D2D2D")
+        }
+
+        // Set the background tint
+        holder.status.backgroundTintList = ColorStateList.valueOf(tintColor)
+
+        // Set the text color based on the background color
+        holder.status.setTextColor(if (backgroundColor == Color.parseColor("#2D2D2D") ||
+            backgroundColor == Color.parseColor("#E8715C")) Color.BLACK else Color.WHITE)
     }
 
     // Sets the color of the moreImageView based on the background color
