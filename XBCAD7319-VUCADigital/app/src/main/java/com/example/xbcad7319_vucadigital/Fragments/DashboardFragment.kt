@@ -1,5 +1,7 @@
 package com.example.xbcad7319_vucadigital.Fragments
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +33,6 @@ class DashboardFragment : Fragment() {
 
     private lateinit var customerCountTextView: TextView
     private lateinit var opportunitiesCountTextView: TextView
-    private lateinit var filteredTasks: List<Int>
     private lateinit var dailyFilterButton: Button
     private lateinit var weeklyFilterButton: Button
     private lateinit var monthlyFilterButton: Button
@@ -178,8 +179,8 @@ class DashboardFragment : Fragment() {
             valueTextColor = ColorTemplate.COLORFUL_COLORS[1]
             valueTextSize = 0f
             lineWidth = 3f
-            circleRadius = 0.1f
-            mode = LineDataSet.Mode.CUBIC_BEZIER
+            circleRadius = 1f
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             setDrawCircles(false)
         }
 
@@ -188,16 +189,14 @@ class DashboardFragment : Fragment() {
 
         // Customize the Y axis
         lineChart.axisLeft.apply {
-            axisMinimum = -0.5f
-            axisMaximum = 30f
-            setLabelCount(5, false)
-            gridColor = android.graphics.Color.TRANSPARENT
+            gridColor = Color.TRANSPARENT
             gridLineWidth = 0f
-            valueFormatter = object : ValueFormatter() {
-                override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                    return if (value % 5 == 0f) value.toInt().toString() else ""
-                }
-            }
+            axisLineColor = Color.BLACK
+            axisLineWidth = 1f
+
+            setDrawGridLines(false)
+
+            typeface = Typeface.DEFAULT_BOLD
         }
 
         lineChart.axisRight.isEnabled = false
@@ -216,14 +215,21 @@ class DashboardFragment : Fragment() {
                 }
             }
 
-            // Set up the custom marker view
-            val markerView = CustomLineChartMarkerView(lineChart.context, lineChart)
-            lineChart.marker = markerView
+            axisLineColor = Color.BLACK
+            axisLineWidth = 1f
 
-            lineChart.description.isEnabled = false
-            lineChart.animateX(2000)
-            lineChart.invalidate()
+            setDrawGridLines(false)
+
+            typeface = Typeface.DEFAULT_BOLD
         }
+
+        // Set up the custom marker view
+        val markerView = CustomLineChartMarkerView(lineChart.context, lineChart)
+        lineChart.marker = markerView
+
+        lineChart.description.isEnabled = false
+        lineChart.animateX(1000)
+        lineChart.invalidate()
     }
 
 
