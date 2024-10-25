@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomLineChartMarkerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -214,6 +215,10 @@ class DashboardFragment : Fragment() {
                     }
                 }
             }
+
+            // Set up the custom marker view
+            val markerView = CustomLineChartMarkerView(lineChart.context, lineChart)
+            lineChart.marker = markerView
 
             lineChart.description.isEnabled = false
             lineChart.animateX(2000)
