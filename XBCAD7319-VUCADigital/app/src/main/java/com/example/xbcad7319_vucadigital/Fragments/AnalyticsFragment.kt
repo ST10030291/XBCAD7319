@@ -27,7 +27,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -114,7 +114,7 @@ class AnalyticsFragment : Fragment() {
         // Setup X-axis
         barChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = object : com.github.mikephil.charting.formatter.IndexAxisValueFormatter(labels.map { it.uppercase() }) {
+            valueFormatter = object : IndexAxisValueFormatter(labels.map { it.uppercase() }) {
                 override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                     return super.getAxisLabel(value, axis)
                 }
@@ -125,7 +125,6 @@ class AnalyticsFragment : Fragment() {
             axisLineWidth = 1f
             setDrawGridLines(false)
 
-            textSize = 11f
             // Make X-axis labels bold
             typeface = Typeface.DEFAULT_BOLD
         }
@@ -138,7 +137,6 @@ class AnalyticsFragment : Fragment() {
             gridColor = Color.TRANSPARENT
             setDrawGridLines(false)
 
-            textSize = 11f
             // Make Y-axis labels bold
             typeface = Typeface.DEFAULT_BOLD
         }
@@ -224,26 +222,24 @@ class AnalyticsFragment : Fragment() {
         // Setup X-axis
         lineChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = object : ValueFormatter() {
+            valueFormatter = object : IndexAxisValueFormatter(labels.map { it.uppercase() }) {
                 override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                    val index = value.toInt()
-                    return if (index in labels.indices) {
-                        // Add padding to the label
-                        labels[index].uppercase().padEnd(10) // Extra spaces for padding
-                    } else {
-                        ""
+                    // Adjusting the first and last label positions
+                    return when (value.toInt()) {
+                        0 -> "    ${super.getAxisLabel(value, axis)}" // Move first label to the right
+                        labels.size - 1 -> "${super.getAxisLabel(value, axis)}      " // Move last label to the left
+                        else -> super.getAxisLabel(value, axis)
                     }
                 }
             }
+
             // Ensure all labels are displayed
-            labelCount = labels.size
             granularity = 1f
             isGranularityEnabled = true
             axisLineColor = Color.BLACK
             axisLineWidth = 1f
             setDrawGridLines(false)
 
-            textSize = 11f
             // Make X-axis labels bold
             typeface = Typeface.DEFAULT_BOLD
         }
