@@ -2,17 +2,23 @@ package com.example.xbcad7319_vucadigital.Fragments
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.SearchView.SearchAutoComplete
 import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.db.SupabaseHelper
+import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.CustomerProductModel
+import com.example.xbcad7319_vucadigital.models.ProductModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -20,8 +26,8 @@ import java.util.*
 
 class AddCustomerProductFragment : Fragment() {
 
-    private lateinit var customerNameInput: EditText
-    private lateinit var productNameInput: EditText
+    private lateinit var customerNameInput: AutoCompleteTextView
+    private lateinit var productNameInput: AutoCompleteTextView
     private lateinit var contractStartDateInput: EditText
     private lateinit var contractEndDateInput: EditText
     private lateinit var contractTermInput: EditText
@@ -29,6 +35,10 @@ class AddCustomerProductFragment : Fragment() {
     private lateinit var createCustomerProductButton: Button
     private lateinit var statusSpinner: Spinner
     private lateinit var sbHelper: SupabaseHelper
+    private lateinit var customers: List<CustomerModel>
+    private lateinit var products: List<ProductModel>
+    private lateinit var customerAdapter: ArrayAdapter<String>
+    private lateinit var productAdapter: ArrayAdapter<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +59,13 @@ class AddCustomerProductFragment : Fragment() {
 
         // Initialize DB helper
         sbHelper = SupabaseHelper()
+
+        lifecycleScope.launch {
+            customers = sbHelper.getAllCustomers()
+            products = sbHelper.getAllProducts()
+            setupCustomerAutoComplete()
+            setupProductAutoComplete()
+        }
 
         // Setup status spinner
         setupStatusSpinner()
@@ -75,10 +92,28 @@ class AddCustomerProductFragment : Fragment() {
         createCustomerProductButton.setOnClickListener {
             if (validateInputs()) {
                 createCustomerProduct()
+                Log.d("Create Button Clicked", "Method called")
+            }
+            else{
+                Log.d("Create Button Clicked", "Method not called")
             }
         }
 
         return view
+    }
+
+    private fun setupCustomerAutoComplete() {
+        val customerNames = customers.map { it.CustomerName }
+        customerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, customerNames)
+        customerNameInput.setAdapter(customerAdapter)
+        customerNameInput.threshold = 1
+    }
+
+    private fun setupProductAutoComplete() {
+        val productNames = products.map { it.ProductName }
+        productAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, productNames)
+        productNameInput.setAdapter(productAdapter)
+        productNameInput.threshold = 1
     }
 
     private fun setupStatusSpinner() {
@@ -113,8 +148,8 @@ class AddCustomerProductFragment : Fragment() {
     }
 
     private fun validateInputs(): Boolean {
-        val customerName = customerNameInput.text.toString().trim()
-        val productName = productNameInput.text.toString().trim()
+        val customerName = customerNameInput.toString()
+        val productName = productNameInput.toString()
         val contractStartDate = contractStartDateInput.text.toString().trim()
         val contractEndDate = contractEndDateInput.text.toString().trim()
         val contractTerm = contractTermInput.text.toString().trim()
@@ -178,10 +213,10 @@ class AddCustomerProductFragment : Fragment() {
     }
 
     private fun createCustomerProduct() {
-        val customerName = customerNameInput.text.toString().trim()
-        val productName = productNameInput.text.toString().trim()
-        val contractStartDate = formatDate(contractStartDateInput.text.toString().trim()) // Format date
-        val contractEndDate = formatDate(contractEndDateInput.text.toString().trim()) // Format date
+        val customerName = customerNameInput.text.toString()
+        val productName = productNameInput.text.toString()
+        val contractStartDate = formatDate(contractStartDateInput.text.toString().trim())
+        val contractEndDate = formatDate(contractEndDateInput.text.toString().trim())
         val contractTerm = contractTermInput.text.toString().trim()
         val serviceProvider = serviceProviderInput.text.toString().trim()
         val status = statusSpinner.selectedItem.toString().trim()
