@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.CalendarContract.Colors
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -30,6 +32,7 @@ import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -95,36 +98,45 @@ class ProductsFragment : Fragment() {
 
         sbHelper = SupabaseHelper()
 
+        Handler(Looper.getMainLooper()).postDelayed({
+            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+            recyclerViewService.visibility = View.VISIBLE
 
-        loadProduct()
-        loadService()
-        setUpSearchView()
+            loadProduct()
+            loadService()
+            setUpSearchView()
 
-        allButton.setOnClickListener {
-            allButton.setBackgroundResource(R.drawable.filter_btn_selected);
-            productButton.setBackgroundResource(R.drawable.filter_btn_border);
-            serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
-            recyclerView.visibility = RecyclerView.VISIBLE
-            recyclerViewService.visibility = RecyclerView.VISIBLE
-        }
+            allButton.setOnClickListener {
+                allButton.setBackgroundResource(R.drawable.filter_btn_selected);
+                productButton.setBackgroundResource(R.drawable.filter_btn_border);
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
+                recyclerView.visibility = RecyclerView.VISIBLE
+                recyclerViewService.visibility = RecyclerView.VISIBLE
+            }
 
-        productButton.setOnClickListener {
-            productButton.setBackgroundResource(R.drawable.filter_btn_selected);
-            allButton.setBackgroundResource(R.drawable.filter_btn_border);
-            serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
-            recyclerViewService.visibility = RecyclerView.GONE
-            recyclerView.visibility = RecyclerView.VISIBLE
-            //loadProduct()
-        }
+            productButton.setOnClickListener {
+                productButton.setBackgroundResource(R.drawable.filter_btn_selected);
+                allButton.setBackgroundResource(R.drawable.filter_btn_border);
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
+                recyclerViewService.visibility = RecyclerView.GONE
+                recyclerView.visibility = RecyclerView.VISIBLE
+                //loadProduct()
+            }
 
-        serviceButton.setOnClickListener {
-            serviceButton.setBackgroundResource(R.drawable.filter_btn_selected);
-            allButton.setBackgroundResource(R.drawable.filter_btn_border);
-            productButton.setBackgroundResource(R.drawable.filter_btn_border);
-            recyclerView.visibility = RecyclerView.GONE
-            recyclerViewService.visibility = RecyclerView.VISIBLE
-            //loadService()
-        }
+            serviceButton.setOnClickListener {
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_selected);
+                allButton.setBackgroundResource(R.drawable.filter_btn_border);
+                productButton.setBackgroundResource(R.drawable.filter_btn_border);
+                recyclerView.visibility = RecyclerView.GONE
+                recyclerViewService.visibility = RecyclerView.VISIBLE
+                //loadService()
+            }
+        },2000)
+
+
     }
     private fun checkLists() {
         if (productList.isNotEmpty()) {

@@ -3,6 +3,8 @@ package com.example.xbcad7319_vucadigital.Fragments
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,6 +28,7 @@ import com.example.xbcad7319_vucadigital.db.SupabaseHelper
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,9 +72,18 @@ class OpportunitiesFragment : Fragment() {
         recyclerView.adapter = opportunityAdapter
 
         sbHelper = SupabaseHelper()
-        loadOpportunity()
 
-        setUpSearchView()
+        Handler(Looper.getMainLooper()).postDelayed({
+            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerOpportunities)
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+
+            loadOpportunity()
+
+            setUpSearchView()
+        },2000)
+
     }
     private fun setUpSearchView() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
