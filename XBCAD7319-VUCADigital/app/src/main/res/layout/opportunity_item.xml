@@ -26,6 +26,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!--Image Colour will change depending on status-->
         <ImageView
             android:id="@+id/displayOpportunityStatusImage"
             android:layout_width="46dp"
@@ -147,6 +148,7 @@
             app:layout_constraintTop_toBottomOf="@+id/valueText"
             tools:text="Customer Name" />
 
+        <!--Colour will change depending on status-->
         <TextView
             android:id="@+id/displayPriority"
             android:layout_width="100dp"

@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProductsFragment : Fragment() {
+    //declaring all variables globally
     private lateinit var allButton: Button
     private lateinit var productAdapter: ProductAdapter
     private var productList = mutableListOf<ProductModel>()
@@ -86,17 +87,17 @@ class ProductsFragment : Fragment() {
 
         searchView = view.findViewById(R.id.productAndServicesSearch)
         recyclerView = view.findViewById(R.id.product_recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        productAdapter = ProductAdapter(productList, ::onEditProduct, ::onDeleteProduct)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)//allows to list items to show next to each other
+        productAdapter = ProductAdapter(productList, ::onEditProduct, ::onDeleteProduct)//calling the Product Adapter
         recyclerView.adapter = productAdapter
 
 
         recyclerViewService = view.findViewById(R.id.service_recycler_view)
-        recyclerViewService.layoutManager = GridLayoutManager(requireContext(), 2)
-        serviceAdapter = ServiceAdapter(serviceList, ::onEditProduct, ::onDeleteService)
+        recyclerViewService.layoutManager = GridLayoutManager(requireContext(), 2)//allows to list items to show next to each other
+        serviceAdapter = ServiceAdapter(serviceList, ::onEditProduct, ::onDeleteService)//calling the Service Adapter
         recyclerViewService.adapter = serviceAdapter
 
-        sbHelper = SupabaseHelper()
+        sbHelper = SupabaseHelper()//calling the supabasehelper
 
         Handler(Looper.getMainLooper()).postDelayed({
             val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
@@ -110,6 +111,7 @@ class ProductsFragment : Fragment() {
             setUpSearchView()
 
             allButton.setOnClickListener {
+                //displays all products and services
                 allButton.setBackgroundResource(R.drawable.filter_btn_selected);
                 productButton.setBackgroundResource(R.drawable.filter_btn_border);
                 serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
@@ -118,6 +120,7 @@ class ProductsFragment : Fragment() {
             }
 
             productButton.setOnClickListener {
+                //displays only products
                 productButton.setBackgroundResource(R.drawable.filter_btn_selected);
                 allButton.setBackgroundResource(R.drawable.filter_btn_border);
                 serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
@@ -127,6 +130,7 @@ class ProductsFragment : Fragment() {
             }
 
             serviceButton.setOnClickListener {
+                //displays only services
                 serviceButton.setBackgroundResource(R.drawable.filter_btn_selected);
                 allButton.setBackgroundResource(R.drawable.filter_btn_border);
                 productButton.setBackgroundResource(R.drawable.filter_btn_border);
@@ -139,6 +143,7 @@ class ProductsFragment : Fragment() {
 
     }
     private fun checkLists() {
+        //method to ensure none of the recyclerviews are shown when certain products or services are filtered
         if (productList.isNotEmpty()) {
 
 
@@ -157,11 +162,12 @@ class ProductsFragment : Fragment() {
     }
 
     private fun loadProduct() {
+        //method that gets the products from the database
         lifecycleScope.launch {
             try {
                 val products = sbHelper.getAllProducts()
                 productss = sbHelper.getAllProducts()
-                val filteredProducts = products.filter { it.Type == "Product" }
+                val filteredProducts = products.filter { it.Type == "Product" }//filtering by only product
                 productAdapter.updateProducts(filteredProducts)
                 productAdapter.notifyDataSetChanged()
                 checkLists()
@@ -171,11 +177,12 @@ class ProductsFragment : Fragment() {
         }
     }
     private fun loadService() {
+        //fetches all the services from the database
         lifecycleScope.launch {
             try {
                 val products = sbHelper.getAllProducts()
                 services = sbHelper.getAllProducts()
-                val filteredProducts = products.filter { it.Type == "Service" }
+                val filteredProducts = products.filter { it.Type == "Service" }//filtering by services
                 serviceAdapter.updateProducts(filteredProducts)
                 serviceAdapter.notifyDataSetChanged()
                 checkLists()
@@ -186,6 +193,7 @@ class ProductsFragment : Fragment() {
     }
     private fun setUpSearchView() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            //method for the searchview that takes in user input
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 //recyclerViewService.visibility = RecyclerView.GONE
@@ -202,6 +210,7 @@ class ProductsFragment : Fragment() {
     }
 
     private fun searchProductsByName(query: String) {
+        //have to search for this product and display accordingly
         val queryLower = query.lowercase()
 
         filteredProducts = productss.filter { product ->
@@ -235,6 +244,7 @@ class ProductsFragment : Fragment() {
         val cancelButton: Button = dialogView.findViewById(R.id.button_cancel)
         val deleteButton: Button = dialogView.findViewById(R.id.button_delete)
 
+        //just setting the dialog delete to show this
         messageTextView.text = "Are you sure you want to delete this product?"
 
         // Set the task name in the dialog
@@ -249,9 +259,10 @@ class ProductsFragment : Fragment() {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     // Delete the task from the database
+                    //product is deleted from database
                     sbHelper.deleteProducts(product.id!!)
                     withContext(Dispatchers.Main) {
-                        productAdapter.removeProduct(product)
+                        productAdapter.removeProduct(product)//and removed from the adapter
                         Toast.makeText(requireContext(), "Product Success! Product deleted.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
@@ -288,10 +299,10 @@ class ProductsFragment : Fragment() {
         deleteButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    // Delete the task from the database
+                    // Delete the service from the database
                     sbHelper.deleteProducts(product.id!!)
                     withContext(Dispatchers.Main) {
-                        serviceAdapter.removeService(product)
+                        serviceAdapter.removeService(product)//removes it from the service adpater
                         Toast.makeText(requireContext(), "Service Success! Service deleted.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
@@ -342,7 +353,7 @@ class ProductsFragment : Fragment() {
 
         val typeOptions = resources.getStringArray(R.array.typeOptions)
 
-        // Populate fields with the task's current values
+        // Populate fields with the product's current values
         productName.setText(product.ProductName)
         productTypeSpinner.setSelection(typeOptions.indexOf(product.Type))
         price.setText(product.Price.toString())
@@ -358,6 +369,7 @@ class ProductsFragment : Fragment() {
         val price: Double = priceString.toDouble()
 
         lifecycleScope.launch {
+            //takes the user input and saves it to the existing product to update any changes which were made
             val updatedProduct = product.copy(
                 ProductName = productName.text.toString(),
                         Type = productTypeSpinner.selectedItem.toString(),
@@ -366,7 +378,7 @@ class ProductsFragment : Fragment() {
             )
 
             try {
-                // Update the task in the database
+                // Update the products in the database
                 sbHelper.updateProducts(updatedProduct)
 
                 // Update the task in the adapter

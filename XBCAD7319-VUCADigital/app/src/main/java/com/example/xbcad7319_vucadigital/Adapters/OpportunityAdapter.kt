@@ -13,6 +13,7 @@ import com.example.xbcad7319_vucadigital.R
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 
+//displays only the opportunities
 class OpportunityAdapter (private var opportunities: MutableList<OpportunityModel> = mutableListOf(),
                           private val onEditClick: (OpportunityModel) -> Unit,
                           private val onDeleteClick: (OpportunityModel) -> Unit
@@ -38,6 +39,7 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
         }
 
         override fun onBindViewHolder(holder: OpportunityViewHolder, position: Int) {
+            //displaying all the data to the set variables from the item
             val opportunity = opportunities[position]
             holder.opportunityName.text = opportunity.OpportunityName
             holder.valueText.text = "R" + opportunity.TotalValue.toString()
@@ -53,7 +55,7 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
 
             if(opportunity.Priority == "High"){
                 holder.priorityImageView.setImageResource(R.drawable.red_stage)
-                holder.priority.setBackgroundResource(R.drawable.high_priority)
+                holder.priority.setBackgroundResource(R.drawable.high_priority)//setting image based on priority
             }else if(opportunity.Priority == "Medium"){
                 holder.priorityImageView.setImageResource(R.drawable.yellow_stage)
                 holder.priority.setBackgroundResource(R.drawable.medium_priority)
@@ -65,46 +67,6 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
                 showPopupMenu(holder.moreImageView, opportunity)
             }*/
         }
-    /*private fun colorChange(x:String): String {
-        var colourName = ""
-        if (x.equals("Dark Blue")){
-            colourName = "#00003f"
-        }else if (x.equals("Light Blue")){
-            colourName ="#00ADB5"
-        }else if (x.equals("Grey")){
-            colourName ="#808080"
-        }else if (x.equals("Orange")){
-            colourName ="#F8B400"
-        }else if (x.equals("Purple")){
-            colourName ="#7209B7"
-        }else if (x.equals("Black")){
-            colourName ="#000000"
-        }else if (x.equals("White")){
-            colourName ="#FFFFFFFF"
-        }else if(x.equals("Select Color")){
-            colourName ="#D9D9D9"
-        }
-        return colourName
-    }*/
-   /* private fun showPopupMenu(view: View, opportunity: OpportunityModel) {
-        val popupMenu = PopupMenu(view.context, view)
-        popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.edit_item -> {
-                    onEditClick(opportunity) // Call the edit click listener
-                    true
-                }
-                R.id.delete_item -> {
-                    onDeleteClick(opportunity) // Call the delete click listener
-                    true
-                }
-                else -> false
-            }
-        }
-        popupMenu.show()
-    }*/
 
         override fun getItemCount(): Int = opportunities.size
 
@@ -116,7 +78,6 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             when (menuItem.itemId) {
                 R.id.edit_item -> {
                     // Call the edit click listener
-                   // Log.d("INF355", "Edit button called")
                     onEditClick(opportunity)
                     true
                 }
@@ -139,26 +100,6 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             notifyItemRemoved(position)
         }
     }
-
-       /* private fun showPopupMenu(view: View, opportunity: OpportunityModel) {
-            val popupMenu = PopupMenu(view.context, view)
-            popupMenu.menuInflater.inflate(R.menu.menu_items, popupMenu.menu)
-
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.edit_item -> {
-                        onEditClick(opportunity) // Call the edit click listener
-                        true
-                    }
-                    R.id.delete_item -> {
-                        onDeleteClick(opportunity) // Call the delete click listener
-                        true
-                    }
-                    else -> false
-                }
-            }
-            popupMenu.show()
-        }*/
        fun updateOpportunity(updatedOpportunity: OpportunityModel) {
            val index = opportunities.indexOfFirst { it.id == updatedOpportunity.id }
            if (index != -1) {

@@ -14,6 +14,7 @@ import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
 import com.squareup.picasso.Picasso
 
+//only displays services
 class ServiceAdapter  (private var services: MutableList<ProductModel> = mutableListOf(),
                           private val onEditClick: (ProductModel) -> Unit,
                           private val onDeleteClick: (ProductModel) -> Unit
@@ -36,6 +37,7 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
 
 
     override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
+        //sets all the services with their data
         val service = services[position]
         holder.serviceName.text = service.ProductName
         holder.serviceValueText.text = "R" + service.Price.toString()
@@ -61,7 +63,6 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
             when (menuItem.itemId) {
                 R.id.edit_item -> {
                     // Call the edit click listener
-                    // Log.d("INF355", "Edit button called")
                     onEditClick(service)
                     true
                 }
@@ -78,7 +79,7 @@ class ServiceAdapter  (private var services: MutableList<ProductModel> = mutable
     fun removeService(product: ProductModel) {
         val position = services.indexOfFirst { it.id == product.id }
         if (position != -1) {
-            // Remove the opportunity at the found position
+            // Remove the services at the found position
             services.removeAt(position)  // Change this line to use 'opportunities' list
             // Notify that an item was removed
             notifyItemRemoved(position)

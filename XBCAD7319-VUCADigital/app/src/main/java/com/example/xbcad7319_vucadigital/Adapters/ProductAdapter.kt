@@ -13,6 +13,7 @@ import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.squareup.picasso.Picasso
 
+//this adapter is just for the products
 class ProductAdapter (private var products: MutableList<ProductModel> = mutableListOf(),
                           private val onEditClick: (ProductModel) -> Unit,
                           private val onDeleteClick: (ProductModel) -> Unit
@@ -34,6 +35,7 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
 
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+        //sets all the products
         val products = products[position]
         holder.productName.text = products.ProductName
         holder.valueText.text = "R" + products.Price.toString()
@@ -58,7 +60,6 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
             when (menuItem.itemId) {
                 R.id.edit_item -> {
                     // Call the edit click listener
-                    // Log.d("INF355", "Edit button called")
                     onEditClick(product)
                     true
                 }
@@ -75,7 +76,7 @@ class ProductAdapter (private var products: MutableList<ProductModel> = mutableL
     fun removeProduct(product: ProductModel) {
         val position = products.indexOfFirst { it.id == product.id }
         if (position != -1) {
-            // Remove the opportunity at the found position
+            // Remove the product at the found position
             products.removeAt(position)  // Change this line to use 'opportunities' list
             // Notify that an item was removed
             notifyItemRemoved(position)

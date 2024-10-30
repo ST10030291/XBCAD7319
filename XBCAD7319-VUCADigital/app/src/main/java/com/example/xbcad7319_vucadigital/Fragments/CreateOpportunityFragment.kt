@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class CreateOpportunityFragment : Fragment() {
-    
+
+    //declaring global vavriables
     private lateinit var date: EditText
     private lateinit var prioritySpinner: Spinner
     private lateinit var customerSpinner: Spinner
@@ -83,32 +84,7 @@ class CreateOpportunityFragment : Fragment() {
         }
         return view
     }
-    /*private fun setUpSearchView() {
-        customerSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { searchCustomersByName(it)
-                    if (filteredCustomers.size == 1) {
-                        // Automatically select if there's only one match
-                        searchName = filteredCustomers.first()
-                    }
-                }
-                return true
-            }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { searchCustomersByName(it) }
-                return true
-            }
-        })
-    }
-
-    private fun searchCustomersByName(query: String) {
-        val queryLower = query.lowercase()
-
-        filteredCustomers = customers.filter { customer ->
-            customer.CustomerName.lowercase().contains(queryLower)
-        }
-    }*/
 
     private fun createOpportunity() {
         // Retrieve values from the inputs
@@ -153,7 +129,9 @@ class CreateOpportunityFragment : Fragment() {
 
 
     }
-
+    //This part of the code was inspired by a stack overflow post
+    //Uploaded by: Charles Durham
+    //Available at: https://stackoverflow.com/questions/45336954/checking-if-string-is-empty-in-kotlin
     private fun validateInputs(
         opportunityName: String,
         value: Double,
@@ -206,7 +184,7 @@ class CreateOpportunityFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val customerNames = sbHelper.getAllCustomersNames()
-                Log.d("", customerNames.toString())
+                Log.d("", customerNames.toString())//setting up drop down menu for customer selection
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, customerNames)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 customerSpinner.adapter = adapter
@@ -215,7 +193,10 @@ class CreateOpportunityFragment : Fragment() {
             }
         }
     }
-
+    
+   // This part of the code was inspired by a stack overflow post
+   // Uploaded by: Derek
+   // Available at: https://stackoverflow.com/questions/45842167/how-to-use-datepickerdialog-in-kotlin
     private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)

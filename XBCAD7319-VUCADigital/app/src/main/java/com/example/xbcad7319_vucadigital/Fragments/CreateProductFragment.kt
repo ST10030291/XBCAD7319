@@ -32,7 +32,7 @@ import java.io.InputStream
 
 class CreateProductFragment : Fragment() {
 
-
+    //declaring variables globally
     private lateinit var productTypeSpinner: Spinner
     private lateinit var productName: EditText
     private lateinit var description: EditText
@@ -79,9 +79,6 @@ class CreateProductFragment : Fragment() {
         backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
-
-
-
         return view
     }
 
@@ -103,6 +100,7 @@ class CreateProductFragment : Fragment() {
         )
 
         lifecycleScope.launch {
+            //saves the product to the database
             val isInserted = sbHelper.addProducts(product)
 
             if (isInserted) {
@@ -150,6 +148,7 @@ class CreateProductFragment : Fragment() {
         }*/
     }
     private fun createService() {
+        //saves to the database
         // Retrieve values from the inputs
         val productName = productName.text.toString()
         val description = description.text.toString()
@@ -187,6 +186,8 @@ class CreateProductFragment : Fragment() {
 
 
     private fun validateInputsProduct(
+
+        //validates user inputs
         productName: String,
         description: String,
         price : Double,

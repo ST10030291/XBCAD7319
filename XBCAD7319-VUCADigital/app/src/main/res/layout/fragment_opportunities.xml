@@ -25,6 +25,7 @@
             android:layout_marginStart="10dp"
             android:text="@string/opportunities" />
 
+        <!--Can search based on products-->
         <SearchView
             android:id="@+id/opportunitySearchView"
             android:layout_width="match_parent"

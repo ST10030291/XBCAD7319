@@ -35,6 +35,7 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class OpportunitiesFragment : Fragment() {
+    //globally declaring all variables
     private lateinit var opportunityAdapter: OpportunityAdapter
     private var opportunityList = mutableListOf<OpportunityModel>()
     private lateinit var customers: List<CustomerModel>
@@ -68,8 +69,8 @@ class OpportunitiesFragment : Fragment() {
         searchView = view.findViewById(R.id.opportunitySearchView)
         val recyclerView: RecyclerView = view.findViewById(R.id.opportunity_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        opportunityAdapter = OpportunityAdapter(opportunityList, ::onEditOpportunity, ::onDeleteOpportunity)
-        recyclerView.adapter = opportunityAdapter
+        opportunityAdapter = OpportunityAdapter(opportunityList, ::onEditOpportunity, ::onDeleteOpportunity)//calling the adapter
+        recyclerView.adapter = opportunityAdapter//setting all the opportunities to match the adapter
 
         sbHelper = SupabaseHelper()
 
@@ -87,6 +88,7 @@ class OpportunitiesFragment : Fragment() {
     }
     private fun setUpSearchView() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            //takes in user input
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { searchOpportunitiesByName(it) }
                 return true
@@ -118,7 +120,7 @@ class OpportunitiesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val opportunities = sbHelper.getAllOpportunities()
-                opportunitiesSearch = sbHelper.getAllOpportunities()
+                opportunitiesSearch = sbHelper.getAllOpportunities()//gets all the opportunities
                 Log.d("Opportunities", "Number of opportunities retrieved: ${opportunities.size}")
                 opportunityAdapter.updateOpportunity(opportunities)
             } catch (e: Exception) {
@@ -149,7 +151,7 @@ class OpportunitiesFragment : Fragment() {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     // Delete the task from the database
-                    sbHelper.deleteOpportunity(opportunity.id!!)
+                    sbHelper.deleteOpportunity(opportunity.id!!)//deletes the opportunity
                     withContext(Dispatchers.Main) {
                         opportunityAdapter.removeOpportunity(opportunity)
                         Toast.makeText(requireContext(), "Operation Success! Opportunity deleted.", Toast.LENGTH_SHORT).show()
