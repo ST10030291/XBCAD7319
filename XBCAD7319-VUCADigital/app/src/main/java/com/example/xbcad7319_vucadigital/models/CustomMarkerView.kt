@@ -9,6 +9,10 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 
+// StackOverflow post
+// Titled: Customize the marker - MPAndroidChart
+// Posted by: David Rawson
+// Available at: https://stackoverflow.com/questions/41458190/customize-the-marker-mpandroidchart
 class CustomBarChartMarkerView(
     context: Context,
     private val barChart: BarChart // Add BarChart as a parameter
@@ -33,7 +37,10 @@ class CustomBarChartMarkerView(
         super.refreshContent(e, highlight)
     }
 }
-
+// StackOverflow post
+// Titled: Customize the marker - MPAndroidChart
+// Posted by: David Rawson
+// Available at: https://stackoverflow.com/questions/41458190/customize-the-marker-mpandroidchart
 class CustomLineChartMarkerView(
     context: Context,
     private val lineChart: LineChart // Add BarChart as a parameter

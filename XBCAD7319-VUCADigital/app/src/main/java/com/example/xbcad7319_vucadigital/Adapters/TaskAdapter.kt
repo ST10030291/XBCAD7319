@@ -19,12 +19,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+// YouTube video
+// Titled: Notes App - CRUD SQLite Database in Android Studio using Kotlin | Create Read Update Delete Data
+// Upload by: Android Knowledge
+// Available at: https://www.youtube.com/watch?v=BVAslimaGSk
 class TaskAdapter(
     private var tasks: MutableList<TaskModel> = mutableListOf(),
     private val onEditClick: (TaskModel) -> Unit,
     private val onDeleteClick: (TaskModel) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
+    // Blog post
+    // Titled: Kotlin Map : mapOf()
+    // Posted by: manishkhetan
+    // Available at: https://www.geeksforgeeks.org/kotlin-map-mapof/
     // Map of priority levels to their corresponding colors
     private val priorityColors = mapOf(
         "High" to "#E8715C",    // Red
@@ -175,6 +183,10 @@ class TaskAdapter(
         popupMenu.show()
     }
 
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     // Fetches the customer name using the provided ID
     private fun getCustomerName(id: String, onResult: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {

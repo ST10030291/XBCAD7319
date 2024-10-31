@@ -90,7 +90,10 @@ class DashboardFragment : Fragment() {
             setupFilterButton(yearlyFilterButton, "year", yearLabels)
         }
     }
-
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun setupFilterButton(button: Button, filterType: String, labels: List<String>) {
         button.setOnClickListener {
             lifecycleScope.launch {
@@ -166,7 +169,10 @@ class DashboardFragment : Fragment() {
             }
         }
     }
-
+    // StackOverflow post
+    // Title: Create Line Chart in Android using MPAndroidChart library
+    // Posted by: AmrDeveloper
+    // Available at: https://stackoverflow.com/questions/64709234/create-line-chart-in-android-using-mpandroidchart-library
     private fun setupLineChart(xAxisLabels: List<String>, values: List<Int>) {
         // Parse the x and y values
         val entries = List(xAxisLabels.size) { index ->
@@ -231,8 +237,6 @@ class DashboardFragment : Fragment() {
         lineChart.animateX(1000)
         lineChart.invalidate()
     }
-
-
 
     private fun openProductsFragment() {
         val fragment = ProductsFragment()

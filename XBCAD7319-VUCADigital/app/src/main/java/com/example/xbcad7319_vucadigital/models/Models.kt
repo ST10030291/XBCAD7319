@@ -1,5 +1,10 @@
 package com.example.xbcad7319_vucadigital.models
 
+// StackOverflow post
+// Titled: Is Kotlin data class serializable by default?
+// Posted by: Zohab Ali
+// Available at: https://stackoverflow.com/questions/61241155/is-kotlin-data-class-serializable-by-default
+
 import kotlinx.serialization.Serializable
 
 @Serializable

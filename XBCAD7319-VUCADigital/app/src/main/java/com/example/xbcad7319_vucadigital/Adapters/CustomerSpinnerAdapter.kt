@@ -8,6 +8,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.xbcad7319_vucadigital.R
 
+// StackOverflow post
+// Titled: Create a Custom Spinner Adapter in Android using Kotlin
+// Asked by: Wael Fadl Ãllåh
+// Available at: https://stackoverflow.com/questions/54539470/create-a-custom-spinner-adapter-in-android-using-kotlin
 class CustomSpinnerAdapter(context: Context, private val items: List<String>) : ArrayAdapter<String>(context, R.layout.spinner_item, items) {
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getDropDownView(position, convertView, parent)

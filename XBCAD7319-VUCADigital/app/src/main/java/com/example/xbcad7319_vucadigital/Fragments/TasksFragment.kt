@@ -87,8 +87,6 @@ class TasksFragment : Fragment() {
             setFilterButtonClickListener(doingFilterButton, "Doing")
             setFilterButtonClickListener(doneFilterButton, "Done")
         },2000)
-
-
     }
 
     private fun selectButton(selectedButton: Button) {
@@ -98,6 +96,10 @@ class TasksFragment : Fragment() {
         doneFilterButton.isSelected = selectedButton == doneFilterButton
     }
 
+    // StackOverflow post
+    // Titled: How can I filter an ArrayList in Kotlin so I only have elements which match my condition?
+    // Posted by: Nithinlal
+    // Available at: https://stackoverflow.com/questions/44098709/how-can-i-filter-an-arraylist-in-kotlin-so-i-only-have-elements-which-match-my-c
     private fun setFilterButtonClickListener(button: Button, filterStatus: String?) {
         button.setOnClickListener {
             filteredTasks = if (filterStatus == null) {
@@ -124,6 +126,10 @@ class TasksFragment : Fragment() {
         })
     }
 
+    // StackOverflow post
+    // Titled: How can I filter an ArrayList in Kotlin so I only have elements which match my condition?
+    // Posted by: Nithinlal
+    // Available at: https://stackoverflow.com/questions/44098709/how-can-i-filter-an-arraylist-in-kotlin-so-i-only-have-elements-which-match-my-c
     private fun searchTasksByName(query: String) {
         val queryLower = query.lowercase()
 
@@ -139,7 +145,10 @@ class TasksFragment : Fragment() {
         }
     }
 
-
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun loadTasks() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -156,6 +165,10 @@ class TasksFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: Android Kotlin Get Value of Selected Spinner Item
+    // Posted by: Subhrajyoti Sen
+    // Available at: https://stackoverflow.com/questions/65556362/android-kotlin-get-value-of-selected-spinner-item
     private fun retrieveCustomerIDFromSpinner(spinner: Spinner): String? {
         try {
             val selectedPosition = spinner.selectedItemPosition
@@ -170,6 +183,10 @@ class TasksFragment : Fragment() {
         return null
     }
 
+    // Blog post
+    // Title: DatePicker in Kotlin
+    // Posted by: Praveenruhil
+    // Available at: https://www.geeksforgeeks.org/datepicker-in-kotlin/
     private fun setupDatePickers(dialogView: View, task: TaskModel) {
         val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
         val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
@@ -189,9 +206,13 @@ class TasksFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: findViewById in Fragment
+    // Posted by: LeffelMania
+    // Available at: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
     private fun setupDialogButtons(dialog: AlertDialog, dialogView: View, task: TaskModel) {
         dialogView.findViewById<Button>(R.id.cancelEditTask).setOnClickListener {
-            dialog.dismiss() // Close the dialog
+            dialog.dismiss()
         }
 
         dialogView.findViewById<Button>(R.id.saveEditTask).setOnClickListener {
@@ -199,6 +220,10 @@ class TasksFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: findViewById in Fragment
+    // Posted by: LeffelMania
+    // Available at: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
     private fun setupDialogViews(dialogView: View, task: TaskModel) {
         // Get references to the dialog views
         val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
@@ -210,6 +235,12 @@ class TasksFragment : Fragment() {
         val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
         val taskStartDateEditText: EditText = dialogView.findViewById(R.id.startDate)
         val taskEndDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+
+
+        // StackOverflow post
+        // Title: How to use LifecycleScope to execute coroutine
+        // Posted by: Arpit Shukla
+        // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
 
         // Populate customer spinner
         lifecycleScope.launch {
@@ -255,6 +286,10 @@ class TasksFragment : Fragment() {
         taskEndDateEditText.setText(task.endDate)
     }
 
+    // StackOverflow post
+    // Titled: How to use DatePickerDialog in Kotlin?
+    // Posted by: Derek
+    // Available at: https://stackoverflow.com/questions/45842167/how-to-use-datepickerdialog-in-kotlin
     private fun showDatePickerDialog(editText: EditText, initialDate: String) {
         val calendar = Calendar.getInstance()
 
@@ -280,6 +315,10 @@ class TasksFragment : Fragment() {
     }
 
     private fun saveTaskChanges(dialog: AlertDialog, task: TaskModel, dialogView: View) {
+        // StackOverflow post
+        // Title: findViewById in Fragment
+        // Posted by: LeffelMania
+        // Available at: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
         val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
         val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
         val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
@@ -290,6 +329,10 @@ class TasksFragment : Fragment() {
         val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
         val customerSpinner: Spinner = dialogView.findViewById(R.id.customerSpinner)
 
+        // StackOverflow post
+        // Title: How to use LifecycleScope to execute coroutine
+        // Posted by: Arpit Shukla
+        // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
         lifecycleScope.launch {
             val updatedTask = task.copy(
                 name = taskNameEditText.text.toString(),
@@ -337,6 +380,10 @@ class TasksFragment : Fragment() {
     }
 
     private fun onDeleteTask(task: TaskModel) {
+        // StackOverflow post
+        // Title: findViewById in Fragment
+        // Posted by: LeffelMania
+        // Available at: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_delete_task, null)
         val deleteDialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
 
@@ -353,6 +400,10 @@ class TasksFragment : Fragment() {
             Toast.makeText(requireContext(), "Operation cancelled! No task deleted.", Toast.LENGTH_SHORT).show()
         }
 
+        // StackOverflow post
+        // Title: How to use LifecycleScope to execute coroutine
+        // Posted by: Arpit Shukla
+        // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
         deleteButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
@@ -375,6 +426,10 @@ class TasksFragment : Fragment() {
         deleteDialog.show()
     }
 
+    // StackOverflow post
+    // Titled: How to get Spinner value?
+    // Posted by: dodo
+    // Available at: https://stackoverflow.com/questions/1947933/how-to-get-spinner-value
     private fun getSelectedSpinnerProperty(spinner: Spinner): String {
         return spinner.selectedItem.toString()
     }

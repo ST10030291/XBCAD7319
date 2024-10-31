@@ -54,6 +54,10 @@ class AnalyticsFragment : Fragment() {
         return view
     }
 
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun getOpportunities() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -76,17 +80,29 @@ class AnalyticsFragment : Fragment() {
         setupBarChart(barEntries, stageData.keys.toList())
     }
 
+    // StackOverflow post
+    // Title: Kotlin - from a list of Maps, to a map grouped by key
+    // Posted by: Constantin Chernishov
+    // Available at: https://stackoverflow.com/questions/53433108/kotlin-from-a-list-of-maps-to-a-map-grouped-by-key
     private fun getStageData(opportunities: List<OpportunityModel>): Map<String, Double> {
         return opportunities.groupBy { it.Stage }
             .mapValues { entry -> entry.value.sumOf { it.TotalValue } }
     }
 
+    // StackOverflow post
+    // Title: Why kotlin map.indexed returns List<Any> insteand of List<MyObject>
+    // Posted by: Mikezx6r
+    // Available at: https://stackoverflow.com/questions/53841789/why-kotlin-map-indexed-returns-listany-insteand-of-listmyobject
     private fun createBarEntries(stageData: Map<String, Double>): List<BarEntry> {
         return stageData.entries.mapIndexed { index, entry ->
             BarEntry(index.toFloat(), entry.value.toFloat())
         }
     }
 
+    // GitHub code
+    // Repo name: MPAndroidChart
+    // Pushed by: danielgindi
+    // Available at: https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/main/java/com/xxmassdeveloper/mpchartexample/BarChartActivityMultiDataset.java
     private fun setupBarChart(barEntries: List<BarEntry>, labels: List<String>) {
         val barDataSet = BarDataSet(barEntries, "").apply {
             color = Color.parseColor("#E8715C")
@@ -165,6 +181,10 @@ class AnalyticsFragment : Fragment() {
         setupLineChart(lineEntries, customerTypeData.keys.toList())
     }
 
+    // StackOverflow post
+    // Title: Kotlin - from a list of Maps, to a map grouped by key
+    // Posted by: Constantin Chernishov
+    // Available at: https://stackoverflow.com/questions/53433108/kotlin-from-a-list-of-maps-to-a-map-grouped-by-key
     private fun getCustomerTypeData(customers: List<CustomerModel>): Map<String, Double> {
         // Group by CustomerType
         return customers.groupBy { it.CustomerType }
@@ -172,12 +192,20 @@ class AnalyticsFragment : Fragment() {
             .mapValues { entry -> entry.value.size.toDouble() }
     }
 
+    // StackOverflow post
+    // Title: Why kotlin map.indexed returns List<Any> insteand of List<MyObject>
+    // Posted by: Mikezx6r
+    // Available at: https://stackoverflow.com/questions/53841789/why-kotlin-map-indexed-returns-listany-insteand-of-listmyobject
     private fun createLineEntries(customerTypeData: Map<String, Double>): List<Entry> {
         return customerTypeData.entries.mapIndexed { index, entry ->
             Entry(index.toFloat(), entry.value.toFloat())
         }
     }
 
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun getCustomers() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -194,6 +222,10 @@ class AnalyticsFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: Create Line Chart in Android using MPAndroidChart library
+    // Posted by: AmrDeveloper
+    // Available at: https://stackoverflow.com/questions/64709234/create-line-chart-in-android-using-mpandroidchart-library
     private fun setupLineChart(entries: List<Entry>, labels: List<String>) {
         val lineDataSet = LineDataSet(entries, "").apply {
             color = Color.parseColor("#E8715C")
