@@ -3,6 +3,7 @@ package com.example.xbcad7319_vucadigital.db
 import android.util.Log
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.CustomerProductModel
+import com.example.xbcad7319_vucadigital.models.NotificationHistoryModel
 import com.example.xbcad7319_vucadigital.models.OpportunityModel
 import com.example.xbcad7319_vucadigital.models.ProductModel
 import com.example.xbcad7319_vucadigital.models.TaskModel
@@ -292,9 +293,6 @@ class SupabaseHelper {
         return tasksGroupedList
     }
 
-
-
-
     //products
 
   /*  suspend fun uploadImageToStorage(imageUri: Uri, context: Context): String {
@@ -312,9 +310,6 @@ class SupabaseHelper {
             throw Exception("Supabase initialization failed.")
         }
     }*/
-
-
-
 
     suspend fun addProducts(product : ProductModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
@@ -482,5 +477,26 @@ class SupabaseHelper {
         }
     }
 
+    suspend fun addNotificationHistory(notificationHistory : NotificationHistoryModel) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
+        if (isInitialized) {
+            supabase.from("notification_history").insert(notificationHistory)
+            return true
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun getAllNotificationHistory(): List<NotificationHistoryModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("notification_history").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<NotificationHistoryModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
 }

@@ -65,5 +65,12 @@ class CustomerProductModel(
     val ServiceProvider: String,
     val Status: String,
 )
+@Serializable
+data class NotificationHistoryModel(
+    val id: String? = null,
+    val customerName: String,
+    val message: String,
+    val dateTime: String? = null
+)
 
 
