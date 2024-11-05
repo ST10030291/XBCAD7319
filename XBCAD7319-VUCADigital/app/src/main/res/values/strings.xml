@@ -71,6 +71,8 @@
     <string name="analytics">Analytics</string>
     <string name="opportunities_by_stage">OPPORTUNITIES BY STAGE</string>
     <string name="customer_type_distribution">CUSTOMER TYPE DISTRIBUTION</string>
+    <string name="completed">Completed</string>
+    <string name="achievements">Achievements</string>
 
     <string-array name="leadStatusOptions">
         <item>Select Lead Status</item>

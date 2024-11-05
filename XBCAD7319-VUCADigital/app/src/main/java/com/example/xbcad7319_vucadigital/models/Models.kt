@@ -72,5 +72,15 @@ data class NotificationHistoryModel(
     val message: String,
     val dateTime: String? = null
 )
+@Serializable
+class AchievementModel(
+    val id: String? = null,
+    val Name: String,
+    val Description: String,
+    val ImageUrl: String,
+    val Target: Int,
+    val Current: Int,
+    val Status: String,
+) : java.io.Serializable
 
 

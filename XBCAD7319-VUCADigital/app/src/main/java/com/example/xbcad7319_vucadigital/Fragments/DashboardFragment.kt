@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -39,6 +40,7 @@ class DashboardFragment : Fragment() {
     private lateinit var yearlyFilterButton: Button
     private lateinit var viewProductsBtn: CardView
     private lateinit var viewAnalyticsBtn: CardView
+    private lateinit var viewAchievementsBtn: ImageView
     private lateinit var lineChart: LineChart
     private val monthLabels = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     private val dayLabels = List(31) { (it + 1).toString() }
@@ -82,6 +84,7 @@ class DashboardFragment : Fragment() {
             // Set onClickListeners
             viewProductsBtn.setOnClickListener { openProductsFragment() }
             viewAnalyticsBtn.setOnClickListener { openAnalyticsFragment() }
+            viewAchievementsBtn.setOnClickListener{ openAchievementsFragment() }
 
             // Set up filter buttons
             setupFilterButton(monthlyFilterButton, "month", monthLabels)
@@ -114,6 +117,7 @@ class DashboardFragment : Fragment() {
         opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
         viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
         viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
+        viewAchievementsBtn = view.findViewById(R.id.achievement_btn)
         lineChart = view.findViewById(R.id.lineChart1)
         dailyFilterButton = view.findViewById(R.id.DailyFilter)
         weeklyFilterButton = view.findViewById(R.id.WeeklyFilter)
@@ -240,6 +244,14 @@ class DashboardFragment : Fragment() {
 
     private fun openProductsFragment() {
         val fragment = ProductsFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openAchievementsFragment() {
+        val fragment = AchievementFragment()
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)

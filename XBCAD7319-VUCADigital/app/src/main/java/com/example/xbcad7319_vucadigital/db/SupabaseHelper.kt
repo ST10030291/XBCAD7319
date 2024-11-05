@@ -1,6 +1,7 @@
 package com.example.xbcad7319_vucadigital.db
 
 import android.util.Log
+import com.example.xbcad7319_vucadigital.models.AchievementModel
 import com.example.xbcad7319_vucadigital.models.CustomerModel
 import com.example.xbcad7319_vucadigital.models.CustomerProductModel
 import com.example.xbcad7319_vucadigital.models.NotificationHistoryModel
@@ -495,6 +496,61 @@ class SupabaseHelper {
             return supabase.from("notification_history").select {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<NotificationHistoryModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    //Achievements
+    suspend fun getAllAchievements(): List<AchievementModel> {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            return supabase.from("achievements").select {
+                order(column = "id", order = Order.ASCENDING)
+            }.decodeList<AchievementModel>()
+        } else {
+            throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun updateAchievement(id: String, incrementBy: Int) {
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+
+        if (isInitialized) {
+            try {
+                val achievement = supabase
+                    .from("achievements")
+                    .select {
+                        filter {
+                            AchievementModel::id eq id
+                            eq("id", id)
+                        }
+                    }.decodeSingle<AchievementModel>()
+
+                if (achievement.Status == "completed") return
+
+                val newCurrent = (achievement.Current ?: 0) + incrementBy
+
+                val updatedStatus = if (newCurrent >= (achievement.Target ?: 0)) "completed" else "not completed"
+
+                supabase
+                    .from("achievements")
+                    .update(
+                        mapOf(
+                            "Current" to newCurrent,
+                            "Status" to updatedStatus
+                        )
+                    ) {
+                        filter {
+                            AchievementModel::id eq id
+                            eq("id", id)
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.e("UpdateAchievementError", "Error updating achievement: ${e.message}")
+                throw e
+            }
         } else {
             throw Exception("Supabase initialization failed.")
         }
