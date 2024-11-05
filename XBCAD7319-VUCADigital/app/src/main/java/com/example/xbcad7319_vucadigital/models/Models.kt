@@ -8,7 +8,7 @@ package com.example.xbcad7319_vucadigital.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-class CustomerModel(
+data class CustomerModel(
     val id: String? = null,
     val CustomerName: String,
     val TelephoneNumber: String,
@@ -73,14 +73,14 @@ data class NotificationHistoryModel(
     val dateTime: String? = null
 )
 @Serializable
-class AchievementModel(
+data class AchievementModel(
     val id: String? = null,
     val Name: String,
     val Description: String,
     val ImageUrl: String,
     val Target: Int,
-    val Current: Int,
-    val Status: String,
+    var Current: Int,
+    var Status: String,
 ) : java.io.Serializable
 
 

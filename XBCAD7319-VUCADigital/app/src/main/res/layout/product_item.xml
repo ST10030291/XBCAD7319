@@ -7,12 +7,12 @@
     android:layout_marginStart="20dp"
     android:layout_marginBottom="5dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="172dp"
         android:layout_height="166dp"
-        android:background="@drawable/border_opportunity">
+        android:background="@drawable/customer_item_border">
 
 
         <ImageView
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="7dp"
+            android:layout_marginEnd="10dp"
             android:padding="2dp"
             android:src="@drawable/more"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,11 +47,13 @@
             android:layout_width="73dp"
             android:layout_height="30dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/value_border"
             android:text="TextView"
             android:textAlignment="center"
             android:textColor="@color/black"
+            android:gravity="center"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +83,7 @@
             android:text="This is a product with details"
             android:textAlignment="textStart"
             android:textColor="@color/black"
-            android:textSize="10sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/productNameText"
             tools:text="This is a product with details" />

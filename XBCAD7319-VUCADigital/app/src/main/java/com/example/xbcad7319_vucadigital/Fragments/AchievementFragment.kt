@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.example.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.example.xbcad7319_vucadigital.Adapters.AchievementAdapter
@@ -26,6 +27,7 @@ class AchievementFragment : Fragment() {
     private lateinit var achievements: List<AchievementModel>
     private lateinit var gridView: GridView
     private lateinit var backButton: ImageView
+    private lateinit var achievementCountTextView: TextView
 
     override fun onResume() {
         super.onResume()
@@ -47,6 +49,7 @@ class AchievementFragment : Fragment() {
             lifecycleScope.launch {
                 achievements = sbHelper.getAllAchievements()
 
+                displayCompletedAchievementsCount()
                 updateAchievementGrid(gridView, achievements)
 
             }
@@ -55,6 +58,18 @@ class AchievementFragment : Fragment() {
 
         backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun displayCompletedAchievementsCount() {
+        lifecycleScope.launch {
+            try {
+                val achievements = sbHelper.getAllAchievements()
+                val completedCount = achievements.count { it.Status == "completed" }
+                "$completedCount/${achievements.count() }".also { achievementCountTextView.text = it }
+            } catch (e: Exception) {
+                throw e
+            }
         }
     }
 
@@ -74,5 +89,6 @@ class AchievementFragment : Fragment() {
         gridView = view.findViewById(R.id.AchievementGridView)
         sbHelper = SupabaseHelper()
         backButton = view.findViewById(R.id.back_btn)
+        achievementCountTextView = view.findViewById(R.id.achievementCount)
     }
 }

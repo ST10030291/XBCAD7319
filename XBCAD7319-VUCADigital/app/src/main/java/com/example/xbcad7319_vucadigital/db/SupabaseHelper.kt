@@ -79,6 +79,7 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("customers").insert(customer)
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
             return true
         } else {
             throw Exception("Supabase initialization failed.")
@@ -93,6 +94,7 @@ class SupabaseHelper {
                     customer.id?.let { eq("id", it) }
                 }
             }
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
             return true
         }
         catch (e: Exception){
@@ -111,6 +113,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
+                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
                 return true
             }
             catch (e: Exception){
@@ -162,6 +165,8 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("Opportunity").insert(opportunity)
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement("618abdea-52e0-48d2-b971-4b589bc4bfc5",1)
             return true
         } else {
             throw Exception("Supabase initialization failed.")
@@ -173,9 +178,17 @@ class SupabaseHelper {
             supabase.from("Opportunity").update(opportunity) {
                 filter {
                     OpportunityModel::id eq opportunity.id
-                    //TaskModel.id?.let { eq("id", it) }
                 }
             }
+            if(opportunity.Status == "Closed Contract"){
+                updateAchievement("15b0f983-96a7-4c80-83d4-8aabfed9016e",1)
+                updateAchievement("15b0f983-96a7-4c80-83d4-8aabfed9016e",
+                    opportunity.TotalValue.toInt()
+                )
+            }
+
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+
             return true
         }
         catch (e: Exception){
@@ -194,6 +207,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
+                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
                 return true
             }
             catch (e: Exception){
@@ -317,6 +331,8 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("products").insert(product)
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement("e2ed48f9-df23-4728-a3fb-5462c5f4d808",1)
             return true
         } else {
             throw Exception("Supabase initialization failed.")
@@ -331,6 +347,7 @@ class SupabaseHelper {
                     //TaskModel.id?.let { eq("id", it) }
                 }
             }
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
             return true
         }
         catch (e: Exception){
@@ -349,6 +366,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
+                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
                 return true
             }
             catch (e: Exception){
@@ -378,6 +396,7 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("tasks").insert(task)
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
             return true
         } else {
             throw Exception("Supabase initialization failed.")
@@ -389,9 +408,13 @@ class SupabaseHelper {
             supabase.from("tasks").update(task) {
                 filter {
                     TaskModel::id eq task.id
-                    //TaskModel.id?.let { eq("id", it) }
                 }
             }
+            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            if(task.status == "Done"){
+                updateAchievement("3efe75fa-6d23-4108-99f0-f3ec692d77c0",1)
+            }
+
             return true
         }
         catch (e: Exception){
@@ -410,6 +433,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
+                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
                 return true
             }
             catch (e: Exception){
@@ -514,45 +538,48 @@ class SupabaseHelper {
         }
     }
 
-    suspend fun updateAchievement(id: String, incrementBy: Int) {
+    private suspend fun getAchievementUsingID(id : String) : AchievementModel{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
-            try {
-                val achievement = supabase
-                    .from("achievements")
-                    .select {
-                        filter {
-                            AchievementModel::id eq id
-                            eq("id", id)
-                        }
-                    }.decodeSingle<AchievementModel>()
-
-                if (achievement.Status == "completed") return
-
-                val newCurrent = (achievement.Current ?: 0) + incrementBy
-
-                val updatedStatus = if (newCurrent >= (achievement.Target ?: 0)) "completed" else "not completed"
-
-                supabase
-                    .from("achievements")
-                    .update(
-                        mapOf(
-                            "Current" to newCurrent,
-                            "Status" to updatedStatus
-                        )
-                    ) {
-                        filter {
-                            AchievementModel::id eq id
-                            eq("id", id)
-                        }
+            return supabase.from("achievements")
+                .select {
+                    filter {
+                        AchievementModel::id eq id
+                        eq("id", id)
                     }
-            } catch (e: Exception) {
-                Log.e("UpdateAchievementError", "Error updating achievement: ${e.message}")
-                throw e
-            }
+                }
+                .decodeSingle<AchievementModel>()
         } else {
             throw Exception("Supabase initialization failed.")
+        }
+    }
+
+    suspend fun updateAchievement(id: String, incrementBy: Int): Boolean {
+        try {
+            val achievement = getAchievementUsingID(id)
+
+            if (achievement.Status == "completed") return true
+
+            val newCurrent = achievement.Current + incrementBy
+
+            val updatedStatus = if (newCurrent >= achievement.Target) "completed" else "not completed"
+
+            achievement.Status = updatedStatus
+            achievement.Current = newCurrent
+
+            supabase.from("achievements").update(achievement) {
+                filter {
+                    OpportunityModel::id eq achievement.id
+                }
+            }
+
+            return true
+
+        } catch (e: Exception) {
+            Log.d("UPD40", "Something went wrong! Update failed")
+            return false
+
         }
     }
 }

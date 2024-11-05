@@ -44,8 +44,13 @@ class AchievementAdapter(context: Context, achievements: List<AchievementModel>)
                 .load(achievement.ImageUrl)
                 .into(viewHolder.imageView);
 
-            viewHolder.progressBar
-            viewHolder.progressBar.setProgressPercentage(achievement.Current.toDouble(), true)
+            val progressPercentage = if (achievement.Target > 0) {
+                (achievement.Current.toDouble() / achievement.Target) * 100
+            } else {
+                0.0
+            }
+
+            viewHolder.progressBar.setProgressPercentage(progressPercentage.coerceAtMost(100.0), true)
 
             if (it.Status == "completed") {
                 viewHolder.progressBar.visibility = View.GONE

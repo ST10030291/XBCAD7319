@@ -155,7 +155,10 @@ class CreateCustomerFragment : Fragment() {
         try {
             val success = initializeFields(view)?.let { operation(it) }
             Toast.makeText(requireContext(), if (success == true) successMessage else failureMessage, Toast.LENGTH_SHORT).show()
-            if (success == true) requireActivity().supportFragmentManager.popBackStack()
+            if (success == true) {
+                sbHelper.updateAchievement("1e1af44d-7824-438e-af14-710e0a81d277",1)
+                requireActivity().supportFragmentManager.popBackStack()
+            }
         } catch (e: Exception) {
             Log.e("CreateCustomer", "Exception: ${e.message}")
             Toast.makeText(requireContext(), "Something went wrong! Operation cancelled.", Toast.LENGTH_SHORT).show()
