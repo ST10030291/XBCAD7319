@@ -12,7 +12,7 @@
         android:label="Vuca Digital"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.XBCAD7319VUCADigital"
+        android:theme="@style/Base.Theme.XBCAD7319VUCADigital"
         tools:targetApi="31">
         <activity
             android:name=".Activites.RegisterActivity"
@@ -32,6 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

@@ -42,6 +42,25 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185352327100:android:02cd3add4c622ff42ca5b9",
+        "android_client_info": {
+          "package_name": "com.vuca.xbcad7319_vucadigital"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9sajTMQhxo-MqiCsh0TzP__bJ646ZX-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

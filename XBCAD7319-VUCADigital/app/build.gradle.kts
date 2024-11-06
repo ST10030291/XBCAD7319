@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.xbcad7319_vucadigital"
+    namespace = "com.vuca.xbcad7319_vucadigital"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.xbcad7319_vucadigital"
+        applicationId = "com.vuca.xbcad7319_vucadigital"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
