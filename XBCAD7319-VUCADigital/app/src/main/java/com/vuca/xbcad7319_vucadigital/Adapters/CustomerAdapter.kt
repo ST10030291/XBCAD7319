@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.vuca.xbcad7319_vucadigital.R
 import com.vuca.xbcad7319_vucadigital.models.CustomerModel
 
+//This adpter is used to bind the customers to the Customer grid in the Customers Fragment
 class CustomerAdapter(context: Context, private val customers: List<CustomerModel>) :
     ArrayAdapter<CustomerModel>(context, 0, customers) {
 

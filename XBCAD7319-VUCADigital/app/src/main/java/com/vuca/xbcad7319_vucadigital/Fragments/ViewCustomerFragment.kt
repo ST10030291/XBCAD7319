@@ -53,6 +53,7 @@ class ViewCustomerFragment : Fragment() {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var notificationType: String
 
+    //Ensures the Navbar is visible and the plus btn is gone
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -101,6 +102,7 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    //Displays the customers information and initialises action buttons
     private fun displayCustomerData(view: View) {
         view.findViewById<TextView>(R.id.customer_name).text = customer.CustomerName
         view.findViewById<TextView>(R.id.customer_email).text = customer.CustomerEmail
@@ -131,6 +133,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to make a phone call using intent in Android?
+    // Posted by: UMAR-MOBITSOLUTIONS
+    // Available at: https://stackoverflow.com/questions/4275678/how-to-make-a-phone-call-using-intent-in-android
     private fun makePhoneCall(phoneNumber: String) {
         if (phoneNumber.isNotEmpty()) {
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
@@ -140,6 +146,7 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    //Function to delete the customer from the database and return back to the customer Fragment
     private suspend fun deleteCustomer() {
         try {
             customer.id?.let {
@@ -152,6 +159,7 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    //Directs the user to the Create Customer Fragment but with update UI
     private fun navigateToUpdateCustomer() {
         val updateCustomerFragment = CreateCustomerFragment().apply {
             arguments = Bundle().apply {
@@ -184,6 +192,7 @@ class ViewCustomerFragment : Fragment() {
             .commit()
     }
 
+    //Displays the Customers products by fetching the products from the database
     private fun loadCustomerProducts() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {

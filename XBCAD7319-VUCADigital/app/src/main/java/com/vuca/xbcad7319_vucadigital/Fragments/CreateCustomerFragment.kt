@@ -22,6 +22,7 @@ import com.vuca.xbcad7319_vucadigital.models.CustomerModel
 import kotlinx.coroutines.launch
 
 class CreateCustomerFragment : Fragment() {
+    //Global variables for later use
     private val sbHelper = SupabaseHelper()
     private lateinit var selectedItem: String
     private lateinit var customerTypeDropdown: AutoCompleteTextView
@@ -46,6 +47,7 @@ class CreateCustomerFragment : Fragment() {
         }
     }
 
+    //Fills the Customer type drop down
     private fun setupDropdown(view: View) {
         customerTypeDropdown = view.findViewById(R.id.autoCompleteText)
         val customerTypes = arrayOf("Prospect", "Leads", "Referrals")
@@ -65,10 +67,12 @@ class CreateCustomerFragment : Fragment() {
         }
     }
 
+    //Sets up the view depending on if hte user is updating or creating a customer
     private fun setupUI(view: View) {
         val titleTextView = view.findViewById<TextView>(R.id.pageName)
         val actionButton = view.findViewById<Button>(R.id.createCustomerButton)
 
+        //Populates the fields if updating a customer
         if (isUpdateMode) {
             titleTextView.text = getString(R.string.update_customer)
             actionButton.text = getString(R.string.save)
@@ -83,6 +87,7 @@ class CreateCustomerFragment : Fragment() {
         }
     }
 
+    //Initialises all fields
     private fun initializeFields(view: View): CustomerModel? {
         val customerName = getFieldText(view, R.id.customerName)
         val telephoneNumber = getFieldText(view, R.id.telephoneNumber)
@@ -108,6 +113,8 @@ class CreateCustomerFragment : Fragment() {
         return view.findViewById<EditText>(id).text.toString()
     }
 
+    //Validates if the user input is not empty
+    //Will return an error if any user input is empty
     private fun validateFields(vararg fields: String): Boolean {
         fields.forEach { field ->
             if (field.isEmpty()) {
@@ -129,6 +136,7 @@ class CreateCustomerFragment : Fragment() {
             .show()
     }
 
+    //Populates the Customer fragment fields for updating
     private fun populateFields(customer: CustomerModel, view: View) {
         view.findViewById<EditText>(R.id.customerName).setText(customer.CustomerName)
         view.findViewById<EditText>(R.id.customerEmail).setText(customer.CustomerEmail)
@@ -151,6 +159,7 @@ class CreateCustomerFragment : Fragment() {
         }
     }
 
+    //Handles the update or create customer operations and returns the respective message
     private suspend fun handleCustomerOperation(view: View, operation: suspend (CustomerModel) -> Boolean, successMessage: String, failureMessage: String) {
         try {
             val success = initializeFields(view)?.let { operation(it) }

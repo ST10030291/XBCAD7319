@@ -31,6 +31,7 @@ class CustomersFragment : Fragment() {
     private lateinit var searchView: SearchView
     private lateinit var gridView: GridView
 
+    //This makes sure that the Navbar is visible in the Customer fragment
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -43,6 +44,7 @@ class CustomersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Initialise necessary elements
         searchView = view.findViewById(R.id.SearchBar)
         gridView = view.findViewById(R.id.CustomerGridView)
         allFilterButton = view.findViewById(R.id.AllFilter)
@@ -51,6 +53,7 @@ class CustomersFragment : Fragment() {
         referralsFilterButton = view.findViewById(R.id.ReferralsFilter)
         sbHelper = SupabaseHelper()
 
+        //Executes this code block after 2 seconds
         Handler(Looper.getMainLooper()).postDelayed({
             val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
             shimmerLayout.stopShimmer()
@@ -58,6 +61,8 @@ class CustomersFragment : Fragment() {
             gridView.visibility = View.VISIBLE
 
             lifecycleScope.launch {
+                //Gets the customers from the database
+                //And updates the customer grid
                 customers = sbHelper.getAllCustomers()
 
                 filteredCustomers = customers
@@ -67,6 +72,7 @@ class CustomersFragment : Fragment() {
                 setUpSearchView()
             }
 
+            //Filter buttons listeners
             allFilterButton.setOnClickListener {
                 filteredCustomers = customers
                 updateCustomerGrid(gridView, filteredCustomers)
@@ -97,6 +103,7 @@ class CustomersFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_customers, container, false)
     }
 
+    //This allows the user to search for a customer by their name
     private fun setUpSearchView() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -111,6 +118,7 @@ class CustomersFragment : Fragment() {
         })
     }
 
+    //Filters the customer grid by the users search input
     private fun searchCustomersByName(query: String) {
         val queryLower = query.lowercase()
 
@@ -120,6 +128,7 @@ class CustomersFragment : Fragment() {
         updateCustomerGrid(gridView, filteredCustomers)
     }
 
+    //Changes the theme of the selected filter button
     private fun selectButton(selectedButton: Button) {
         allFilterButton.isSelected = selectedButton == allFilterButton
         prospectFilterButton.isSelected = selectedButton == prospectFilterButton
@@ -127,6 +136,7 @@ class CustomersFragment : Fragment() {
         referralsFilterButton.isSelected = selectedButton == referralsFilterButton
     }
 
+    //Updates the customer grid and sets on click listeners for each grid item
     private fun updateCustomerGrid(gridView: GridView, filteredCustomers: List<CustomerModel>) {
         val adapter = CustomerAdapter(requireContext(), filteredCustomers)
         gridView.adapter = adapter

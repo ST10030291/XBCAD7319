@@ -13,6 +13,7 @@ import com.vuca.xbcad7319_vucadigital.models.AchievementModel
 import com.mackhartley.roundedprogressbar.RoundedProgressBar
 import com.squareup.picasso.Picasso
 
+//Binds the achievements to the Achievement grid in the Achievement fragment
 class AchievementAdapter(context: Context, achievements: List<AchievementModel>) :
     ArrayAdapter<AchievementModel>(context, 0, achievements) {
 
@@ -35,10 +36,12 @@ class AchievementAdapter(context: Context, achievements: List<AchievementModel>)
             viewHolder.nameTextView.text = achievement.Name
             viewHolder.descriptionTextView.text = achievement.Description
 
+            //Uses Picasso to display the achievement badge for each item
             Picasso.get()
                 .load(achievement.ImageUrl)
                 .into(viewHolder.imageView);
 
+            //Ensures that the percentage is calculated to reflect the current and target values
             val progressPercentage = if (achievement.Target > 0) {
                 (achievement.Current.toDouble() / achievement.Target) * 100
             } else {
@@ -47,6 +50,7 @@ class AchievementAdapter(context: Context, achievements: List<AchievementModel>)
 
             viewHolder.progressBar.setProgressPercentage(progressPercentage.coerceAtMost(100.0), true)
 
+            //Progress bar is not displayed if the achievement is completed
             if (it.Status == "completed") {
                 viewHolder.progressBar.visibility = View.GONE
                 viewHolder.isCompletedTextView.visibility = View.VISIBLE

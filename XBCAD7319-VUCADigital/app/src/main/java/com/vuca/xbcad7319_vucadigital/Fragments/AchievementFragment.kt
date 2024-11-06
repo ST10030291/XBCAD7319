@@ -21,12 +21,14 @@ import kotlinx.coroutines.launch
 
 class AchievementFragment : Fragment() {
 
+    //Global variables for later use
     private lateinit var sbHelper: SupabaseHelper
     private lateinit var achievements: List<AchievementModel>
     private lateinit var gridView: GridView
     private lateinit var backButton: ImageView
     private lateinit var achievementCountTextView: TextView
 
+    //Ensures that the Navbar is gone and plus btn is gone
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -37,13 +39,14 @@ class AchievementFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        InitElements(view)
+        initElement(view)
         Handler(Looper.getMainLooper()).postDelayed({
             val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerAchievement)
             shimmerLayout.stopShimmer()
             shimmerLayout.visibility = View.GONE
             gridView.visibility = View.VISIBLE
 
+            //Fetches all Achievements so be displayed to the user and updates the achievement Grid
             lifecycleScope.launch {
                 achievements = sbHelper.getAllAchievements()
 
@@ -54,11 +57,13 @@ class AchievementFragment : Fragment() {
 
         },2000)
 
+        //Directs the user to the previous fragment on click
         backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
+    //Displays the count of the achievements with the status "completed"
     private fun displayCompletedAchievementsCount() {
         lifecycleScope.launch {
             try {
@@ -71,6 +76,7 @@ class AchievementFragment : Fragment() {
         }
     }
 
+    //Updates the achievement grid
     private fun updateAchievementGrid(gridView: GridView, achievements: List<AchievementModel>) {
         val adapter = AchievementAdapter(requireContext(), achievements)
         gridView.adapter = adapter
@@ -83,7 +89,7 @@ class AchievementFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_achievement, container, false)
     }
 
-    private fun InitElements(view: View){
+    private fun initElement(view: View){
         gridView = view.findViewById(R.id.AchievementGridView)
         sbHelper = SupabaseHelper()
         backButton = view.findViewById(R.id.back_btn)

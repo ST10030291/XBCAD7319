@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
 
         progressBar()
     }
+
+    //Progress bar to load the application
+    //After reaching 100, navigates the user to the login page
     private fun progressBar(){
         pb = findViewById(R.id.progressBar)
 
