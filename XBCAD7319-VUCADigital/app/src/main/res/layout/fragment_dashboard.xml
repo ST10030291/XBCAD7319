@@ -104,6 +104,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
+                    android:layout_marginEnd="20dp"
                     android:id="@+id/YearlyFilter"
                     android:text="Yearly"
                     android:textColor="@color/black"

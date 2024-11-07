@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="UselessParent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,188 +48,201 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/labelCustomerName"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/customer_name"/>
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/customerName"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:autofillHints="customerName"
-                android:inputType="text"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
-                android:textSize="16sp"
-                android:hint="@string/customer_name"/>
-
-            <!-- Telephone Number -->
-            <TextView
-                android:id="@+id/labelTelephoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginTop="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/telephone_number"/>
-
-            <EditText
-                android:id="@+id/telephoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
-                android:textSize="16sp"
-                android:autofillHints="customerTelephone"
-                android:inputType="phone"
-                android:hint="@string/telephone_number"/>
-
-            <!-- Customer Email -->
-            <TextView
-                android:id="@+id/labelCustomerEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/customer_email"/>
-
-            <EditText
-                android:id="@+id/customerEmail"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:autofillHints="emailAddress"
-                android:inputType="textEmailAddress"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
-                android:textSize="16sp"
-                android:hint="@string/customer_email"/>
-
-            <!-- Account Number -->
-            <TextView
-                android:id="@+id/labelAccountNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/account_number"/>
-
-            <EditText
-                android:id="@+id/accountNumber"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:autofillHints="accountNumber"
-                android:inputType="text"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
-                android:textSize="16sp"
-                android:hint="@string/account_number"
-                tools:ignore="TextFields" />
-
-            <!-- Billing Account Number -->
-            <TextView
-                android:id="@+id/labelBillingAccountNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/billing_account_number"/>
-
-            <EditText
-                android:id="@+id/billingAccountNumber"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:background="@drawable/user_input_border"
-                android:textSize="16sp"
-                android:autofillHints="billingAccount"
-                android:inputType="text"
-                android:hint="@string/billing_account_number"
-                tools:ignore="TextFields" />
-
-            <!-- Customer Type -->
-            <TextView
-                android:id="@+id/labelCustomerType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="@string/customer_type"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/customerTypeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:hint="@string/select"
-                app:hintEnabled="false"
-                android:textSize="16sp"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:labelFor="@id/labelCustomerType">
-
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteText"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/user_input_border"
-                    android:textSize="16sp"
-                    android:inputType="none"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/labelCustomerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/customer_name"/>
+
+                    <EditText
+                        android:id="@+id/customerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:autofillHints="customerName"
+                        android:inputType="text"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:background="@drawable/user_input_border"
+                        android:textSize="16sp"
+                        android:hint="@string/customer_name"/>
+
+                    <!-- Telephone Number -->
+                    <TextView
+                        android:id="@+id/labelTelephoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginTop="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/telephone_number"/>
+
+                    <EditText
+                        android:id="@+id/telephoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:background="@drawable/user_input_border"
+                        android:textSize="16sp"
+                        android:autofillHints="customerTelephone"
+                        android:inputType="phone"
+                        android:hint="@string/telephone_number"/>
+
+                    <!-- Customer Email -->
+                    <TextView
+                        android:id="@+id/labelCustomerEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/customer_email"/>
+
+                    <EditText
+                        android:id="@+id/customerEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:autofillHints="emailAddress"
+                        android:inputType="textEmailAddress"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:background="@drawable/user_input_border"
+                        android:textSize="16sp"
+                        android:hint="@string/customer_email"/>
+
+                    <!-- Account Number -->
+                    <TextView
+                        android:id="@+id/labelAccountNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/account_number"/>
+
+                    <EditText
+                        android:id="@+id/accountNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:autofillHints="accountNumber"
+                        android:inputType="text"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:background="@drawable/user_input_border"
+                        android:textSize="16sp"
+                        android:hint="@string/account_number"
+                        tools:ignore="TextFields" />
+
+                    <!-- Billing Account Number -->
+                    <TextView
+                        android:id="@+id/labelBillingAccountNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/billing_account_number"/>
+
+                    <EditText
+                        android:id="@+id/billingAccountNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:background="@drawable/user_input_border"
+                        android:textSize="16sp"
+                        android:autofillHints="billingAccount"
+                        android:inputType="text"
+                        android:hint="@string/billing_account_number"
+                        tools:ignore="TextFields" />
+
+                    <!-- Customer Type -->
+                    <TextView
+                        android:id="@+id/labelCustomerType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="@string/customer_type"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/customerTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:hint="@string/select"
+                        app:hintEnabled="false"
+                        android:textSize="16sp"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:labelFor="@id/labelCustomerType">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoCompleteText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/user_input_border"
+                            android:textSize="16sp"
+                            android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/createCustomerButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="@string/create"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:textSize="16sp"
+                    android:theme="@style/FilterBtnTheme"
+                    android:layout_marginBottom="40dp"/>
+
+                </LinearLayout>
+                </ScrollView>
         </LinearLayout>
-        <Button
-            android:id="@+id/createCustomerButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="@string/create"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textSize="16sp"
-            android:theme="@style/FilterBtnTheme"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="70dp"/>
+
     </RelativeLayout>
 
 

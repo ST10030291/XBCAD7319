@@ -27,7 +27,7 @@
                 android:layout_width="62dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginEnd="60dp"
+                android:layout_marginEnd="50dp"
                 android:clickable="true"
                 android:contentDescription="@string/todo"
                 android:focusable="true"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="Create Opportunity"
                 android:textColor="@color/black"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -71,7 +71,7 @@
 
         <EditText
             android:id="@+id/opportunityNameInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="customerName"
             android:background="@drawable/user_input_border"
@@ -96,7 +96,7 @@
 
         <EditText
             android:id="@+id/valueInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="customerTelephone"
             android:background="@drawable/user_input_border"
@@ -121,11 +121,11 @@
 
         <Spinner
             android:id="@+id/customerNameInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/user_input_border"
-            android:paddingStart="15dp"
+            android:paddingStart="10dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -145,13 +145,13 @@
 
         <Spinner
             android:id="@+id/priorityOfOpportunitySpinner"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:entries="@array/priorityOptions"
             android:background="@drawable/user_input_border"
             android:inputType="textEmailAddress"
-            android:paddingStart="15dp"
+            android:paddingStart="10dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -170,13 +170,13 @@
 
         <Spinner
             android:id="@+id/statusInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/user_input_border"
             android:entries="@array/leadStatusOptions"
             android:inputType="textEmailAddress"
-            android:paddingStart="15dp"
+            android:paddingStart="10dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -196,13 +196,13 @@
 
         <Spinner
             android:id="@+id/stageInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/user_input_border"
             android:entries="@array/stageOptions"
             android:inputType="textEmailAddress"
-            android:paddingStart="15dp"
+            android:paddingStart="10dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -221,7 +221,7 @@
 
         <EditText
             android:id="@+id/dateInput"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="emailAddress"
             android:background="@drawable/user_input_border"
@@ -235,7 +235,7 @@
 
         <Button
             android:id="@+id/createOpportunityButton"
-            android:layout_width="375dp"
+            android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="55dp"
             android:text="@string/create"
