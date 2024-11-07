@@ -532,6 +532,7 @@ class SupabaseHelper {
             return false
         }
     }
+
 //    suspend fun updateNotificationHistory(notificationHistory: NotificationHistoryModel) : Boolean{
 //        try{
 //            supabase.from("notification_history").update(notificationHistory) {

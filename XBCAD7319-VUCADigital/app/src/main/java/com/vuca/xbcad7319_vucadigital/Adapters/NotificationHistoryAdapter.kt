@@ -13,9 +13,8 @@ import com.vuca.xbcad7319_vucadigital.models.NotificationHistoryModel
 
 class NotificationHistoryAdapter(
     private val notifications: MutableList<NotificationHistoryModel>,
-    private val onHide: (Int) -> Unit,
-    private val onShow: (Int) -> Unit,
-    private val onDelete: (Int) -> Unit
+    private val onHide: (NotificationHistoryModel, Boolean) -> Unit,
+    private val onDelete: (NotificationHistoryModel) -> Unit
 ) : RecyclerView.Adapter<NotificationHistoryAdapter.NotificationHistoryViewHolder>() {
 
     class NotificationHistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -46,57 +45,49 @@ class NotificationHistoryAdapter(
 
         holder.imageHide.setOnClickListener {
             if(notifications.visible == true){
-                onHide(position)
+                onHide(notifications,false)
                 updateVisibilityIcon(holder.imageHide, true)
             }
             else{
-                onShow(position)
+                onHide(notifications,true)
                 updateVisibilityIcon(holder.imageHide, false)
             }
         }
-        holder.imageDelete.setOnClickListener { onDelete(position) }
+        holder.imageDelete.setOnClickListener { onDelete(notifications) }
     }
 
     override fun getItemCount(): Int = notifications.size
 
-//    // Update a single notification in the adapter
-//    fun updateNotification(updatedNotification: NotificationHistoryModel) {
-//        val index = notifications.indexOfFirst { it.id == updatedNotification.id }
-//        if (index != -1) {
-//            notifications[index] = updatedNotification
-//            // Notify the adapter that the item at 'index' has changed
-//            notifyItemChanged(index)
-//        }
-//    }
-//
-//    // Update the entire list of notifications
-//    fun updateNotifications(newNotifications: List<NotificationHistoryModel>) {
-//        val oldSize = notifications.size
-//        notifications.clear()
-//        notifications.addAll(newNotifications)
-//        // Notify that old items were removed
-//        notifyItemRangeRemoved(0, oldSize)
-//        // Notify that new items were added
-//        notifyItemRangeInserted(0, newNotifications.size)
-//    }
-//
-//    // Remove a notification from the adapter
-//    fun removeNotification(notification: NotificationHistoryModel) {
-//        val position = notifications.indexOfFirst { it.id == notification.id }
-//        if (position != -1) {
-//            // Remove the notification at the found position
-//            notifications.removeAt(position)
-//            // Notify that an item was removed
-//            notifyItemRemoved(position)
-//        }
-//    }
+    // Update a single notification in the adapter
+    fun updateNotification(updatedNotification: NotificationHistoryModel) {
+        val index = notifications.indexOfFirst { it.id == updatedNotification.id }
+        if (index != -1) {
+            notifications[index] = updatedNotification
+            // Notify the adapter that the item at 'index' has changed
+            notifyItemChanged(index)
+        }
+    }
 
-    fun updateData(newNotifications: List<NotificationHistoryModel>) {
-        val diffCallback = NotificationHistoryDiffCallback(notifications, newNotifications)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
+    // Update the entire list of notifications
+    fun updateNotifications(newNotifications: List<NotificationHistoryModel>) {
+        val oldSize = notifications.size
         notifications.clear()
         notifications.addAll(newNotifications)
-        diffResult.dispatchUpdatesTo(this)
+        // Notify that old items were removed
+        notifyItemRangeRemoved(0, oldSize)
+        // Notify that new items were added
+        notifyItemRangeInserted(0, newNotifications.size)
+    }
+
+    // Remove a notification from the adapter
+    fun removeNotification(notification: NotificationHistoryModel) {
+        val position = notifications.indexOfFirst { it.id == notification.id }
+        if (position != -1) {
+            // Remove the notification at the found position
+            notifications.removeAt(position)
+            // Notify that an item was removed
+            notifyItemRemoved(position)
+        }
     }
 
     private fun updateVisibilityIcon(imageView: ImageView, isVisible: Boolean) {
@@ -108,21 +99,4 @@ class NotificationHistoryAdapter(
     }
 }
 
-class NotificationHistoryDiffCallback(
-   private val oldList: List<NotificationHistoryModel>,
-    private val newList: List<NotificationHistoryModel>
-) : DiffUtil.Callback() {
-
-    override fun getOldListSize(): Int = oldList.size
-
-    override fun getNewListSize(): Int = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].id == newList[newItemPosition].id
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition]
-    }
-}
 

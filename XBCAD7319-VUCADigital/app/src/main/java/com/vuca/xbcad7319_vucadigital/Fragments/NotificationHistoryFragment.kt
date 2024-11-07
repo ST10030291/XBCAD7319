@@ -1,6 +1,8 @@
 package com.vuca.xbcad7319_vucadigital.Fragments
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vuca.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.vuca.xbcad7319_vucadigital.Adapters.NotificationHistoryAdapter
-import com.vuca.xbcad7319_vucadigital.R
+import com.vuca.xbcad7319_vucadigital.databinding.FragmentNotificationHistoryBinding
 import com.vuca.xbcad7319_vucadigital.db.SupabaseHelper
 import com.vuca.xbcad7319_vucadigital.models.NotificationHistoryModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NotificationHistoryFragment : Fragment() {
-
+    private lateinit var binding: FragmentNotificationHistoryBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var notificationHistoryAdapter: NotificationHistoryAdapter
     private var notificationList: MutableList<NotificationHistoryModel> = mutableListOf()
@@ -31,6 +33,7 @@ class NotificationHistoryFragment : Fragment() {
     private var tempNotifications : MutableList<NotificationHistoryModel> = mutableListOf()
     private var sbHelper: SupabaseHelper = SupabaseHelper()
 
+    private lateinit var allFilterBtn: Button
     private lateinit var visibleFilterBtn: Button
     private lateinit var hiddenFilterBtn: Button
     private lateinit var searchView: SearchView
@@ -39,38 +42,46 @@ class NotificationHistoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for the fragment
-        val binding = inflater.inflate(R.layout.fragment_notification_history, container, false)
-        recyclerView = binding.findViewById(R.id.notificationHistoryRecyclerView)
-        searchView = binding.findViewById(R.id.notificationHistorySearchView)
-        visibleFilterBtn = binding.findViewById(R.id.visibleFilterBtn)
-        hiddenFilterBtn = binding.findViewById(R.id.hiddenFilterBtn)
-
-        // Set up RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        notificationHistoryAdapter = NotificationHistoryAdapter(
-            notifications = notificationList,
-            onHide = { position -> changeNotificationState(position, false) },
-            onShow = { position -> changeNotificationState(position, true) },
-            onDelete = { position -> deleteNotification(position) }
-        )
-        recyclerView.adapter = notificationHistoryAdapter
-
-        // Load notifications from Supabase
-        loadNotifications()
-
-        setUpSearchView()
-
-        selectButton(visibleFilterBtn)
-
-        // Set up the click listeners for each filter button
-        setFilterButtonClickListener(visibleFilterBtn, true)
-        setFilterButtonClickListener(hiddenFilterBtn, false)
-
-        return binding
+        // Inflate the ViewBinding object and return the root view
+        binding = FragmentNotificationHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private fun selectButton(selectedButton: Button) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerView = binding.notificationHistoryRecyclerView
+        searchView = binding.notificationHistorySearchView
+        allFilterBtn = binding.AllFilterBtn
+        visibleFilterBtn = binding.visibleFilterBtn
+        hiddenFilterBtn = binding.hiddenFilterBtn
+
+        // Set up RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        notificationHistoryAdapter = NotificationHistoryAdapter(notificationList, ::changeNotificationState, ::deleteNotification)
+        recyclerView.adapter = notificationHistoryAdapter
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val shimmerLayout = binding.shimmerTasks
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+
+            // Load notifications from Supabase
+            loadNotifications()
+
+            setUpSearchView()
+
+            // Set up the click listeners for each filter button
+            setFilterButtonClickListener(allFilterBtn, null)
+            setFilterButtonClickListener(visibleFilterBtn, true)
+            setFilterButtonClickListener(hiddenFilterBtn, false)
+            selectButton(allFilterBtn)
+
+        },2000)
+    }
+
+        private fun selectButton(selectedButton: Button) {
+        allFilterBtn.isSelected = selectedButton == allFilterBtn
         visibleFilterBtn.isSelected = selectedButton == visibleFilterBtn
         hiddenFilterBtn.isSelected = selectedButton == hiddenFilterBtn
     }
@@ -82,14 +93,20 @@ class NotificationHistoryFragment : Fragment() {
     private fun setFilterButtonClickListener(button: Button, filterVisibility: Boolean?) {
         try {
             button.setOnClickListener {
-                filteredNotificationList = if(filterVisibility == true){
-                    tempNotifications.filter { it.visible == true }.toMutableList()
-                } else{
-                    tempNotifications.filter { it.visible == false }.toMutableList()
+                filteredNotificationList = when (filterVisibility) {
+                    null -> {
+                        tempNotifications
+                    }
+                    true -> {
+                        tempNotifications.filter { it.visible == true }.toMutableList()
+                    }
+                    else -> {
+                        tempNotifications.filter { it.visible == false }.toMutableList()
+                    }
                 }
 
                 selectButton(button)
-                notificationHistoryAdapter.updateData(filteredNotificationList)
+                notificationHistoryAdapter.updateNotifications(filteredNotificationList)
             }
         }
         catch (e : Exception){
@@ -127,11 +144,11 @@ class NotificationHistoryFragment : Fragment() {
             notification.customerName.lowercase().contains(queryLower)
         }.toMutableList()
 
-        notificationHistoryAdapter.updateData(filteredNotificationList)
+        notificationHistoryAdapter.updateNotifications(filteredNotificationList)
 
         // Show a toast message if filteredTasks is empty
         if (filteredNotificationList.isEmpty()) {
-            Toast.makeText(context, "Task \"$query\" not found!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Operation failure! Customer \"$query\" not found!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -142,57 +159,55 @@ class NotificationHistoryFragment : Fragment() {
                 //notificationList = notifications.toMutableList()
                 withContext(Dispatchers.Main) {
                     // Update RecyclerView on the main thread
-                    notificationHistoryAdapter.updateData(tempNotifications)
+                    notificationHistoryAdapter.updateNotifications(tempNotifications)
                 }
             } catch (e: Exception) {
                 Log.e("NotificationLoadError", "Error loading notifications", e)
                 withContext(Dispatchers.Main) {
                     // Show an error message if loading fails
-                    Toast.makeText(requireContext(), "Couldn't load notifications from DB", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Operation failure! Couldn't load notifications from DB.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    // Hide a notification (set visible = false in database)
-    private fun changeNotificationState(position: Int, visibilityState: Boolean) {
-        val notification = tempNotifications[position]
-        // Update visibility locally
-        tempNotifications[position] = notification.copy(visible = visibilityState)
-
+    private fun changeNotificationState(notification: NotificationHistoryModel, visibilityState: Boolean) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                // Update the notification in the database
                 sbHelper.updateNotificationHistory(notification.id!!, visibilityState)
+
+                // Update the notification in memory as well (to reflect the change in the adapter)
+                 notification.visible = visibilityState
+
                 withContext(Dispatchers.Main) {
-                    // Refresh the item
-                    notificationHistoryAdapter.notifyItemChanged(position)
-                    Toast.makeText(requireContext(), "Notification visibility changed.", Toast.LENGTH_SHORT).show()
+                    // Update the notification in the adapter
+                    notificationHistoryAdapter.updateNotification(notification)
+                    Toast.makeText(requireContext(), "Operation Success! Notification visibility has been changed.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Log.e("HideNotificationError", "Error hiding notification", e)
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Failed to hide notification", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Operation failure! Failed to hide notification", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    // Delete a notification (actually delete from database)
-    private fun deleteNotification(position: Int) {
-        val notification = tempNotifications[position]
+    private fun deleteNotification(notification: NotificationHistoryModel) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                // Delete the notification from the database
                 sbHelper.deleteNotificationHistory(notification.id!!)
                 withContext(Dispatchers.Main) {
-                    notificationList.removeAt(position)
-                    notificationHistoryAdapter.notifyItemRemoved(position)
-                    Toast.makeText(requireContext(), "Notification deleted successfully", Toast.LENGTH_SHORT).show()
+                    // Delete the notification in the adapter
+                    notificationHistoryAdapter.removeNotification(notification)
+                    Toast.makeText(requireContext(), "Operation Success! Notification deleted.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Log.e("NotificationDeleteError", "Error deleting notification", e)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Failed to delete notification", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Operation failure! Could not delete notification.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

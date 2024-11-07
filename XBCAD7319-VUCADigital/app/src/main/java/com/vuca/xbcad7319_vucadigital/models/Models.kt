@@ -71,7 +71,7 @@ data class NotificationHistoryModel(
     val customerName: String,
     val message: String,
     val dateTime: String,
-    val visible: Boolean? = null
+    var visible: Boolean? = null
 )
 @Serializable
 data class AchievementModel(
