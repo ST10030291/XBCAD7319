@@ -513,6 +513,62 @@ class SupabaseHelper {
         }
     }
 
+    suspend fun updateNotificationHistory(notificationId: String, newVisibility: Boolean) : Boolean{
+        // Build the data to update
+        val updatedData = mapOf(
+            "visible" to newVisibility
+        )
+
+        try{
+            supabase.from("notification_history").update(updatedData) {
+                filter {
+                    NotificationHistoryModel::id eq notificationId
+                }
+            }
+            return true
+        }
+        catch (e: Exception){
+            Log.d("UPD40", "Something went wrong! Update failed")
+            return false
+        }
+    }
+//    suspend fun updateNotificationHistory(notificationHistory: NotificationHistoryModel) : Boolean{
+//        try{
+//            supabase.from("notification_history").update(notificationHistory) {
+//                filter {
+//                    NotificationHistoryModel::id eq notificationHistory.id
+//                }
+//            }
+//            return true
+//        }
+//        catch (e: Exception){
+//            Log.d("UPD40", "Something went wrong! Update failed")
+//            return false
+//        }
+//    }
+
+    suspend fun deleteNotificationHistory(id : String) : Boolean{
+        val isInitialized = fetchSupabaseApiKeyAndInitialize()
+        if (isInitialized) {
+            try{
+                supabase.from("notification_history").delete {
+                    filter {
+                        NotificationHistoryModel::id eq id
+                        eq("id", id)
+                    }
+                }
+                return true
+            }
+            catch (e: Exception){
+                Log.e("DEL40", "Deletion failed: ${e.message}", e)
+                return false
+            }
+        }else{
+            throw Exception("Supabase initialization failed.")
+        }
+
+    }
+
     suspend fun getAllNotificationHistory(): List<NotificationHistoryModel> {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 

@@ -41,6 +41,7 @@ class DashboardFragment : Fragment() {
     private lateinit var viewProductsBtn: CardView
     private lateinit var viewAnalyticsBtn: CardView
     private lateinit var viewAchievementsBtn: ImageView
+    private lateinit var viewNotificationHistoryBtn: ImageView
     private lateinit var lineChart: LineChart
     private val monthLabels = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     private val dayLabels = List(31) { (it + 1).toString() }
@@ -85,6 +86,7 @@ class DashboardFragment : Fragment() {
             viewProductsBtn.setOnClickListener { openProductsFragment() }
             viewAnalyticsBtn.setOnClickListener { openAnalyticsFragment() }
             viewAchievementsBtn.setOnClickListener{ openAchievementsFragment() }
+            viewNotificationHistoryBtn.setOnClickListener{ openNotificationHistoryFragment() }
 
             // Set up filter buttons
             setupFilterButton(monthlyFilterButton, "month", monthLabels)
@@ -118,12 +120,12 @@ class DashboardFragment : Fragment() {
         viewProductsBtn = view.findViewById(R.id.viewProducts_btn)
         viewAnalyticsBtn = view.findViewById(R.id.viewAnalytics_btn)
         viewAchievementsBtn = view.findViewById(R.id.achievement_btn)
+        viewNotificationHistoryBtn = view.findViewById(R.id.notification_btn)
         lineChart = view.findViewById(R.id.lineChart1)
         dailyFilterButton = view.findViewById(R.id.DailyFilter)
         weeklyFilterButton = view.findViewById(R.id.WeeklyFilter)
         monthlyFilterButton= view.findViewById(R.id.MonthlyFilter)
         yearlyFilterButton = view.findViewById(R.id.YearlyFilter)
-
     }
 
     private fun fetchAndDisplayCustomerCount() {
@@ -260,6 +262,14 @@ class DashboardFragment : Fragment() {
 
     private fun openAnalyticsFragment() {
         val fragment = AnalyticsFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openNotificationHistoryFragment() {
+        val fragment = NotificationHistoryFragment()
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)

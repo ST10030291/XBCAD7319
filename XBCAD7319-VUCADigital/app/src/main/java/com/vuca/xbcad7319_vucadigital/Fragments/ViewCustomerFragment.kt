@@ -1,18 +1,17 @@
 package com.vuca.xbcad7319_vucadigital.Fragments
 
 import android.Manifest
-import android.content.Intent
-import android.provider.Settings
 import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +51,7 @@ class ViewCustomerFragment : Fragment() {
     private lateinit var customerProductAdapter: CustomerProductsAdapter
 
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    private lateinit var notificationTitle: String
     private lateinit var notificationType: String
 
     //Ensures the Navbar is visible and the plus btn is gone
@@ -66,6 +67,7 @@ class ViewCustomerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sbHelper = SupabaseHelper()
+
         val recyclerView: RecyclerView = view.findViewById(R.id.customer_products_recycler)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         customerProductAdapter = CustomerProductsAdapter(customerProducts)
@@ -234,8 +236,11 @@ class ViewCustomerFragment : Fragment() {
 
             // Check if the ContractEnd is today
             if (isSameDay(contractEndDate, currentDate)) {
+                val message = "${customer.CustomerName}'s contract ends today! Call them to attempt to renew their contract."
+                val split = message.split("!", limit = 2)
+                notificationTitle = split[0]
                 notificationType = "ENDING_TODAY"
-                return "Customer contract ends today! Call them to attempt to renew their contract."
+                return message
             }
 
             // Check if the ContractEnd is in the next 7 days
@@ -243,14 +248,20 @@ class ViewCustomerFragment : Fragment() {
             calendar.time = currentDate
             calendar.add(Calendar.DAY_OF_YEAR, 7)
             if (contractEndDate.before(calendar.time) && contractEndDate.after(currentDate)) {
+                val message = "${customer.CustomerName}'s contract ends soon! On ${convertDateFormat(contractEnd)}. Consider calling them to renew their contract."
+                val split = message.split("!", limit = 2)
+                notificationTitle = split[0]
                 notificationType = "ENDING_SOON"
-                return "Customer contract ends soon! Consider calling them to renew their contract"
+                return message
             }
 
             // Check if the ContractEnd has passed
             if (contractEndDate.before(currentDate)) {
+                val message = "${customer.CustomerName}'s contract has ended! Contract expired on ${convertDateFormat(contractEnd)}. Call them to attempt to renew their contract."
+                val split = message.split("!", limit = 2)
+                notificationTitle = split[0]
                 notificationType = "ENDED"
-                return "Customer contract has ended! Call them to attempt to renew their contract."
+                return message
             }
 
             null // Return null if none of the conditions are met
@@ -274,7 +285,7 @@ class ViewCustomerFragment : Fragment() {
                 checkContractEnd(product.ContractEnd)?.let { message ->
 //                    val uniqueId = "notification_${System.currentTimeMillis()}"
                     val customerName = customer.CustomerName
-                    showNotificationIfNotShown(requireContext(), customerName, message, generateNotificationID(customerName,notificationType))
+                    showNotificationIfNotShown(requireContext(), customerName, message, generateNotificationID(customerName,notificationType), notificationTitle)
                 }
             }
         } catch (e: Exception) {
@@ -309,7 +320,7 @@ class ViewCustomerFragment : Fragment() {
     // Title: Create and manage notification channels
     // Posted by: Google for Developers
     // Available at: https://developer.android.com/develop/ui/views/notifications/channels#:~:text=To%20create%20a%20notification%20channel%2C%20follow%20these%20steps%3A,the%20notification%20channel%20by%20passing%20it%20to%20createNotificationChannel%28%29.
-    private fun showNotification(context: Context, customerName: String, message: String, notificationId: String) {
+    private fun showNotification(context: Context, customerName: String, message: String, notificationId: String, notificationTitle: String) {
         if (message.isEmpty()) {
             Log.w("Notification", "No message to display in the notification")
             return
@@ -322,7 +333,7 @@ class ViewCustomerFragment : Fragment() {
         try {
             val notificationBuilder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.logo)
-                .setContentTitle("Contract Notification")
+                .setContentTitle(notificationTitle)
                 .setContentText(message)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(message))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -400,10 +411,10 @@ class ViewCustomerFragment : Fragment() {
     }
 
     private fun saveNotificationToDB(customerName: String, message: String) {
-        Log.e("INSERT454", "Customer name: $customerName")
         val notification = NotificationHistoryModel(
             customerName = customerName,
-            message = message
+            message = message,
+            dateTime = getCurrentDate()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -416,12 +427,12 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
-    private fun showNotificationIfNotShown(context: Context, customerName: String, message: String, notificationId: String) {
+    private fun showNotificationIfNotShown(context: Context, customerName: String, message: String, notificationId: String, notificationTitle: String) {
         // Do not show if already shown today
         if (hasNotificationBeenShown(notificationId)) return
 
         // Show the notification
-        showNotification(context, customerName, message, notificationId)
+        showNotification(context, customerName, message, notificationId, notificationTitle)
 
         // Save the notification ID to prevent it from being shown again
         saveNotificationId(notificationId)
@@ -485,5 +496,31 @@ class ViewCustomerFragment : Fragment() {
 
     private fun generateNotificationID(customerName: String, notificationType: String): String{
         return "notification_${customerName}_${notificationType}"
+    }
+
+    private fun convertDateFormat(inputDate: String): String {
+        // Define the input and output date formats
+        val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormatter = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.ENGLISH)
+
+        return try {
+            // Parse the input date string to a Date object
+            val date = inputFormatter.parse(inputDate)
+
+            // Format the Date object to the desired output format
+            date?.let {
+                outputFormatter.format(it)
+            } ?: "Invalid date"
+        } catch (e: Exception) {
+            // Handle invalid input date format
+            "Invalid date format"
+        }
+    }
+
+    private fun getCurrentDate(): String{
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
+        val currentDateTime = dateFormat.format(Date())
+        return currentDateTime
+
     }
 }
