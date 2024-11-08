@@ -533,21 +533,6 @@ class SupabaseHelper {
         }
     }
 
-//    suspend fun updateNotificationHistory(notificationHistory: NotificationHistoryModel) : Boolean{
-//        try{
-//            supabase.from("notification_history").update(notificationHistory) {
-//                filter {
-//                    NotificationHistoryModel::id eq notificationHistory.id
-//                }
-//            }
-//            return true
-//        }
-//        catch (e: Exception){
-//            Log.d("UPD40", "Something went wrong! Update failed")
-//            return false
-//        }
-//    }
-
     suspend fun deleteNotificationHistory(id : String) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
         if (isInitialized) {
@@ -575,7 +560,7 @@ class SupabaseHelper {
 
         if (isInitialized) {
             return supabase.from("notification_history").select {
-                order(column = "id", order = Order.ASCENDING)
+                order(column = "dateTime", order = Order.DESCENDING)
             }.decodeList<NotificationHistoryModel>()
         } else {
             throw Exception("Supabase initialization failed.")

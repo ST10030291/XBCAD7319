@@ -28,12 +28,12 @@ class NotificationHistoryFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var notificationHistoryAdapter: NotificationHistoryAdapter
     private var notificationList: MutableList<NotificationHistoryModel> = mutableListOf()
+    private lateinit var lastButtonClicked: Button
 
-    private lateinit var filteredNotificationList: MutableList<NotificationHistoryModel>
-    private var tempNotifications : MutableList<NotificationHistoryModel> = mutableListOf()
+    private lateinit var filteredNotificationList: List<NotificationHistoryModel>
+    private lateinit var tempNotifications : List<NotificationHistoryModel>
     private var sbHelper: SupabaseHelper = SupabaseHelper()
 
-    private lateinit var allFilterBtn: Button
     private lateinit var visibleFilterBtn: Button
     private lateinit var hiddenFilterBtn: Button
     private lateinit var searchView: SearchView
@@ -41,7 +41,7 @@ class NotificationHistoryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the ViewBinding object and return the root view
         binding = FragmentNotificationHistoryBinding.inflate(inflater, container, false)
         return binding.root
@@ -51,7 +51,6 @@ class NotificationHistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.notificationHistoryRecyclerView
         searchView = binding.notificationHistorySearchView
-        allFilterBtn = binding.AllFilterBtn
         visibleFilterBtn = binding.visibleFilterBtn
         hiddenFilterBtn = binding.hiddenFilterBtn
 
@@ -66,22 +65,18 @@ class NotificationHistoryFragment : Fragment() {
             shimmerLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
-            // Load notifications from Supabase
-            loadNotifications()
-
             setUpSearchView()
 
             // Set up the click listeners for each filter button
-            setFilterButtonClickListener(allFilterBtn, null)
             setFilterButtonClickListener(visibleFilterBtn, true)
             setFilterButtonClickListener(hiddenFilterBtn, false)
-            selectButton(allFilterBtn)
 
+            // Load notifications from Supabase
+            loadNotifications()
         },2000)
     }
 
-        private fun selectButton(selectedButton: Button) {
-        allFilterBtn.isSelected = selectedButton == allFilterBtn
+    private fun selectButton(selectedButton: Button) {
         visibleFilterBtn.isSelected = selectedButton == visibleFilterBtn
         hiddenFilterBtn.isSelected = selectedButton == hiddenFilterBtn
     }
@@ -98,15 +93,20 @@ class NotificationHistoryFragment : Fragment() {
                         tempNotifications
                     }
                     true -> {
-                        tempNotifications.filter { it.visible == true }.toMutableList()
+                        tempNotifications.filter { it.visible == true }
                     }
-                    else -> {
-                        tempNotifications.filter { it.visible == false }.toMutableList()
+                    false -> {
+                        tempNotifications.filter { it.visible == false }
                     }
                 }
 
                 selectButton(button)
                 notificationHistoryAdapter.updateNotifications(filteredNotificationList)
+                lastButtonClicked = button
+
+                if(filteredNotificationList.isEmpty()){
+                    Toast.makeText(context, "History not found! No notifications with this filter exists.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         catch (e : Exception){
@@ -142,7 +142,7 @@ class NotificationHistoryFragment : Fragment() {
 
         filteredNotificationList = tempNotifications.filter { notification ->
             notification.customerName.lowercase().contains(queryLower)
-        }.toMutableList()
+        }
 
         notificationHistoryAdapter.updateNotifications(filteredNotificationList)
 
@@ -155,11 +155,13 @@ class NotificationHistoryFragment : Fragment() {
     private fun loadNotifications() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                tempNotifications = sbHelper.getAllNotificationHistory().toMutableList()
-                //notificationList = notifications.toMutableList()
+                tempNotifications = sbHelper.getAllNotificationHistory()
                 withContext(Dispatchers.Main) {
                     // Update RecyclerView on the main thread
                     notificationHistoryAdapter.updateNotifications(tempNotifications)
+
+                    // After loading the data, manually trigger the default filter (visible filter in this case)
+                    visibleFilterBtn.performClick() // Simulate button click to trigger filter action
                 }
             } catch (e: Exception) {
                 Log.e("NotificationLoadError", "Error loading notifications", e)
@@ -172,25 +174,16 @@ class NotificationHistoryFragment : Fragment() {
     }
 
     private fun changeNotificationState(notification: NotificationHistoryModel, visibilityState: Boolean) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             try {
                 // Update the notification in the database
                 sbHelper.updateNotificationHistory(notification.id!!, visibilityState)
-
-                // Update the notification in memory as well (to reflect the change in the adapter)
-                 notification.visible = visibilityState
-
-                withContext(Dispatchers.Main) {
-                    // Update the notification in the adapter
-                    notificationHistoryAdapter.updateNotification(notification)
-                    Toast.makeText(requireContext(), "Operation Success! Notification visibility has been changed.", Toast.LENGTH_SHORT).show()
-                }
+                notificationHistoryAdapter.updateNotification(notification)
+                lastButtonClicked.performClick()
+                Toast.makeText(requireContext(), "Operation Success! Notification visibility has been changed.", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Log.e("HideNotificationError", "Error hiding notification", e)
-
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Operation failure! Failed to hide notification", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(requireContext(), "Operation failure! Failed to hide notification", Toast.LENGTH_SHORT).show()
             }
         }
     }

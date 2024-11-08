@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.vuca.xbcad7319_vucadigital.R
 import com.vuca.xbcad7319_vucadigital.models.NotificationHistoryModel
@@ -45,10 +44,12 @@ class NotificationHistoryAdapter(
 
         holder.imageHide.setOnClickListener {
             if(notifications.visible == true){
+                notifications.visible = false
                 onHide(notifications,false)
                 updateVisibilityIcon(holder.imageHide, true)
             }
             else{
+                notifications.visible = true
                 onHide(notifications,true)
                 updateVisibilityIcon(holder.imageHide, false)
             }
