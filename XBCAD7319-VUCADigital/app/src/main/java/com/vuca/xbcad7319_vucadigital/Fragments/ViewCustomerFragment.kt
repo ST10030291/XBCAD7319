@@ -64,6 +64,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_view_customer, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sbHelper = SupabaseHelper()
@@ -82,8 +86,11 @@ class ViewCustomerFragment : Fragment() {
         // Reset the notification state at the start of the day
         checkAndResetNotificationState()
 
-        // Initialize the permission launcher
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        // StackOverflow post
+        // Titled: Ask permission for push notification
+        // Answered by: AskNilesh
+        // Available at: https://stackoverflow.com/questions/44305206/ask-permission-for-push-notification
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean -> // Initialize the permission launcher
             if (isGranted) {
                 createNotificationChannel()
                 checkContracts()
@@ -92,10 +99,6 @@ class ViewCustomerFragment : Fragment() {
                 promptUserToEnableNotifications()
             }
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_view_customer, container, false)
     }
 
     private fun retrieveArguments() {
@@ -223,6 +226,10 @@ class ViewCustomerFragment : Fragment() {
         requireActivity().supportFragmentManager.popBackStack()
     }
 
+    // StackOverflow post
+    // Titled: Best way to compare dates in Android
+    // Answered by: JB Nizet
+    // Available at: https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
     private fun checkContractEnd(contractEnd: String?): String? {
         if (contractEnd.isNullOrEmpty()) {
             // Handle the case where the contractEnd is null or empty
@@ -272,6 +279,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: Best way to compare dates in Android
+    // Answered by: JB Nizet
+    // Available at: https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
     private fun isSameDay(date1: Date, date2: Date): Boolean {
         val cal1 = Calendar.getInstance().apply { time = date1 }
         val cal2 = Calendar.getInstance().apply { time = date2 }
@@ -279,11 +290,18 @@ class ViewCustomerFragment : Fragment() {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
+    // StackOverflow post
+    // Titled: Iterating over list with lambda forEach Kotlin
+    // Answered by: Damon Baker
+    // Available at: https://stackoverflow.com/questions/55132535/iterating-over-list-with-lambda-foreach-kotlin
     private fun checkContracts() {
         try {
             customerProducts.forEach { product ->
+                // StackOverflow post
+                // Titled: What is the purpose of 'let' keyword in Kotlin [duplicate]
+                // Answered by: Dean
+                // Available at:https://stackoverflow.com/questions/58606651/what-is-the-purpose-of-let-keyword-in-kotlin
                 checkContractEnd(product.ContractEnd)?.let { message ->
-//                    val uniqueId = "notification_${System.currentTimeMillis()}"
                     val customerName = customer.CustomerName
                     showNotificationIfNotShown(requireContext(), customerName, message, generateNotificationID(customerName,notificationType), notificationTitle)
                 }
@@ -314,7 +332,6 @@ class ViewCustomerFragment : Fragment() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 
     // Blog post
     // Title: Create and manage notification channels
@@ -349,7 +366,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
-
+    // StackOverflow post
+    // Titled: How do I check whether my app is allowed to post notifications?
+    // Answered by: Abhishek Bansal
+    // Available at: https://stackoverflow.com/questions/27815782/how-do-i-check-whether-my-app-is-allowed-to-post-notifications
     private fun areNotificationsEnabled(): Boolean {
         val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -361,6 +381,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: Access application notification settings programmatically [duplicate]
+    // Answered by: Sterling
+    // Available at: https://stackoverflow.com/questions/38124552/access-application-notification-settings-programmatically
     private fun promptUserToEnableNotifications() {
         if (!areNotificationsEnabled()) {
             AlertDialog.Builder(requireContext())
@@ -387,6 +411,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: Ask permission for push notification
+    // Answered by: AskNilesh
+    // Available at: https://stackoverflow.com/questions/44305206/ask-permission-for-push-notification
     private fun obtainPermissions(onPermissionGranted: () -> Unit) {
         // If below API level Tiramisu, no need to request permission
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -417,6 +445,10 @@ class ViewCustomerFragment : Fragment() {
             dateTime = getCurrentDate()
         )
 
+        // StackOverflow post
+        // Titled: What is the proper way to launch a coroutine on Android?
+        // Answered by: Bernd Kampl
+        // Available at: https://stackoverflow.com/questions/59060195/what-is-the-proper-way-to-launch-a-coroutine-on-android
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 sbHelper.addNotificationHistory(notification)
@@ -438,6 +470,10 @@ class ViewCustomerFragment : Fragment() {
         saveNotificationId(notificationId)
     }
 
+    // StackOverflow post
+    // Titled: How to use SharedPreferences in Android to store, fetch and edit values [closed]
+    // Answered by: Harneet Kaur
+    // Available at: https://stackoverflow.com/questions/3624280/how-to-use-sharedpreferences-in-android-to-store-fetch-and-edit-values
     private fun saveNotificationId(notificationId: String) {
         val sharedPreferences = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val notificationIds = sharedPreferences.getStringSet("notification_ids", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
@@ -451,6 +487,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to use SharedPreferences in Android to store, fetch and edit values [closed]
+    // Answered by: Harneet Kaur
+    // Available at: https://stackoverflow.com/questions/3624280/how-to-use-sharedpreferences-in-android-to-store-fetch-and-edit-values
     private fun hasNotificationBeenShown(notificationId: String): Boolean {
         val sharedPreferences = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val notificationIds = sharedPreferences.getStringSet("notification_ids", mutableSetOf()) ?: mutableSetOf()
@@ -459,7 +499,10 @@ class ViewCustomerFragment : Fragment() {
         return notificationIds.contains(notificationId)
     }
 
-
+    // StackOverflow post
+    // Titled: How to get current local date and time in Kotlin
+    // Answered by: Shan Mk
+    // Available at: https://stackoverflow.com/questions/47006254/how-to-get-current-local-date-and-time-in-kotlin
     private fun checkAndResetNotificationState() {
         val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val lastResetDate = getLastResetDate()
@@ -472,6 +515,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to use SharedPreferences in Android to store, fetch and edit values [closed]
+    // Answered by: Harneet Kaur
+    // Available at: https://stackoverflow.com/questions/3624280/how-to-use-sharedpreferences-in-android-to-store-fetch-and-edit-values
     private fun resetNotificationIds() {
         val sharedPreferences = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
@@ -481,6 +528,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to use SharedPreferences in Android to store, fetch and edit values [closed]
+    // Answered by: Harneet Kaur
+    // Available at: https://stackoverflow.com/questions/3624280/how-to-use-sharedpreferences-in-android-to-store-fetch-and-edit-values
     private fun saveLastResetDate(date: String) {
         val sharedPreferences = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
@@ -489,6 +540,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to use SharedPreferences in Android to store, fetch and edit values [closed]
+    // Answered by: Harneet Kaur
+    // Available at: https://stackoverflow.com/questions/3624280/how-to-use-sharedpreferences-in-android-to-store-fetch-and-edit-values
     private fun getLastResetDate(): String? {
         val sharedPreferences = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("last_reset_date", null)
@@ -498,6 +553,10 @@ class ViewCustomerFragment : Fragment() {
         return "notification_${customerName}_${notificationType}"
     }
 
+    // StackOverflow post
+    // Titled: How to format in Kotlin date in string or timestamp to my preferred format?
+    // Answered by: Android Geek
+    // Available at: https://stackoverflow.com/questions/57402045/how-to-format-in-kotlin-date-in-string-or-timestamp-to-my-preferred-format
     private fun convertDateFormat(inputDate: String): String {
         // Define the input and output date formats
         val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -517,6 +576,10 @@ class ViewCustomerFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to get current local date and time in Kotlin
+    // Answered by: Shan Mk
+    // Available at: https://stackoverflow.com/questions/47006254/how-to-get-current-local-date-and-time-in-kotlin
     private fun getCurrentDate(): String{
         val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
         val currentDateTime = dateFormat.format(Date())

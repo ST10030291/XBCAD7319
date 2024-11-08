@@ -65,6 +65,7 @@ class CustomerProductModel(
     val ServiceProvider: String,
     val Status: String,
 )
+
 @Serializable
 data class NotificationHistoryModel(
     val id: String? = null,
@@ -73,6 +74,7 @@ data class NotificationHistoryModel(
     val dateTime: String,
     var visible: Boolean? = null
 )
+
 @Serializable
 data class AchievementModel(
     val id: String? = null,

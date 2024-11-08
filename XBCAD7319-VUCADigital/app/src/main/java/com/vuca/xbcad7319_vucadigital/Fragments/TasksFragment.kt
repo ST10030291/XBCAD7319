@@ -77,6 +77,7 @@ class TasksFragment : Fragment() {
             shimmerLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
+            // Get Tasks from db and load them onto the adapter
             loadTasks()
 
             setUpSearchView()
@@ -112,6 +113,11 @@ class TasksFragment : Fragment() {
         }
     }
 
+    // Blog post
+    // Title: SearchView in Android with Kotlin
+    // Posted by: chaitanyamunje
+    // Posted on:  28 July 2022
+    // Available at: https://www.geeksforgeeks.org/searchview-in-android-with-kotlin/
     private fun setUpSearchView() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

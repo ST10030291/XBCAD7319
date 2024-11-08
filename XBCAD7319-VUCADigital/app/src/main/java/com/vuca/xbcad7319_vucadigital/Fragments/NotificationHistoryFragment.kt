@@ -114,6 +114,11 @@ class NotificationHistoryFragment : Fragment() {
         }
     }
 
+    // Blog post
+    // Title: SearchView in Android with Kotlin
+    // Posted by: chaitanyamunje
+    // Posted on:  28 July 2022
+    // Available at: https://www.geeksforgeeks.org/searchview-in-android-with-kotlin/
     private fun setUpSearchView() {
         try{
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -152,6 +157,10 @@ class NotificationHistoryFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun loadNotifications() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -173,6 +182,10 @@ class NotificationHistoryFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Titled: How to update RecyclerView Adapter Data
+    // Uploaded by: Suragch
+    // Available at: https://stackoverflow.com/questions/31367599/how-to-update-recyclerview-adapter-data
     private fun changeNotificationState(notification: NotificationHistoryModel, visibilityState: Boolean) {
         lifecycleScope.launch {
             try {
@@ -188,6 +201,10 @@ class NotificationHistoryFragment : Fragment() {
         }
     }
 
+    // StackOverflow post
+    // Title: How to use LifecycleScope to execute coroutine
+    // Posted by: Arpit Shukla
+    // Available at: https://stackoverflow.com/questions/70058423/how-to-use-lifecyclescope-to-execute-coroutine
     private fun deleteNotification(notification: NotificationHistoryModel) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {

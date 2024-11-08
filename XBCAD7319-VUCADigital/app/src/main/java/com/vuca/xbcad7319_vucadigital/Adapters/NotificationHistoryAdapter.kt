@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.vuca.xbcad7319_vucadigital.R
 import com.vuca.xbcad7319_vucadigital.models.NotificationHistoryModel
 
-
+// StackOverflow post
+// Titled: How to update RecyclerView Adapter Data
+// Uploaded by: Suragch
+// Available at: https://stackoverflow.com/questions/31367599/how-to-update-recyclerview-adapter-data
 class NotificationHistoryAdapter(
     private val notifications: MutableList<NotificationHistoryModel>,
     private val onHide: (NotificationHistoryModel, Boolean) -> Unit,
