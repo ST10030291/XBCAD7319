@@ -111,8 +111,8 @@ class CreateTaskFragment : Fragment() {
 
     private fun setupSpinners() {
         // Sample data for now
-        val categories = listOf("Select a category", "Work", "Personal", "Urgent", "Later")
-        val assignedPersons = listOf("Select a person", "Alice", "Bob", "Charlie", "Dana")
+        val categories = listOf("Select a category", "Follow up", "Installation", "Billing", "Support")
+        val assignedPersons = listOf("Select a person", "Samantha", "Ethan", "Olivia", "Daniel", "Jonathan", "Carlos")
         val priorityLevels = listOf("Select a priority level", "High", "Medium", "Low")
         val statuses = listOf("Select a task status", "To Do", "Doing", "Done")
 
