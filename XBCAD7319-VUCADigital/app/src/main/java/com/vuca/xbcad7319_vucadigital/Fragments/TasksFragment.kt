@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.Locale
 
 class TasksFragment : Fragment() {
     private lateinit var taskAdapter: TaskAdapter
@@ -308,7 +309,7 @@ class TasksFragment : Fragment() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                val formattedDate = String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth)
+                val formattedDate = String.format(Locale.getDefault(),"%04d/%02d/%02d", year, month + 1, dayOfMonth)
                 editText.setText(formattedDate)
             },
             calendar.get(Calendar.YEAR),

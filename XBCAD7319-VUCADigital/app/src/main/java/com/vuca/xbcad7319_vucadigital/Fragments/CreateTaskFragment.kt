@@ -147,7 +147,7 @@ class CreateTaskFragment : Fragment() {
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
                 // Format selected date as "YYYY/MM/DD"
-                val selectedDate = String.format("%04d/%02d/%02d", selectedYear, selectedMonth + 1, selectedDay)
+                val selectedDate = String.format(Locale.getDefault(),"%04d/%02d/%02d", selectedYear, selectedMonth + 1, selectedDay)
 
                 onDateSelected(selectedDate)
             },
