@@ -395,7 +395,6 @@ class TasksFragment : Fragment() {
         val deleteDialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
 
         val taskNameTextView: TextView = dialogView.findViewById(R.id.dialog_task_name)
-        val messageTextView: TextView = dialogView.findViewById(R.id.dialog_message)
         val cancelButton: Button = dialogView.findViewById(R.id.button_cancel)
         val deleteButton: Button = dialogView.findViewById(R.id.button_delete)
 

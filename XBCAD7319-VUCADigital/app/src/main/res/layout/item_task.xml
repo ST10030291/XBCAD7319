@@ -79,7 +79,7 @@
         <LinearLayout
             android:id="@+id/rest_attributes_layout"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="85dp"
             android:orientation="vertical"
             android:layout_marginBottom="10dp">
 
