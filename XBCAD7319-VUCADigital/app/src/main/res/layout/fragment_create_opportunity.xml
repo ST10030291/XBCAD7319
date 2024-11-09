@@ -101,7 +101,7 @@
             android:autofillHints="customerTelephone"
             android:background="@drawable/user_input_border"
             android:hint="Value"
-            android:inputType="phone"
+            android:inputType="number|numberDecimal"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16sp"

@@ -157,12 +157,12 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginEnd="15dp"
                         android:autofillHints="accountNumber"
-                        android:inputType="text"
+                        android:background="@drawable/user_input_border"
+                        android:hint="@string/account_number"
+                        android:inputType="number"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:background="@drawable/user_input_border"
                         android:textSize="16sp"
-                        android:hint="@string/account_number"
                         tools:ignore="TextFields" />
 
                     <!-- Billing Account Number -->
@@ -184,13 +184,13 @@
                         android:layout_height="48dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginEnd="15dp"
+                        android:autofillHints="billingAccount"
+                        android:background="@drawable/user_input_border"
+                        android:hint="@string/billing_account_number"
+                        android:inputType="number"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:background="@drawable/user_input_border"
                         android:textSize="16sp"
-                        android:autofillHints="billingAccount"
-                        android:inputType="text"
-                        android:hint="@string/billing_account_number"
                         tools:ignore="TextFields" />
 
                     <!-- Customer Type -->
