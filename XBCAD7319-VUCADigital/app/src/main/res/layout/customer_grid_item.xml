@@ -40,9 +40,9 @@
                     android:id="@+id/CustomerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/customer_name"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/customer_name"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />

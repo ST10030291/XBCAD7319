@@ -101,7 +101,7 @@ class ProductsFragment : Fragment() {
             loadProduct()
             loadService()
             setUpSearchView()
-
+            allButton.isSelected = true
             allButton.setOnClickListener {
                 //displays all products and services
                 allButton.setBackgroundResource(R.drawable.filter_btn_selected);

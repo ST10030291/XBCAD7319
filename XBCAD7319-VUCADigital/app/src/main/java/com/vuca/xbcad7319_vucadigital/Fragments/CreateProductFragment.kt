@@ -96,6 +96,7 @@ class CreateProductFragment : Fragment() {
             if (isInserted) {
                 Log.d(product.ProductName, "${product.ProductName} saved successfully!")
                 Toast.makeText(requireContext(), "${product.Type} created successfully!", Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.popBackStack()
             } else {
                 Log.d(product.ProductName, "${product.ProductName} failed!")
                 Toast.makeText(requireContext(), "${product.Type} creation failed!", Toast.LENGTH_SHORT).show()

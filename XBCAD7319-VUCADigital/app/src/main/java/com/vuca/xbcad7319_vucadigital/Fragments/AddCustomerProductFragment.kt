@@ -232,6 +232,7 @@ class AddCustomerProductFragment : Fragment() {
                 val success = sbHelper.addCustomerProduct(newProduct)
                 if (success) {
                     Toast.makeText(requireContext(), "Product added successfully!", Toast.LENGTH_SHORT).show()
+                    requireActivity().supportFragmentManager.popBackStack()
                     clearInputs()
                 } else {
                     Log.e("AddCustomerProduct", "Failed to add product")

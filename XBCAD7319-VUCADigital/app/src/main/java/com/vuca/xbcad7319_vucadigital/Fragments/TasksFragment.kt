@@ -80,7 +80,7 @@ class TasksFragment : Fragment() {
 
             // Get Tasks from db and load them onto the adapter
             loadTasks()
-
+            selectButton(allFilterButton)
             setUpSearchView()
 
             // Set up the click listeners for each filter button

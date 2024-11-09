@@ -115,6 +115,7 @@ class CreateOpportunityFragment : Fragment() {
             if (isInserted) {
                 Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} saved successfully!")
                 Toast.makeText(requireContext(), "Opportunity created successfully!", Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.popBackStack()
             } else {
                 Log.d(opportunity.OpportunityName, "${opportunity.OpportunityName} failed!")
                 Toast.makeText(requireContext(), "Opportunity creation failed!", Toast.LENGTH_SHORT).show()

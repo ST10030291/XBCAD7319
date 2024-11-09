@@ -216,6 +216,7 @@ class CreateTaskFragment : Fragment() {
             customerID = customerID
         )
         sendToDB(task)
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
     private fun validateInputs(
