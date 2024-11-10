@@ -28,7 +28,7 @@ class CustomerProductsAdapter(private val customerProducts: MutableList<Customer
         val customer = customerProducts[position]
 
         holder.productNameTextView.text = customer.ProductName
-        (customer.ContractStart + " - " + customer.ContractEnd).also { holder.contractPeriodTextView.text = it }
+        (customer.ContractStart.replace("-", "/") + " | " + customer.ContractEnd.replace("-", "/")).also { holder.contractPeriodTextView.text = it }
         holder.statusTextView.text = customer.Status
         holder.serviceProviderTextView.text = customer.ServiceProvider
         holder.contractTermTextView.text = customer.ContractTerm

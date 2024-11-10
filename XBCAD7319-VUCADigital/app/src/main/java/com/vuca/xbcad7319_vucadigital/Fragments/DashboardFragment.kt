@@ -64,7 +64,7 @@ class DashboardFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
 
         //Initialize views
-        InitElements(view)
+        initElements(view)
 
         // Display a welcome message with the users name for added personalization
         val userEmail = user?.email
@@ -114,7 +114,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun InitElements(view: View){
+    private fun initElements(view: View){
         customerCountTextView = view.findViewById(R.id.customerCount)
         opportunitiesCountTextView = view.findViewById(R.id.opportunityCount)
         viewProductsBtn = view.findViewById(R.id.viewProducts_btn)

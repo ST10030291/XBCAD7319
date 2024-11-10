@@ -195,12 +195,12 @@ class TasksFragment : Fragment() {
     // Posted by: Praveenruhil
     // Available at: https://www.geeksforgeeks.org/datepicker-in-kotlin/
     private fun setupDatePickers(dialogView: View, task: TaskModel) {
-        val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
-        val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+        val startDateEditText: EditText = dialogView.findViewById(R.id.editStartDate)
+        val endDateEditText: EditText = dialogView.findViewById(R.id.editEndDate)
 
         // Set initial values
-        startDateEditText.setText(task.startDate)
-        endDateEditText.setText(task.endDate)
+        startDateEditText.setText(task.startDate.replace("-", "/"))
+        endDateEditText.setText(task.endDate.replace("-", "/"))
 
         // Show date picker when start date is clicked
         startDateEditText.setOnClickListener {
@@ -240,8 +240,8 @@ class TasksFragment : Fragment() {
         val personAssignedSpinner: Spinner = dialogView.findViewById(R.id.personAssignedSpinner)
         val customerSpinner: Spinner = dialogView.findViewById(R.id.customerSpinner)
         val statusSpinner: Spinner = dialogView.findViewById(R.id.statusSpinner)
-        val taskStartDateEditText: EditText = dialogView.findViewById(R.id.startDate)
-        val taskEndDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+        val taskStartDateEditText: EditText = dialogView.findViewById(R.id.editStartDate)
+        val taskEndDateEditText: EditText = dialogView.findViewById(R.id.editEndDate)
 
 
         // StackOverflow post
@@ -289,7 +289,9 @@ class TasksFragment : Fragment() {
         priorityLevelSpinner.setSelection(priorityLevels.indexOf(task.priorityLevel))
         personAssignedSpinner.setSelection(assignedPersons.indexOf(task.personAssigned))
         statusSpinner.setSelection(statuses.indexOf(task.status))
+
         taskStartDateEditText.setText(task.startDate)
+
         taskEndDateEditText.setText(task.endDate)
     }
 

@@ -115,7 +115,7 @@
                 android:text="@string/start_date"/>
 
             <EditText
-                android:id="@+id/startDate"
+                android:id="@+id/editStartDate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:inputType="date"
@@ -136,7 +136,7 @@
                 android:text="@string/end_date"/>
 
             <EditText
-                android:id="@+id/endDate"
+                android:id="@+id/editEndDate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:inputType="date"

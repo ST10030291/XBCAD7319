@@ -44,7 +44,7 @@ class OpportunityAdapter (private var opportunities: MutableList<OpportunityMode
             holder.stage.text = opportunity.Stage // For now
             holder.customerName.text = opportunity.CustomerName // For now
             holder.status.text = opportunity.Status
-            holder.creationDate.text = opportunity.CreationDate
+            holder.creationDate.text = opportunity.CreationDate.replace("-", "/")
             holder.priority.text = opportunity.Priority
 
             holder.moreImageView.setOnClickListener {

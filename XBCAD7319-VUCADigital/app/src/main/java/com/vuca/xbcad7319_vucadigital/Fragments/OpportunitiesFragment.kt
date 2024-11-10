@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.Locale
 
 class OpportunitiesFragment : Fragment() {
     //globally declaring all variables
@@ -187,7 +188,7 @@ class OpportunitiesFragment : Fragment() {
         val dateEditText: EditText = dialogView.findViewById(R.id.dateInput)
 
         // Set initial values
-        dateEditText.setText(opportunity.CreationDate)
+        dateEditText.setText(opportunity.CreationDate.replace("-", "/"))
 
         // Show date picker when start date is clicked
         dateEditText.setOnClickListener {
@@ -222,7 +223,7 @@ class OpportunitiesFragment : Fragment() {
                 customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
 
                 // Set selection to a specific name
-                opportunity.CustomerName?.let { customerName ->
+                opportunity.CustomerName.let { customerName ->
                     val customerIndex = customerNames.indexOf(customerName)
                     if (customerIndex != -1) {
                         customerSpinner.setSelection(customerIndex)
@@ -295,7 +296,7 @@ class OpportunitiesFragment : Fragment() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                val formattedDate = String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth)
+                val formattedDate = String.format(Locale.getDefault(),"%04d/%02d/%02d", year, month + 1, dayOfMonth)
                 editText.setText(formattedDate)
             },
             calendar.get(Calendar.YEAR),

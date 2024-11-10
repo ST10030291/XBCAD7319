@@ -182,10 +182,10 @@
                     android:autofillHints="emailAddress"
                     android:background="@drawable/user_input_border"
                     android:hint="Date Of Opportunity"
-                    android:inputType="textEmailAddress"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
+                    android:inputType="date"
+                    android:padding="15dp"
                     android:textSize="16sp"
+                    android:focusable="false"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dateLabel" />
 
