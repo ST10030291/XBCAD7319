@@ -33,7 +33,7 @@
 
                 <EditText
                     android:id="@+id/productNameInput"
-                    android:layout_width="375dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
@@ -58,7 +58,7 @@
 
                 <Spinner
                     android:id="@+id/productTypeInput"
-                    android:layout_width="375dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:autofillHints="emailAddress"
                     android:background="@drawable/user_input_border"
@@ -82,7 +82,7 @@
 
                 <EditText
                     android:id="@+id/descriptionInput"
-                    android:layout_width="375dp"
+                    android:layout_width="match_parent"
                     android:layout_height="144dp"
                     android:autofillHints="emailAddress"
                     android:background="@drawable/user_input_border"
@@ -107,7 +107,7 @@
 
                 <EditText
                     android:id="@+id/priceInput"
-                    android:layout_width="375dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:autofillHints="emailAddress"
                     android:background="@drawable/user_input_border"
