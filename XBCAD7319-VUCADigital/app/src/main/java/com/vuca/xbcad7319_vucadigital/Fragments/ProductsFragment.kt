@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
@@ -52,6 +54,12 @@ class ProductsFragment : Fragment() {
 
     private lateinit var searchView: SearchView
 
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var notFoundLayout: LinearLayout
+    private lateinit var notFoundImg: ImageView
+    private lateinit var notFoundMessage: TextView
+    private lateinit var notFoundMessage2: TextView
+
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -73,6 +81,12 @@ class ProductsFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        notFoundLayout = view.findViewById(R.id.notFoundLayout)
+        notFoundImg = view.findViewById(R.id.notFoundImg)
+        notFoundMessage = view.findViewById(R.id.notFoundMessage)
+        notFoundMessage2 = view.findViewById(R.id.notFoundMessage2)
+
         allButton = view.findViewById(R.id.AllFilter)
         productButton = view.findViewById(R.id.ProductsFilter)
         serviceButton = view.findViewById(R.id.ServicesFilter)
@@ -92,9 +106,11 @@ class ProductsFragment : Fragment() {
         sbHelper = SupabaseHelper()//calling the supabasehelper
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
+            shimmerFrameLayout = view.findViewById(R.id.shimmerCustomers)
+            shimmerFrameLayout.stopShimmer()
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
             recyclerViewService.visibility = View.VISIBLE
 
@@ -118,6 +134,13 @@ class ProductsFragment : Fragment() {
                 serviceButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerViewService.visibility = RecyclerView.GONE
                 recyclerView.visibility = RecyclerView.VISIBLE
+
+                if(productList.isEmpty()){
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
+                }
                 //loadProduct()
             }
 
@@ -128,6 +151,13 @@ class ProductsFragment : Fragment() {
                 productButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerView.visibility = RecyclerView.GONE
                 recyclerViewService.visibility = RecyclerView.VISIBLE
+
+                if(serviceList.isEmpty()){
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
+                }
                 //loadService()
             }
         },2000)
@@ -138,16 +168,19 @@ class ProductsFragment : Fragment() {
         //method to ensure none of the recyclerviews are shown when certain products or services are filtered
         if (productList.isNotEmpty()) {
 
-
+            notFoundLayout.visibility = View.GONE
             recyclerView.visibility = RecyclerView.VISIBLE
             recyclerViewService.visibility = RecyclerView.GONE
 
 
         } else if (serviceList.isNotEmpty()) {
 
+            notFoundLayout.visibility = View.GONE
             recyclerViewService.visibility = RecyclerView.VISIBLE
             recyclerView.visibility = RecyclerView.GONE
-        } else {
+        }
+        else {
+            notFoundLayout.visibility = View.GONE
             recyclerView.visibility = RecyclerView.VISIBLE
             recyclerViewService.visibility = RecyclerView.VISIBLE
         }
@@ -163,9 +196,6 @@ class ProductsFragment : Fragment() {
                 productAdapter.updateProducts(filteredProducts)
                 productAdapter.notifyDataSetChanged()
                 checkLists()
-                if(filteredProducts.isEmpty()){
-                    Toast.makeText(context, "Products not found! No products with this filter exists.", Toast.LENGTH_SHORT).show()
-                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Couldn't load products from DB", Toast.LENGTH_SHORT).show()
             }
@@ -181,9 +211,6 @@ class ProductsFragment : Fragment() {
                 serviceAdapter.updateProducts(filteredProducts)
                 serviceAdapter.notifyDataSetChanged()
                 checkLists()
-                if(filteredProducts.isEmpty()){
-                    Toast.makeText(context, "Services not found! No services with this filter exists.", Toast.LENGTH_SHORT).show()
-                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Couldn't load services from DB", Toast.LENGTH_SHORT).show()
             }
@@ -229,7 +256,10 @@ class ProductsFragment : Fragment() {
 
         // Show a toast message if filteredTasks is empty
         if (filteredProducts.isEmpty()) {
-            Toast.makeText(context, "Product/Service \"$query\" not found!", Toast.LENGTH_SHORT).show()
+            notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
+            notFoundLayout.visibility = View.VISIBLE
+            shimmerFrameLayout.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
     }
 

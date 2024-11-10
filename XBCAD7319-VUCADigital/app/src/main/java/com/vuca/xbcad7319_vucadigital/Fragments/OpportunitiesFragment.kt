@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
@@ -45,6 +47,13 @@ class OpportunitiesFragment : Fragment() {
     private lateinit var opportunitiesSearch: List<OpportunityModel>
     private lateinit var searchView: SearchView
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var notFoundLayout: LinearLayout
+    private lateinit var notFoundImg: ImageView
+    private lateinit var notFoundMessage: TextView
+    private lateinit var notFoundMessage2: TextView
+
     override fun onResume() {
         super.onResume()
         val dashboardActivity = activity as? DashboardActivity
@@ -65,8 +74,14 @@ class OpportunitiesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        notFoundLayout = view.findViewById(R.id.notFoundLayout)
+        notFoundImg = view.findViewById(R.id.notFoundImg)
+        notFoundMessage = view.findViewById(R.id.notFoundMessage)
+        notFoundMessage2 = view.findViewById(R.id.notFoundMessage2)
+
         searchView = view.findViewById(R.id.opportunitySearchView)
-        val recyclerView: RecyclerView = view.findViewById(R.id.opportunity_recycler_view)
+        recyclerView = view.findViewById(R.id.opportunity_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         opportunityAdapter = OpportunityAdapter(opportunityList, ::onEditOpportunity, ::onDeleteOpportunity)//calling the adapter
         recyclerView.adapter = opportunityAdapter//setting all the opportunities to match the adapter
@@ -74,9 +89,11 @@ class OpportunitiesFragment : Fragment() {
         sbHelper = SupabaseHelper()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerOpportunities)
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
+            shimmerFrameLayout = view.findViewById(R.id.shimmerOpportunities)
+            shimmerFrameLayout.stopShimmer()
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
             loadOpportunity()
@@ -109,8 +126,16 @@ class OpportunitiesFragment : Fragment() {
 
         opportunityAdapter.updateOpportunities(filteredOpportunities)
 
+        notFoundLayout.visibility = View.GONE
+        shimmerFrameLayout.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+
+
         if (filteredOpportunities.isEmpty()) {
-            Toast.makeText(context, "Opportunity \"$query\" not found!", Toast.LENGTH_SHORT).show()
+            notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
+            notFoundLayout.visibility = View.VISIBLE
+            shimmerFrameLayout.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
     }
 

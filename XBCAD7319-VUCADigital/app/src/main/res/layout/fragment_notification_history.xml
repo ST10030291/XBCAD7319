@@ -273,6 +273,44 @@
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 
+            <!-- Error Layout, hidden by default -->
+            <LinearLayout
+                android:id="@+id/notFoundLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/notFoundImg"
+                    android:layout_width="230dp"
+                    android:layout_height="230dp"
+                    android:layout_marginTop="120dp"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/person" />
+
+                <TextView
+                    android:id="@+id/notFoundMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/not_found"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/notFoundMessage2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/try_choosing_another_filter"
+                    android:textSize="17sp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/notificationHistoryRecyclerView"
                 android:layout_width="match_parent"

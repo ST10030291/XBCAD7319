@@ -9,9 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.GridView
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.vuca.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.vuca.xbcad7319_vucadigital.Adapters.CustomerAdapter
 import com.vuca.xbcad7319_vucadigital.R
@@ -32,6 +36,12 @@ class CustomersFragment : Fragment() {
     private lateinit var searchView: SearchView
     private lateinit var gridView: GridView
 
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var notFoundLayout: LinearLayout
+    private lateinit var notFoundImg: ImageView
+    private lateinit var notFoundMessage: TextView
+    private lateinit var notFoundMessage2: TextView
+
     //This makes sure that the Navbar is visible in the Customer fragment
     override fun onResume() {
         super.onResume()
@@ -45,6 +55,11 @@ class CustomersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        notFoundLayout = view.findViewById(R.id.notFoundLayout)
+        notFoundImg = view.findViewById(R.id.notFoundImg)
+        notFoundMessage = view.findViewById(R.id.notFoundMessage)
+        notFoundMessage2 = view.findViewById(R.id.notFoundMessage2)
+
         //Initialise necessary elements
         searchView = view.findViewById(R.id.SearchBar)
         gridView = view.findViewById(R.id.CustomerGridView)
@@ -56,9 +71,11 @@ class CustomersFragment : Fragment() {
 
         //Executes this code block after 2 seconds
         Handler(Looper.getMainLooper()).postDelayed({
-            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerCustomers)
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
+            shimmerFrameLayout = view.findViewById(R.id.shimmerCustomers)
+            shimmerFrameLayout.stopShimmer()
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
             gridView.visibility = View.VISIBLE
 
             lifecycleScope.launch {
@@ -78,32 +95,64 @@ class CustomersFragment : Fragment() {
                 filteredCustomers = customers
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(allFilterButton)
+
+                notFoundLayout.visibility = View.GONE
+                shimmerFrameLayout.visibility = View.GONE
+                gridView.visibility = View.VISIBLE
+
                 if(filteredCustomers.isEmpty()){
-                    Toast.makeText(context, "No Customers registered! Please register customers first.", Toast.LENGTH_SHORT).show()
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    gridView.visibility = View.GONE
                 }
             }
             leadsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Leads" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(leadsFilterButton)
+
+                notFoundLayout.visibility = View.GONE
+                shimmerFrameLayout.visibility = View.GONE
+                gridView.visibility = View.VISIBLE
+
                 if(filteredCustomers.isEmpty()){
-                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    gridView.visibility = View.GONE
                 }
             }
             referralsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Referrals" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(referralsFilterButton)
+
+                notFoundLayout.visibility = View.GONE
+                shimmerFrameLayout.visibility = View.GONE
+                gridView.visibility = View.VISIBLE
+
                 if(filteredCustomers.isEmpty()){
-                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    gridView.visibility = View.GONE
                 }
             }
             prospectFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Prospect" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(prospectFilterButton)
+
+                notFoundLayout.visibility = View.GONE
+                shimmerFrameLayout.visibility = View.GONE
+                gridView.visibility = View.VISIBLE
+
                 if(filteredCustomers.isEmpty()){
-                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    gridView.visibility = View.GONE
                 }
             }
         }, 2000)
@@ -139,6 +188,17 @@ class CustomersFragment : Fragment() {
             customer.CustomerName.lowercase().contains(queryLower)
         }
         updateCustomerGrid(gridView, filteredCustomers)
+
+        notFoundLayout.visibility = View.GONE
+        shimmerFrameLayout.visibility = View.GONE
+        gridView.visibility = View.VISIBLE
+
+        if(filteredCustomers.isEmpty()){
+            notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
+            notFoundLayout.visibility = View.VISIBLE
+            shimmerFrameLayout.visibility = View.GONE
+            gridView.visibility = View.GONE
+        }
     }
 
     //Changes the theme of the selected filter button

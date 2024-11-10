@@ -8,14 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.vuca.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.vuca.xbcad7319_vucadigital.Adapters.NotificationHistoryAdapter
+import com.vuca.xbcad7319_vucadigital.R
 import com.vuca.xbcad7319_vucadigital.databinding.FragmentNotificationHistoryBinding
 import com.vuca.xbcad7319_vucadigital.db.SupabaseHelper
 import com.vuca.xbcad7319_vucadigital.models.NotificationHistoryModel
@@ -38,6 +43,12 @@ class NotificationHistoryFragment : Fragment() {
     private lateinit var hiddenFilterBtn: Button
     private lateinit var searchView: SearchView
 
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var notFoundLayout: LinearLayout
+    private lateinit var notFoundImg: ImageView
+    private lateinit var notFoundMessage: TextView
+    private lateinit var notFoundMessage2: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +60,12 @@ class NotificationHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        notFoundLayout = binding.notFoundLayout
+        notFoundImg = binding.notFoundImg
+        notFoundMessage = binding.notFoundMessage
+        notFoundMessage2 = binding.notFoundMessage2
+
         recyclerView = binding.notificationHistoryRecyclerView
         searchView = binding.notificationHistorySearchView
         visibleFilterBtn = binding.visibleFilterBtn
@@ -60,9 +77,11 @@ class NotificationHistoryFragment : Fragment() {
         recyclerView.adapter = notificationHistoryAdapter
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val shimmerLayout = binding.shimmerTasks
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
+            shimmerFrameLayout = binding.shimmerTasks
+            shimmerFrameLayout.stopShimmer()
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
             setUpSearchView()
@@ -104,8 +123,14 @@ class NotificationHistoryFragment : Fragment() {
                 notificationHistoryAdapter.updateNotifications(filteredNotificationList)
                 lastButtonClicked = button
 
+                notFoundLayout.visibility = View.GONE
+                shimmerFrameLayout.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+
                 if(filteredNotificationList.isEmpty()){
-                    Toast.makeText(context, "History not found! No notifications with this filter exists.", Toast.LENGTH_SHORT).show()
+                    notFoundLayout.visibility = View.VISIBLE
+                    shimmerFrameLayout.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
                 }
             }
         }
@@ -151,9 +176,15 @@ class NotificationHistoryFragment : Fragment() {
 
         notificationHistoryAdapter.updateNotifications(filteredNotificationList)
 
+        notFoundLayout.visibility = View.GONE
+        shimmerFrameLayout.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+
         // Show a toast message if filteredTasks is empty
         if (filteredNotificationList.isEmpty()) {
-            Toast.makeText(context, "Operation failure! Customer \"$query\" not found!", Toast.LENGTH_SHORT).show()
+            notFoundLayout.visibility = View.VISIBLE
+            shimmerFrameLayout.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
     }
 

@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.TextView
@@ -48,6 +50,13 @@ class TasksFragment : Fragment() {
 
     private lateinit var searchView: SearchView
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var notFoundLayout: LinearLayout
+    private lateinit var notFoundImg: ImageView
+    private lateinit var notFoundMessage: TextView
+    private lateinit var notFoundMessage2: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,7 +68,12 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
+        notFoundLayout = view.findViewById(R.id.notFoundLayout)
+        notFoundImg = view.findViewById(R.id.notFoundImg)
+        notFoundMessage = view.findViewById(R.id.notFoundMessage)
+        notFoundMessage2 = view.findViewById(R.id.notFoundMessage2)
+
+        recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         taskAdapter = TaskAdapter(tasksList, ::onEditTask, ::onDeleteTask)
         recyclerView.adapter = taskAdapter
@@ -73,9 +87,11 @@ class TasksFragment : Fragment() {
         sbHelper = SupabaseHelper()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerTasks)
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
+            shimmerFrameLayout = view.findViewById(R.id.shimmerTasks)
+            shimmerFrameLayout.stopShimmer()
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
             // Get Tasks from db and load them onto the adapter
@@ -111,8 +127,16 @@ class TasksFragment : Fragment() {
             }
             selectButton(button)
             taskAdapter.updateTasks(filteredTasks)
+
+            notFoundLayout.visibility = View.GONE
+            shimmerFrameLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+
             if(filteredTasks.isEmpty()){
-                Toast.makeText(context, "Tasks not found! No tasks with this filter exists.", Toast.LENGTH_SHORT).show()
+                notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
+                notFoundLayout.visibility = View.VISIBLE
+                shimmerFrameLayout.visibility = View.GONE
+                recyclerView.visibility = View.GONE
             }
         }
     }
@@ -149,9 +173,16 @@ class TasksFragment : Fragment() {
 
         taskAdapter.updateTasks(filteredTasks)
 
+        notFoundLayout.visibility = View.GONE
+        shimmerFrameLayout.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+
         // Show a toast message if filteredTasks is empty
         if (filteredTasks.isEmpty()) {
-            Toast.makeText(context, "Task \"$query\" not found!", Toast.LENGTH_SHORT).show()
+            notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
+            notFoundLayout.visibility = View.VISIBLE
+            shimmerFrameLayout.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
     }
 

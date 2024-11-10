@@ -80,6 +80,9 @@
     <string name="view_all_hidden_notifications">View all hidden notifications</string>
     <string name="hidden">Hidden</string>
     <string name="visible">Visible</string>
+    <string name="try_choosing_another_filter">Try choosing another filter.</string>
+    <string name="not_found">Not Found</string>
+    <string name="try_entering_a_different_search_term">try entering a different search term.</string>
 
     <string-array name="leadStatusOptions">
         <item>Select Lead Status</item>
