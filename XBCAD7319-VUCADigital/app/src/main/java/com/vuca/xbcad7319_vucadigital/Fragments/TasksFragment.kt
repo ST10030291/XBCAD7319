@@ -363,8 +363,8 @@ class TasksFragment : Fragment() {
         // Posted by: LeffelMania
         // Available at: https://stackoverflow.com/questions/6495898/findviewbyid-in-fragment
         val taskNameEditText: EditText = dialogView.findViewById(R.id.taskName)
-        val startDateEditText: EditText = dialogView.findViewById(R.id.startDate)
-        val endDateEditText: EditText = dialogView.findViewById(R.id.endDate)
+        val startDateEditText: EditText = dialogView.findViewById(R.id.editStartDate)
+        val endDateEditText: EditText = dialogView.findViewById(R.id.editEndDate)
         val categorySpinner: Spinner = dialogView.findViewById(R.id.categorySpinner)
         val descriptionEditText: EditText = dialogView.findViewById(R.id.description)
         val priorityLevelSpinner: Spinner = dialogView.findViewById(R.id.priorityLevelSpinner)

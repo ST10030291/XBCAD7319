@@ -134,13 +134,6 @@ class ProductsFragment : Fragment() {
                 serviceButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerViewService.visibility = RecyclerView.GONE
                 recyclerView.visibility = RecyclerView.VISIBLE
-
-                if(productList.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    recyclerView.visibility = View.GONE
-                }
                 //loadProduct()
             }
 
@@ -151,13 +144,6 @@ class ProductsFragment : Fragment() {
                 productButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerView.visibility = RecyclerView.GONE
                 recyclerViewService.visibility = RecyclerView.VISIBLE
-
-                if(serviceList.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    recyclerView.visibility = View.GONE
-                }
                 //loadService()
             }
         },2000)
@@ -253,6 +239,10 @@ class ProductsFragment : Fragment() {
 
         serviceAdapter.updateServices(filteredServices)
         //recyclerViewService.visibility = RecyclerView.GONE
+
+        notFoundLayout.visibility = View.GONE
+        shimmerFrameLayout.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
 
         // Show a toast message if filteredTasks is empty
         if (filteredProducts.isEmpty()) {

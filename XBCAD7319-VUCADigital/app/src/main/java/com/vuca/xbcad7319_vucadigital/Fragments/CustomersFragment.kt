@@ -13,9 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.vuca.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.vuca.xbcad7319_vucadigital.Adapters.CustomerAdapter
 import com.vuca.xbcad7319_vucadigital.R
@@ -91,69 +89,26 @@ class CustomersFragment : Fragment() {
             }
 
             //Filter buttons listeners
+
             allFilterButton.setOnClickListener {
                 filteredCustomers = customers
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(allFilterButton)
-
-                notFoundLayout.visibility = View.GONE
-                shimmerFrameLayout.visibility = View.GONE
-                gridView.visibility = View.VISIBLE
-
-                if(filteredCustomers.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    gridView.visibility = View.GONE
-                }
             }
             leadsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Leads" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(leadsFilterButton)
-
-                notFoundLayout.visibility = View.GONE
-                shimmerFrameLayout.visibility = View.GONE
-                gridView.visibility = View.VISIBLE
-
-                if(filteredCustomers.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    gridView.visibility = View.GONE
-                }
             }
             referralsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Referrals" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(referralsFilterButton)
-
-                notFoundLayout.visibility = View.GONE
-                shimmerFrameLayout.visibility = View.GONE
-                gridView.visibility = View.VISIBLE
-
-                if(filteredCustomers.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    gridView.visibility = View.GONE
-                }
             }
             prospectFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Prospect" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(prospectFilterButton)
-
-                notFoundLayout.visibility = View.GONE
-                shimmerFrameLayout.visibility = View.GONE
-                gridView.visibility = View.VISIBLE
-
-                if(filteredCustomers.isEmpty()){
-                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
-                    notFoundLayout.visibility = View.VISIBLE
-                    shimmerFrameLayout.visibility = View.GONE
-                    gridView.visibility = View.GONE
-                }
             }
         }, 2000)
     }
