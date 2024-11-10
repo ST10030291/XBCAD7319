@@ -36,7 +36,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:queryHint="Filter opportunities by customer name"/>
+            android:queryHint="Filter by customer name"/>
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerOpportunities"
