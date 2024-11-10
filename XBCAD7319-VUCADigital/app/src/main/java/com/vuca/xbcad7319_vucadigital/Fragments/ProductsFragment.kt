@@ -43,7 +43,7 @@ class ProductsFragment : Fragment() {
     private var serviceList = mutableListOf<ProductModel>()
     private lateinit var recyclerViewService : RecyclerView
     private lateinit var filteredProducts: List<ProductModel>
-    private lateinit var productss: List<ProductModel>
+    private lateinit var products: List<ProductModel>
 
     private lateinit var filteredServices: List<ProductModel>
     private lateinit var services: List<ProductModel>
@@ -96,7 +96,6 @@ class ProductsFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)//allows to list items to show next to each other
         productAdapter = ProductAdapter(productList, ::onEditProduct, ::onDeleteProduct)//calling the Product Adapter
         recyclerView.adapter = productAdapter
-
 
         recyclerViewService = view.findViewById(R.id.service_recycler_view)
         recyclerViewService.layoutManager = GridLayoutManager(requireContext(), 2)//allows to list items to show next to each other
@@ -176,8 +175,7 @@ class ProductsFragment : Fragment() {
         //method that gets the products from the database
         lifecycleScope.launch {
             try {
-                val products = sbHelper.getAllProducts()
-                productss = sbHelper.getAllProducts()
+                products = sbHelper.getAllProducts()
                 val filteredProducts = products.filter { it.Type == "Product" }//filtering by only product
                 productAdapter.updateProducts(filteredProducts)
                 productAdapter.notifyDataSetChanged()
@@ -191,9 +189,8 @@ class ProductsFragment : Fragment() {
         //fetches all the services from the database
         lifecycleScope.launch {
             try {
-                val products = sbHelper.getAllProducts()
                 services = sbHelper.getAllProducts()
-                val filteredProducts = products.filter { it.Type == "Service" }//filtering by services
+                val filteredProducts = services.filter { it.Type == "Service" }//filtering by services
                 serviceAdapter.updateProducts(filteredProducts)
                 serviceAdapter.notifyDataSetChanged()
                 checkLists()
@@ -224,7 +221,7 @@ class ProductsFragment : Fragment() {
         //have to search for this product and display accordingly
         val queryLower = query.lowercase()
 
-        filteredProducts = productss.filter { product ->
+        filteredProducts = products.filter { product ->
             product.ProductName.lowercase().contains(queryLower) &&
                     product.Type == "Product"
         }
@@ -245,7 +242,7 @@ class ProductsFragment : Fragment() {
         recyclerView.visibility = View.VISIBLE
 
         // Show a toast message if filteredTasks is empty
-        if (filteredProducts.isEmpty()) {
+        if (filteredProducts.isEmpty() && filteredServices.isEmpty()) {
             notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
             notFoundLayout.visibility = View.VISIBLE
             shimmerFrameLayout.visibility = View.GONE
