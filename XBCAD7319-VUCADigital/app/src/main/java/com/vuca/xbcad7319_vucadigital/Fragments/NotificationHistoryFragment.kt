@@ -128,6 +128,7 @@ class NotificationHistoryFragment : Fragment() {
                 recyclerView.visibility = View.VISIBLE
 
                 if(filteredNotificationList.isEmpty()){
+                    notFoundMessage2.text = getString(R.string.try_choosing_another_filter)
                     notFoundLayout.visibility = View.VISIBLE
                     shimmerFrameLayout.visibility = View.GONE
                     recyclerView.visibility = View.GONE
@@ -182,6 +183,7 @@ class NotificationHistoryFragment : Fragment() {
 
         // Show a toast message if filteredTasks is empty
         if (filteredNotificationList.isEmpty()) {
+            notFoundMessage2.text = getString(R.string.try_entering_a_different_search_term)
             notFoundLayout.visibility = View.VISIBLE
             shimmerFrameLayout.visibility = View.GONE
             recyclerView.visibility = View.GONE

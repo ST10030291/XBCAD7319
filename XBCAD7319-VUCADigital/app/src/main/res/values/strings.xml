@@ -82,7 +82,7 @@
     <string name="visible">Visible</string>
     <string name="try_choosing_another_filter">Try choosing another filter.</string>
     <string name="not_found">Not Found</string>
-    <string name="try_entering_a_different_search_term">try entering a different search term.</string>
+    <string name="try_entering_a_different_search_term">Try entering a different search term.</string>
 
     <string-array name="leadStatusOptions">
         <item>Select Lead Status</item>
