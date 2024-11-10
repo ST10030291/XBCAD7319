@@ -111,6 +111,9 @@ class TasksFragment : Fragment() {
             }
             selectButton(button)
             taskAdapter.updateTasks(filteredTasks)
+            if(filteredTasks.isEmpty()){
+                Toast.makeText(context, "Tasks not found! No tasks with this filter exists.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

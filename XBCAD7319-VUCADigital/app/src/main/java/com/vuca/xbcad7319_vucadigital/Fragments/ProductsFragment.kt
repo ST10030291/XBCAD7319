@@ -104,18 +104,18 @@ class ProductsFragment : Fragment() {
             allButton.isSelected = true
             allButton.setOnClickListener {
                 //displays all products and services
-                allButton.setBackgroundResource(R.drawable.filter_btn_selected);
-                productButton.setBackgroundResource(R.drawable.filter_btn_border);
-                serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
+                allButton.setBackgroundResource(R.drawable.filter_btn_selected)
+                productButton.setBackgroundResource(R.drawable.filter_btn_border)
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerView.visibility = RecyclerView.VISIBLE
                 recyclerViewService.visibility = RecyclerView.VISIBLE
             }
 
             productButton.setOnClickListener {
                 //displays only products
-                productButton.setBackgroundResource(R.drawable.filter_btn_selected);
-                allButton.setBackgroundResource(R.drawable.filter_btn_border);
-                serviceButton.setBackgroundResource(R.drawable.filter_btn_border);
+                productButton.setBackgroundResource(R.drawable.filter_btn_selected)
+                allButton.setBackgroundResource(R.drawable.filter_btn_border)
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerViewService.visibility = RecyclerView.GONE
                 recyclerView.visibility = RecyclerView.VISIBLE
                 //loadProduct()
@@ -123,9 +123,9 @@ class ProductsFragment : Fragment() {
 
             serviceButton.setOnClickListener {
                 //displays only services
-                serviceButton.setBackgroundResource(R.drawable.filter_btn_selected);
-                allButton.setBackgroundResource(R.drawable.filter_btn_border);
-                productButton.setBackgroundResource(R.drawable.filter_btn_border);
+                serviceButton.setBackgroundResource(R.drawable.filter_btn_selected)
+                allButton.setBackgroundResource(R.drawable.filter_btn_border)
+                productButton.setBackgroundResource(R.drawable.filter_btn_border)
                 recyclerView.visibility = RecyclerView.GONE
                 recyclerViewService.visibility = RecyclerView.VISIBLE
                 //loadService()
@@ -163,6 +163,9 @@ class ProductsFragment : Fragment() {
                 productAdapter.updateProducts(filteredProducts)
                 productAdapter.notifyDataSetChanged()
                 checkLists()
+                if(filteredProducts.isEmpty()){
+                    Toast.makeText(context, "Products not found! No products with this filter exists.", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Couldn't load products from DB", Toast.LENGTH_SHORT).show()
             }
@@ -178,6 +181,9 @@ class ProductsFragment : Fragment() {
                 serviceAdapter.updateProducts(filteredProducts)
                 serviceAdapter.notifyDataSetChanged()
                 checkLists()
+                if(filteredProducts.isEmpty()){
+                    Toast.makeText(context, "Services not found! No services with this filter exists.", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Couldn't load services from DB", Toast.LENGTH_SHORT).show()
             }

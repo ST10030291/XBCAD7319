@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.GridView
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.vuca.xbcad7319_vucadigital.Activites.DashboardActivity
 import com.vuca.xbcad7319_vucadigital.Adapters.CustomerAdapter
@@ -77,21 +78,33 @@ class CustomersFragment : Fragment() {
                 filteredCustomers = customers
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(allFilterButton)
+                if(filteredCustomers.isEmpty()){
+                    Toast.makeText(context, "No Customers registered! Please register customers first.", Toast.LENGTH_SHORT).show()
+                }
             }
             leadsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Leads" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(leadsFilterButton)
+                if(filteredCustomers.isEmpty()){
+                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                }
             }
             referralsFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Referrals" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(referralsFilterButton)
+                if(filteredCustomers.isEmpty()){
+                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                }
             }
             prospectFilterButton.setOnClickListener {
                 filteredCustomers = customers.filter { it.CustomerType == "Prospect" }
                 updateCustomerGrid(gridView, filteredCustomers)
                 selectButton(prospectFilterButton)
+                if(filteredCustomers.isEmpty()){
+                    Toast.makeText(context, "Customers not found! No customers with this filter exist.", Toast.LENGTH_SHORT).show()
+                }
             }
         }, 2000)
     }

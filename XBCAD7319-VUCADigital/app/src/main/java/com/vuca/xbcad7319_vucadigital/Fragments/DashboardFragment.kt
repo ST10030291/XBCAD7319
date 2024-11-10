@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -107,9 +108,14 @@ class DashboardFragment : Fragment() {
                     supabaseHelper.fetchTasksByFilter(filterType)
                 }
 
-                // Update UI on the main thread
-                setupLineChart(labels, tasks)
-                selectButton(button)
+                if(tasks.isNotEmpty()){
+                    // Update UI on the main thread
+                    setupLineChart(labels, tasks)
+                    selectButton(button)
+                }
+                else{
+                    Toast.makeText(context, "Empty Graph! No data with this filter available.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
