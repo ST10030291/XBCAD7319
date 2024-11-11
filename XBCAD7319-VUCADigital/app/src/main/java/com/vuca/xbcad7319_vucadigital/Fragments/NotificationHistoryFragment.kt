@@ -245,6 +245,7 @@ class NotificationHistoryFragment : Fragment() {
                 sbHelper.deleteNotificationHistory(notification.id!!)
                 withContext(Dispatchers.Main) {
                     // Delete the notification in the adapter
+                    tempNotifications = tempNotifications.filter { it.id != notification.id }
                     notificationHistoryAdapter.removeNotification(notification)
                     Toast.makeText(requireContext(), "Operation Success! Notification deleted.", Toast.LENGTH_SHORT).show()
                 }

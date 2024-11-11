@@ -393,6 +393,8 @@ class TasksFragment : Fragment() {
                 // Update the task in the database
                 sbHelper.updateTask(updatedTask)
 
+                tasks = tasks.filter { it.id != task.id }
+
                 // Update the task in the adapter
                 taskAdapter.updateTask(updatedTask)
 
@@ -452,6 +454,7 @@ class TasksFragment : Fragment() {
                     // Delete the task from the database
                     sbHelper.deleteTask(task.id!!)
                     withContext(Dispatchers.Main) {
+                        tasks = tasks.filter { it.id != task.id }
                         taskAdapter.removeTask(task)
                         Toast.makeText(requireContext(), "Operation Success! Task deleted.", Toast.LENGTH_SHORT).show()
                     }

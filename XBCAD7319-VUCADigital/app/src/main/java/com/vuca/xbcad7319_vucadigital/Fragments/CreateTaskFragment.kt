@@ -132,6 +132,7 @@ class CreateTaskFragment : Fragment() {
                 Toast.makeText(requireContext(),"Operation Success! task created.",Toast.LENGTH_SHORT).show()
                 requireActivity().supportFragmentManager.popBackStack()
             } catch (e: Exception) {
+                Log.d("OP34", "$e")
                 Toast.makeText(requireContext(),"Operation failure! Couldn't create task.",Toast.LENGTH_SHORT).show()
             }
         }
