@@ -57,6 +57,8 @@ class TasksFragment : Fragment() {
     private lateinit var notFoundMessage: TextView
     private lateinit var notFoundMessage2: TextView
 
+    private lateinit var lastButtonClicked: Button
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -127,6 +129,8 @@ class TasksFragment : Fragment() {
             }
             selectButton(button)
             taskAdapter.updateTasks(filteredTasks)
+
+            lastButtonClicked = button
 
             notFoundLayout.visibility = View.GONE
             shimmerFrameLayout.visibility = View.GONE
@@ -393,11 +397,17 @@ class TasksFragment : Fragment() {
                 // Update the task in the database
                 sbHelper.updateTask(updatedTask)
 
+                val index = tasks.indexOfFirst { it.id == updatedTask.id }
+                val temp = tasks.toMutableList()
+                temp[index] = updatedTask
+                tasks = temp.toList()
+
                 // Update the task in the adapter
                 taskAdapter.updateTask(updatedTask)
 
                 Toast.makeText(requireContext(), "Operation Success! Updated task.", Toast.LENGTH_SHORT).show()
                 dialog.dismiss() // Dismiss only after success
+                lastButtonClicked.performClick()
             } catch (e: Exception) {
                 Log.e("EditTask", "Error updating task", e) // Log error details
                 Toast.makeText(requireContext(), "Operation failure! Couldn't update task.", Toast.LENGTH_SHORT).show()
