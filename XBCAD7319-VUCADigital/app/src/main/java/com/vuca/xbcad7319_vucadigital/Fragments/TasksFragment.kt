@@ -58,6 +58,12 @@ class TasksFragment : Fragment() {
 
     private lateinit var lastButtonClicked: Button
 
+    // Use a single variable to store the active filter status, or null for "All"
+    private var activeFilter: String? = null
+
+    // Function for handling search
+    private var currentSearchQuery: String = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -121,11 +127,11 @@ class TasksFragment : Fragment() {
     // Available at: https://stackoverflow.com/questions/44098709/how-can-i-filter-an-arraylist-in-kotlin-so-i-only-have-elements-which-match-my-c
     private fun setFilterButtonClickListener(button: Button, filterStatus: String?) {
         button.setOnClickListener {
-            filteredTasks = if (filterStatus == null) {
-                tasksList
-            } else {
-                tasksList.filter { it.status == filterStatus }
-            }
+            activeFilter = filterStatus
+
+            // Apply the combined filters (status and search)
+            updateFilteredTasks()
+
             selectButton(button)
             taskAdapter.updateTasks(filteredTasks)
 
@@ -140,6 +146,23 @@ class TasksFragment : Fragment() {
                 notFoundLayout.visibility = View.VISIBLE
                 shimmerFrameLayout.visibility = View.GONE
                 recyclerView.visibility = View.GONE
+            }
+        }
+    }
+
+    // Function to update filtered tasks based on the active filter and the search query
+    private fun updateFilteredTasks() {
+        // First, filter tasks by the active filter (status)
+        filteredTasks = if (activeFilter != null) {
+            tasksList.filter { it.status == activeFilter }
+        } else {
+            tasksList // No filter selected, show all tasks
+        }
+
+        // Then, apply the search filter if there is a search query
+        if (currentSearchQuery.isNotEmpty()) {
+            filteredTasks = filteredTasks.filter { task ->
+                task.name.lowercase().contains(currentSearchQuery.lowercase())
             }
         }
     }
@@ -168,11 +191,10 @@ class TasksFragment : Fragment() {
     // Posted by: Nithinlal
     // Available at: https://stackoverflow.com/questions/44098709/how-can-i-filter-an-arraylist-in-kotlin-so-i-only-have-elements-which-match-my-c
     private fun searchTasksByName(query: String) {
-        val queryLower = query.lowercase()
+        currentSearchQuery = query.lowercase()
 
-        filteredTasks = tasksList.filter { task ->
-            task.name.lowercase().contains(queryLower)
-        }
+        // Update the filtered tasks based on both search and selected filters
+        updateFilteredTasks()
 
         taskAdapter.updateTasks(filteredTasks)
 
