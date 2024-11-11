@@ -393,8 +393,6 @@ class TasksFragment : Fragment() {
                 // Update the task in the database
                 sbHelper.updateTask(updatedTask)
 
-                tasks = tasks.filter { it.id != task.id }
-
                 // Update the task in the adapter
                 taskAdapter.updateTask(updatedTask)
 
