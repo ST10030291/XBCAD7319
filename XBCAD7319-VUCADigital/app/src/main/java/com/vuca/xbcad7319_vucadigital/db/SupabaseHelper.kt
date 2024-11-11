@@ -446,13 +446,13 @@ class SupabaseHelper {
 
     }
 
-    suspend fun getAllTasks(): List<TaskModel> {
+    suspend fun getAllTasks(): MutableList<TaskModel> {
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
             return supabase.from("tasks").select {
                 order(column = "id", order = Order.ASCENDING)
-            }.decodeList<TaskModel>()
+            }.decodeList<TaskModel>().toMutableList()
         } else {
             throw Exception("Supabase initialization failed.")
         }

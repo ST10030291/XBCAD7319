@@ -41,7 +41,6 @@ class TasksFragment : Fragment() {
     private lateinit var sbHelper: SupabaseHelper
     private lateinit var customers: List<CustomerModel>
     private lateinit var filteredTasks: List<TaskModel>
-    private lateinit var tasks: List<TaskModel>
 
     private lateinit var allFilterButton: Button
     private lateinit var toDoFilterButton: Button
@@ -123,9 +122,9 @@ class TasksFragment : Fragment() {
     private fun setFilterButtonClickListener(button: Button, filterStatus: String?) {
         button.setOnClickListener {
             filteredTasks = if (filterStatus == null) {
-                tasks
+                tasksList
             } else {
-                tasks.filter { it.status == filterStatus }
+                tasksList.filter { it.status == filterStatus }
             }
             selectButton(button)
             taskAdapter.updateTasks(filteredTasks)
@@ -171,7 +170,7 @@ class TasksFragment : Fragment() {
     private fun searchTasksByName(query: String) {
         val queryLower = query.lowercase()
 
-        filteredTasks = tasks.filter { task ->
+        filteredTasks = tasksList.filter { task ->
             task.name.lowercase().contains(queryLower)
         }
 
@@ -197,9 +196,9 @@ class TasksFragment : Fragment() {
     private fun loadTasks() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                tasks = sbHelper.getAllTasks()
+                tasksList = sbHelper.getAllTasks()
                 withContext(Dispatchers.Main) {
-                    taskAdapter.updateTasks(tasks)
+                    taskAdapter.updateTasks(tasksList)
                 }
             } catch (e: Exception) {
                 Log.e("TaskLoadError", "Error loading tasks", e)
@@ -397,10 +396,12 @@ class TasksFragment : Fragment() {
                 // Update the task in the database
                 sbHelper.updateTask(updatedTask)
 
-                val index = tasks.indexOfFirst { it.id == updatedTask.id }
-                val temp = tasks.toMutableList()
-                temp[index] = updatedTask
-                tasks = temp.toList()
+//                val index = tasks.indexOfFirst { it.id == updatedTask.id }
+//                val temp = tasks.toMutableList()
+//                temp[index] = updatedTask
+//                tasks = temp.toList()
+                val index = tasksList.indexOfFirst { it.id == updatedTask.id }
+                tasksList[index] = updatedTask
 
                 // Update the task in the adapter
                 taskAdapter.updateTask(updatedTask)
@@ -462,7 +463,7 @@ class TasksFragment : Fragment() {
                     // Delete the task from the database
                     sbHelper.deleteTask(task.id!!)
                     withContext(Dispatchers.Main) {
-                        tasks = tasks.filter { it.id != task.id }
+                        tasksList.remove(task)
                         taskAdapter.removeTask(task)
                         Toast.makeText(requireContext(), "Operation Success! Task deleted.", Toast.LENGTH_SHORT).show()
                     }
