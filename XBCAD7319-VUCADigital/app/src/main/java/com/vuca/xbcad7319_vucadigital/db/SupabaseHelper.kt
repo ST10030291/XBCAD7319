@@ -451,7 +451,7 @@ class SupabaseHelper {
 
         if (isInitialized) {
             return supabase.from("tasks").select {
-                order(column = "id", order = Order.ASCENDING)
+                order(column = "startDate", order = Order.ASCENDING)
             }.decodeList<TaskModel>().toMutableList()
         } else {
             throw Exception("Supabase initialization failed.")

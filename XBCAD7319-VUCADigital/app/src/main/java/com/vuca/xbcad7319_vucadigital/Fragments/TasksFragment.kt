@@ -312,7 +312,7 @@ class TasksFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 customers = sbHelper.getAllCustomers() // Assuming you have access to sbHelper
-                val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
+                val customerNames = listOf("Select a customer name:") + customers.map { it.CustomerName }
                 customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
 
                 // Set selection if customerID is provided
@@ -330,10 +330,10 @@ class TasksFragment : Fragment() {
         }
 
         // Sample data for now
-        val categories = listOf("Select a category", "Follow up", "Installation", "Billing", "Support")
-        val assignedPersons = listOf("Select a person", "Samantha", "Ethan", "Olivia", "Daniel", "Jonathan", "Carlos")
-        val priorityLevels = listOf("Select a priority level", "High", "Medium", "Low")
-        val statuses = listOf("Select a task status", "To Do", "Doing", "Done")
+        val categories = listOf("Select a category:", "Follow up", "Installation", "Billing", "Support")
+        val assignedPersons = listOf("Select a person:", "Samantha", "Ethan", "Olivia", "Daniel", "Jonathan", "Carlos")
+        val priorityLevels = listOf("Select a priority level:", "High", "Medium", "Low")
+        val statuses = listOf("Select a task status:", "To Do", "Doing", "Done")
 
         // Set adapters
         categorySpinner.adapter = CustomSpinnerAdapter(requireContext(), categories)

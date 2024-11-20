@@ -116,7 +116,7 @@ class TaskAdapter(
     // Configures the priority button appearance
     private fun setPriorityButton(holder: TaskViewHolder, task: TaskModel, backgroundColor: Int, textColor: Int) {
         // Red background
-        if (backgroundColor == Color.parseColor("#E8715C")) {
+        if (backgroundColor == Color.parseColor("#E8715C") && task.priorityLevel == "High") {
             holder.priorityButton.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             //holder.priorityButton.setBackgroundColor(Color.WHITE)
             holder.priorityButton.setTextColor(Color.RED)

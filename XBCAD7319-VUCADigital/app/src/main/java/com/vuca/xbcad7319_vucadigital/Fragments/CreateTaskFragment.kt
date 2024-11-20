@@ -101,7 +101,7 @@ class CreateTaskFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 customers = sbHelper.getAllCustomers()
-                val customerNames = listOf("Select a customer name") + customers.map { it.CustomerName }
+                val customerNames = listOf("Select a customer name:") + customers.map { it.CustomerName }
                 customerSpinner.adapter = CustomSpinnerAdapter(requireContext(), customerNames)
             } catch (e: Exception) {
                 Toast.makeText(requireContext(),"Operation failure! Couldn't create task.",Toast.LENGTH_SHORT).show()
@@ -111,10 +111,10 @@ class CreateTaskFragment : Fragment() {
 
     private fun setupSpinners() {
         // Sample data for now
-        val categories = listOf("Select a category", "Follow up", "Installation", "Billing", "Support")
-        val assignedPersons = listOf("Select a person", "Samantha", "Ethan", "Olivia", "Daniel", "Jonathan", "Carlos")
-        val priorityLevels = listOf("Select a priority level", "High", "Medium", "Low")
-        val statuses = listOf("Select a task status", "To Do", "Doing", "Done")
+        val categories = listOf("Select a category:", "Follow up", "Installation", "Billing", "Support")
+        val assignedPersons = listOf("Select a person:", "Samantha", "Ethan", "Olivia", "Daniel", "Jonathan", "Carlos")
+        val priorityLevels = listOf("Select a priority level:", "High", "Medium", "Low")
+        val statuses = listOf("Select a task status:", "To Do", "Doing", "Done")
 
         // Create ArrayAdapter for each spinner with custom layout
         categorySpinner.adapter = CustomSpinnerAdapter(requireContext(), categories)
@@ -240,7 +240,7 @@ class CreateTaskFragment : Fragment() {
                 showToast("Name too short! Task name must be at least 4 characters.")
                 false
             }
-            category == "Select a category" -> {
+            category == "Select a category:" -> {
                 showToast("Category not selected! Please select a category.")
                 false
             }
@@ -248,11 +248,11 @@ class CreateTaskFragment : Fragment() {
                 showToast("Customer name not selected! Please select a customer name.")
                 false
             }
-            personAssigned == "Select a person" -> {
+            personAssigned == "Select a person:" -> {
                 showToast("Person assigned not selected! Please select a person assigned.")
                 false
             }
-            priorityLevel == "Select a priority level" -> {
+            priorityLevel == "Select a priority level:" -> {
                 showToast("Priority level not selected! Please select a priority level.")
                 false
             }
@@ -268,7 +268,7 @@ class CreateTaskFragment : Fragment() {
                 showToast("Description too short! Please enter a longer description.")
                 false
             }
-            status == "Select a task status" -> {
+            status == "Select a task status:" -> {
                 showToast("Task status not selected! Please select a task status.")
                 false
             }
