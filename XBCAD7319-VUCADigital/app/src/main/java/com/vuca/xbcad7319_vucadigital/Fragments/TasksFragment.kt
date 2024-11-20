@@ -442,7 +442,6 @@ class TasksFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_item, null)
         val builder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setTitle("Edit Task")
 
         setupDialogViews(dialogView, task)
 

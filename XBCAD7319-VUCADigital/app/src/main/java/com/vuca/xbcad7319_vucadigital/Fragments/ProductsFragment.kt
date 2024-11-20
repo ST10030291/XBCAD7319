@@ -336,7 +336,6 @@ class ProductsFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_product, null)
         val builder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setTitle("Edit Product")
 
         setupDialogViews(dialogView, product)
 

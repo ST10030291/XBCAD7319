@@ -197,7 +197,6 @@ class OpportunitiesFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_opportunity, null)
         val builder = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setTitle("Edit Opportunity")
 
         setupDialogViews(dialogView, opportunity)
 

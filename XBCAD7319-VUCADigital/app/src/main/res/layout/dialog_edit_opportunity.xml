@@ -23,15 +23,27 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/pageName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_opportunity"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
                     android:id="@+id/labelCustomerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Name of Opportunity:"
+                    android:text="@string/name_of_opportunity"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/pageName"/>
 
                 <EditText
                     android:id="@+id/opportunityNameInput"
@@ -39,7 +51,7 @@
                     android:layout_height="48dp"
                     android:autofillHints="customerName"
                     android:background="@drawable/user_input_border"
-                    android:hint="Opportunity Name"
+                    android:hint="@string/opportunity_name"
                     android:inputType="text"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
@@ -52,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21dp"
-                    android:text="Value:"
+                    android:text="@string/value"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -100,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21dp"
-                    android:text="Priority Of Opportunity:"
+                    android:text="@string/priority_of_opportunity"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -123,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21dp"
-                    android:text="Lead Status Of Opportunity:"
+                    android:text="@string/lead_status_of_opportunity"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +158,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Stage Of Opportunity:"
+                    android:text="@string/stage_of_opportunity"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -169,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21dp"
-                    android:text="Date Of Opportunity:"
+                    android:text="@string/date_of_opportunity"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"

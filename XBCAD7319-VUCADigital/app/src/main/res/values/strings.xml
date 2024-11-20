@@ -86,6 +86,16 @@
     <string name="products_and_capital_services">Products and Services</string>
     <string name="products">Products</string>
     <string name="services">Services</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="edit_opportunity">Edit Opportunity</string>
+    <string name="name_of_opportunity">Name of Opportunity:</string>
+    <string name="opportunity_name">Opportunity Name</string>
+    <string name="value">Value:</string>
+    <string name="priority_of_opportunity">Priority Of Opportunity:</string>
+    <string name="lead_status_of_opportunity">Lead Status Of Opportunity:</string>
+    <string name="stage_of_opportunity">Stage Of Opportunity:</string>
+    <string name="date_of_opportunity">Date Of Opportunity:</string>
+    <string name="edit_product">Edit Product</string>
 
     <string-array name="leadStatusOptions">
         <item>Select Lead Status</item>
