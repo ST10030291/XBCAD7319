@@ -166,6 +166,10 @@ class CreateProductFragment : Fragment() {
             else -> true
         }
     }
+
+    //This part of the code was inspired by a stack overflow post
+    //Uploaded by: Charles Durham
+    //Available at: https://stackoverflow.com/questions/45336954/checking-if-string-is-empty-in-kotlin
     private fun validateInputsService(
         productName: String,
         description: String,
