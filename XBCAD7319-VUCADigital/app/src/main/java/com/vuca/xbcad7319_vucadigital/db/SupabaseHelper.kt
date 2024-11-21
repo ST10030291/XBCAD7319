@@ -24,6 +24,12 @@ import kotlin.coroutines.suspendCoroutine
 class SupabaseHelper {
     private lateinit var supabase: SupabaseClient
 
+    companion object {
+        const val ERROR = "Supabase initialization failed."
+        const val ACHIEVEMENT_ID = "352f37f4-86dd-4129-b39e-7f91db44004d"
+        const val WENT_WRONG_ERROR = "Something went wrong! Update failed"
+    }
+
     private fun initializeSupabase(apiKey: String) {
         supabase = createSupabaseClient(
             supabaseUrl = "https://tptruaqxxbujkjbktvnf.supabase.co",
@@ -56,7 +62,7 @@ class SupabaseHelper {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<CustomerModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
     suspend fun getAllCustomersNames(): List<String> {
@@ -69,7 +75,7 @@ class SupabaseHelper {
                 .decodeList<CustomerModel>()
                 .map { it.CustomerName } 
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -79,10 +85,10 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("customers").insert(customer)
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -94,11 +100,11 @@ class SupabaseHelper {
                     customer.id?.let { eq("id", it) }
                 }
             }
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             return true
         }
         catch (e: Exception){
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
         }
     }
@@ -113,7 +119,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
-                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+                updateAchievement(ACHIEVEMENT_ID,1)
                 return true
             }
             catch (e: Exception){
@@ -121,7 +127,7 @@ class SupabaseHelper {
                 return false
             }
         }else{
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
     }
@@ -139,7 +145,7 @@ class SupabaseHelper {
                 return 0 // Return 0 in case of an error
             }
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -155,7 +161,7 @@ class SupabaseHelper {
                 return 0
             }
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -165,11 +171,11 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("Opportunity").insert(opportunity)
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             updateAchievement("618abdea-52e0-48d2-b971-4b589bc4bfc5",1)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -187,12 +193,12 @@ class SupabaseHelper {
                 )
             }
 
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
 
             return true
         }
         catch (e: Exception){
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
         }
     }
@@ -207,7 +213,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
-                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+                updateAchievement(ACHIEVEMENT_ID,1)
                 return true
             }
             catch (e: Exception){
@@ -215,7 +221,7 @@ class SupabaseHelper {
                 return false
             }
         }else{
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
     }
@@ -228,7 +234,7 @@ class SupabaseHelper {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<OpportunityModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -301,41 +307,23 @@ class SupabaseHelper {
 
             tasksGroupedList.addAll(tasksGrouped.toList())
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
         //returns the filtered tasks list
         return tasksGroupedList
     }
 
-    //products
-
-  /*  suspend fun uploadImageToStorage(imageUri: Uri, context: Context): String {
-        val isInitialized = fetchSupabaseApiKeyAndInitialize()
-        if (isInitialized) {
-            val inputStream = context.contentResolver.openInputStream(imageUri)
-
-            val fileName = "${UUID.randomUUID()}.jpg"
-            val upload = supabase.storage.from("product_images").upload(fileName, inputStream)
-
-
-            val publicUrl = supabase.storage.from("product_images").getPublicUrl(fileName)
-            return publicUrl
-        } else {
-            throw Exception("Supabase initialization failed.")
-        }
-    }*/
-
     suspend fun addProducts(product : ProductModel) : Boolean{
         val isInitialized = fetchSupabaseApiKeyAndInitialize()
 
         if (isInitialized) {
             supabase.from("products").insert(product)
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             updateAchievement("e2ed48f9-df23-4728-a3fb-5462c5f4d808",1)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -347,11 +335,11 @@ class SupabaseHelper {
                     //TaskModel.id?.let { eq("id", it) }
                 }
             }
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             return true
         }
         catch (e: Exception){
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
         }
     }
@@ -366,7 +354,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
-                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+                updateAchievement(ACHIEVEMENT_ID,1)
                 return true
             }
             catch (e: Exception){
@@ -374,7 +362,7 @@ class SupabaseHelper {
                 return false
             }
         }else{
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
     }
@@ -387,7 +375,7 @@ class SupabaseHelper {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<ProductModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -396,10 +384,10 @@ class SupabaseHelper {
 
         if (isInitialized) {
             supabase.from("tasks").insert(task)
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -410,7 +398,7 @@ class SupabaseHelper {
                     TaskModel::id eq task.id
                 }
             }
-            updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+            updateAchievement(ACHIEVEMENT_ID,1)
             if(task.status == "Done"){
                 updateAchievement("3efe75fa-6d23-4108-99f0-f3ec692d77c0",1)
             }
@@ -418,7 +406,7 @@ class SupabaseHelper {
             return true
         }
         catch (e: Exception){
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
         }
     }
@@ -433,7 +421,7 @@ class SupabaseHelper {
                         eq("id", id)
                     }
                 }
-                updateAchievement("352f37f4-86dd-4129-b39e-7f91db44004d",1)
+                updateAchievement(ACHIEVEMENT_ID,1)
                 return true
             }
             catch (e: Exception){
@@ -441,7 +429,7 @@ class SupabaseHelper {
                 return false
             }
         }else{
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
     }
@@ -454,7 +442,7 @@ class SupabaseHelper {
                 order(column = "startDate", order = Order.ASCENDING)
             }.decodeList<TaskModel>().toMutableList()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -471,7 +459,7 @@ class SupabaseHelper {
                 }
                 .decodeSingle<CustomerModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -482,7 +470,7 @@ class SupabaseHelper {
             supabase.from("customer_products").insert(customerProduct)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -498,7 +486,7 @@ class SupabaseHelper {
                     order("id", Order.ASCENDING)
                 }.decodeList<CustomerProductModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -509,7 +497,7 @@ class SupabaseHelper {
             supabase.from("notification_history").insert(notificationHistory)
             return true
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -528,7 +516,7 @@ class SupabaseHelper {
             return true
         }
         catch (e: Exception){
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
         }
     }
@@ -550,7 +538,7 @@ class SupabaseHelper {
                 return false
             }
         }else{
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
 
     }
@@ -563,7 +551,7 @@ class SupabaseHelper {
                 order(column = "dateTime", order = Order.DESCENDING)
             }.decodeList<NotificationHistoryModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -576,7 +564,7 @@ class SupabaseHelper {
                 order(column = "id", order = Order.ASCENDING)
             }.decodeList<AchievementModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -593,7 +581,7 @@ class SupabaseHelper {
                 }
                 .decodeSingle<AchievementModel>()
         } else {
-            throw Exception("Supabase initialization failed.")
+            throw Exception(ERROR)
         }
     }
 
@@ -619,7 +607,7 @@ class SupabaseHelper {
             return true
 
         } catch (e: Exception) {
-            Log.d("UPD40", "Something went wrong! Update failed")
+            Log.d("UPD40", WENT_WRONG_ERROR)
             return false
 
         }

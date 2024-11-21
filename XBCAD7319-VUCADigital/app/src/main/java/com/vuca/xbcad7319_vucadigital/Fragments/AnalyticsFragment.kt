@@ -38,6 +38,10 @@ class AnalyticsFragment : Fragment() {
     private lateinit var barChart: BarChart
     private lateinit var lineChart: LineChart
 
+    companion object {
+        const val RED = "#E8715C"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -105,7 +109,7 @@ class AnalyticsFragment : Fragment() {
     // Available at: https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/main/java/com/xxmassdeveloper/mpchartexample/BarChartActivityMultiDataset.java
     private fun setupBarChart(barEntries: List<BarEntry>, labels: List<String>) {
         val barDataSet = BarDataSet(barEntries, "").apply {
-            color = Color.parseColor("#E8715C")
+            color = Color.parseColor(RED)
             valueTextColor = Color.BLACK
             valueTextSize = 16f
             // Disable value labels above bars
@@ -228,14 +232,14 @@ class AnalyticsFragment : Fragment() {
     // Available at: https://stackoverflow.com/questions/64709234/create-line-chart-in-android-using-mpandroidchart-library
     private fun setupLineChart(entries: List<Entry>, labels: List<String>) {
         val lineDataSet = LineDataSet(entries, "").apply {
-            color = Color.parseColor("#E8715C")
+            color = Color.parseColor(RED)
             valueTextColor = Color.BLACK
             valueTextSize = 16f
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             lineWidth = 3f
             setDrawValues(false)
             setDrawCircles(true)
-            setCircleColor(Color.parseColor("#E8715C"))
+            setCircleColor(Color.parseColor(RED))
             circleRadius = 4f
         }
 

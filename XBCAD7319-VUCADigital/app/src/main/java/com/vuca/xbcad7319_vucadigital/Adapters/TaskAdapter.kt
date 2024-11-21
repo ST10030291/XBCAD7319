@@ -29,13 +29,18 @@ class TaskAdapter(
     private val onDeleteClick: (TaskModel) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
+    companion object {
+        const val RED = "#E8715C"
+        const val DARK_GREY = "#2D2D2D"
+    }
+
     // Blog post
     // Titled: Kotlin Map : mapOf()
     // Posted by: manishkhetan
     // Available at: https://www.geeksforgeeks.org/kotlin-map-mapof/
     // Map of priority levels to their corresponding colors
     private val priorityColors = mapOf(
-        "High" to "#E8715C",    // Red
+        "High" to RED,    // Red
         "Medium" to "#FFD700",  // Yellow
         "Low" to "#D3D3D3"      // Dark Gray
     )
@@ -64,9 +69,9 @@ class TaskAdapter(
 
         // Determine the background color based on the position
         val backgroundColor = when (position % 3) {
-            0 -> Color.parseColor("#2D2D2D") // Dark Gray
+            0 -> Color.parseColor(DARK_GREY) // Dark Gray
             1 -> Color.WHITE // White
-            2 -> Color.parseColor("#E8715C") // Red
+            2 -> Color.parseColor(RED) // Red
             else -> Color.WHITE // Default to White
         }
         holder.cardView.setCardBackgroundColor(backgroundColor)
@@ -116,7 +121,7 @@ class TaskAdapter(
     // Configures the priority button appearance
     private fun setPriorityButton(holder: TaskViewHolder, task: TaskModel, backgroundColor: Int, textColor: Int) {
         // Red background
-        if (backgroundColor == Color.parseColor("#E8715C") && task.priorityLevel == "High") {
+        if (backgroundColor == Color.parseColor(RED) && task.priorityLevel == "High") {
             holder.priorityButton.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             //holder.priorityButton.setBackgroundColor(Color.WHITE)
             holder.priorityButton.setTextColor(Color.RED)
@@ -132,25 +137,25 @@ class TaskAdapter(
     // Configures the status button appearance
     private fun setStatusButton(holder: TaskViewHolder, backgroundColor: Int) {
         // Determine the tint color based on the cardview background color
-        val tintColor = if (backgroundColor == Color.parseColor("#2D2D2D") ||
-            backgroundColor == Color.parseColor("#E8715C")) {
+        val tintColor = if (backgroundColor == Color.parseColor(DARK_GREY) ||
+            backgroundColor == Color.parseColor(RED)) {
             Color.WHITE
         } else {
             // Set background to dark grey
-            Color.parseColor("#2D2D2D")
+            Color.parseColor(DARK_GREY)
         }
 
         // Set the background tint
         holder.status.backgroundTintList = ColorStateList.valueOf(tintColor)
 
         // Set the text color based on the background color
-        holder.status.setTextColor(if (backgroundColor == Color.parseColor("#2D2D2D") ||
-            backgroundColor == Color.parseColor("#E8715C")) Color.BLACK else Color.WHITE)
+        holder.status.setTextColor(if (backgroundColor == Color.parseColor(DARK_GREY) ||
+            backgroundColor == Color.parseColor(RED)) Color.BLACK else Color.WHITE)
     }
 
     // Sets the color of the moreImageView based on the background color
     private fun setMoreImageViewColor(imageView: ImageView, backgroundColor: Int) {
-        if (backgroundColor == Color.parseColor("#E8715C") || backgroundColor == Color.parseColor("#2D2D2D")) {
+        if (backgroundColor == Color.parseColor(RED) || backgroundColor == Color.parseColor(DARK_GREY)) {
             // Set to white for red or grey backgrounds
             imageView.setColorFilter(Color.WHITE)
         } else {
